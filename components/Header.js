@@ -1,87 +1,63 @@
 import React from 'react';
-import { Menu } from 'semantic-ui-react';
-
-
 import { Link } from '../routes';
-export default () => {
+
+const Header = () => {
+    const headerStyle = {
+        backgroundColor: '#289672',
+        marginBottom: '15px',
+        height: '100px',
+        display: 'flex',
+        alignItems: 'center',
+        padding: '0 20px',
+        color: 'white',
+        fontFamily: 'Lato, "Helvetica Neue", Arial, Helvetica, sans-serif',
+        justifyContent: 'space-between',
+    };
+
+    const logoStyle = {
+        fontSize: '24px',
+        fontWeight: 'bold',
+    };
+
+    const navStyle = {
+        display: 'flex',
+        gap: '20px', // Space between items
+    };
+
+    const linkStyle = {
+        color: 'white',
+        fontWeight: 'bold',
+        textDecoration: 'none',
+    };
+
     return (
-        <div className="topMenu" style={{
-            width: '100%',
-            overflow: 'auto',
-            whiteSpace: 'nowrap',
-            backgroundColor: '#289672',
-            marginBottom: '15px',
-            textAlign: 'center' // Centering the content
-        }}>
-            <Link route='/' legacyBehavior>
-                <a className='item' style={{'display': 'inline-block',
-                'color': 'white',
-                'font-family': 'Lato,\'Helvetica Neue\',Arial,Helvetica,sans-serif',
-                'font-weight':'bold',
-                'text-align': 'center',
-                'padding': '14px',
-                'text-decoration': 'none'}}>About</a>
-            </Link>
-
-            <Link route='/registration' legacyBehavior>
-                <a className='item' style={{'display': 'inline-block',
-                'color': 'white',
-                'font-family': 'Lato,\'Helvetica Neue\',Arial,Helvetica,sans-serif',
-                'font-weight':'bold',
-                'text-align': 'center',
-                'padding': '14px',
-                'text-decoration': 'none'}}>Local Municipality</a>
-            </Link>
-
-            <Link route='/productionline' legacyBehavior>
-                <a className='item' style={{'display': 'inline-block',
-                'color': 'white',
-                'font-family': 'Lato,\'Helvetica Neue\',Arial,Helvetica,sans-serif',
-                'font-weight':'bold',
-                'text-align': 'center',
-                'padding': '14px',
-                'text-decoration': 'none'}}>Production Line Machine</a>
-            </Link>
-
-            <Link route='/recycler' legacyBehavior>
-                <a className='item' style={{'display': 'inline-block',
-                'color': 'white',
-                'font-family': 'Lato,\'Helvetica Neue\',Arial,Helvetica,sans-serif',
-                'font-weight':'bold',
-                'text-align': 'center',
-                'padding': '14px',
-                'text-decoration': 'none'}}>Recycler</a>
-            </Link>
-
-            <Link route='/auctions/viewbales' legacyBehavior>
-                <a className='item' style={{'display': 'inline-block',
-                'color': 'white',
-                'font-family': 'Lato,\'Helvetica Neue\',Arial,Helvetica,sans-serif',
-                'font-weight':'bold',
-                'text-align': 'center',
-                'padding': '14px',
-                'text-decoration': 'none'}}>Seller</a>
-            </Link>
-            
-            <Link route='/sortingmachine' legacyBehavior>
-                <a className='item' style={{'display': 'inline-block',
-                'color': 'white',
-                'font-family': 'Lato,\'Helvetica Neue\',Arial,Helvetica,sans-serif',
-                'font-weight':'bold',
-                'text-align': 'center',
-                'padding': '14px',
-                'text-decoration': 'none'}}>Sorting Machine</a>
-            </Link>
-
-            <Link route='/auctions/viewauctions' legacyBehavior>
-                <a className='item' style={{'display': 'inline-block',
-                'color': 'white',
-                'font-family': 'Lato,\'Helvetica Neue\',Arial,Helvetica,sans-serif',
-                'font-weight':'bold',
-                'text-align': 'center',
-                'padding': '14px',
-                'text-decoration': 'none'}}>Buyer</a>
-            </Link>
+        <div style={headerStyle}>
+            <div style={logoStyle}>ReGen</div>
+            <div style={navStyle}>
+                <Link route='/' legacyBehavior>
+                    <a style={linkStyle}>About</a>
+                </Link>
+                <Link route='/registration' legacyBehavior>
+                    <a style={linkStyle}>Local Municipality</a>
+                </Link>
+                <Link route='/productionline' legacyBehavior>
+                    <a style={linkStyle}>Production Line Machine</a>
+                </Link>
+                <Link route='/recycler' legacyBehavior>
+                    <a style={linkStyle}>Recycler</a>
+                </Link>
+                <Link route='/auctions/viewbales' legacyBehavior>
+                    <a style={linkStyle}>Seller</a>
+                </Link>
+                <Link route='/sortingmachine' legacyBehavior>
+                    <a style={linkStyle}>Sorting Machine</a>
+                </Link>
+                <Link route='/auctions/viewauctions' legacyBehavior>
+                    <a style={linkStyle}>Buyer</a>
+                </Link>
+            </div>
         </div>
     );
 }
+
+export default Header;
