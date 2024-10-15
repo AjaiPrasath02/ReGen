@@ -1,0 +1,12 @@
+{
+  "/_app": "pages/_app.js",
+  "/_error": "pages/_error.js",
+  "/_document": "pages/_document.js",
+  "/productionline": "pages/productionline.js",
+  "/registration": "pages/registration.js",
+  "/sortingmachine": "pages/sortingmachine.js",
+  "/auctions/viewbales": "pages/auctions/viewbales.js",
+  "/recycler": "pages/recycler.js",
+  "/auctions/viewauctions": "pages/auctions/viewauctions.js",
+  "/": "pages/index.js"
+}

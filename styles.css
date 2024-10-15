@@ -1,0 +1,252 @@
+/* Global CSS */
+html, body {
+  background-color: #f0f0f0 !important;
+}
+
+div {
+  font-family: "Times New Roman", Times, serif;
+}
+
+h1, h2, h3 {
+  color: #1e6f5c;
+}
+
+/* Top Menu */
+.topMenu::-webkit-scrollbar {
+  display: none;
+}
+
+/* Index Page CSS */
+.about {
+  padding-top: 240px;
+}
+
+.about h1 {
+  text-align: center;
+}
+
+.about p {
+  align-content: center;
+  background-color: #fefefe18;
+  color: rgb(6, 6, 6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 6em;
+  padding-left: 20px;
+}
+
+.about.Image {
+  margin-left: 500px;
+  margin-right: 500px;
+  position: relative;
+  top: -3px;
+  width: 50%;
+}
+
+.feature p {
+  align-content: center;
+  background-color: #fefefe18;
+  color: rgb(6, 6, 6);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 3em;
+  padding-left: 20px;
+}
+
+/* Registration Page CSS */
+.Registration h1 {
+  text-align: center;
+}
+
+.Registration div {
+  text-align: center;
+}
+
+/* Production Line Machine Page CSS */
+.ProductionLine h2 {
+  text-align: center;
+}
+
+/* Sorting Machine Page CSS */
+.SortingMachine h1, .SortingMachine h2 {
+  text-align: center;
+}
+
+/* Recycler Page CSS */
+.Recycler h1 {
+  text-align: center;
+}
+
+.Recycler h2 {
+  text-align: center;
+}
+
+/* Tracking Page CSS */
+.Tracking h1 {
+  padding-top: 60px;
+  text-align: center;
+}
+
+/* Seller Page (viewBales.js) CSS */
+.Seller h1 {
+  text-align: center;
+}
+
+/* Seller & Buyer Page - Auction (startAuction.js & joinAuction) CSS */
+.statistic h1 {
+  text-align: center;
+}
+
+.statistic {
+  text-align: center;
+}
+
+.statistic title h3 {
+  font-size: 20px;
+}
+
+.AuctionContainer {
+  text-align: center;
+  background-color: rgba(90, 90, 90, 0.5);
+  min-height: 8em;
+  padding: 10px;
+}
+
+/* Buyer Page (viewAuctions.js) CSS */
+.Buyer h1 {
+  text-align: center;
+}
+
+/* Seller Page - Auction (startAuction.js ) CSS */
+.setAuction h1 {
+  text-align: center;
+}
+
+/* Buyer Page - Auction (joinAuction) CSS */
+.conversionButtons {
+  text-align: center;
+}
+
+#clockdiv {
+  font-family: sans-serif;
+  color: #fff;
+  display: inline-block;
+  font-weight: 100;
+  text-align: center;
+  font-size: 20px;
+}
+
+#clockdiv > div {
+  padding: 8px;
+  border-radius: 3px;
+  background: rgb(230, 230, 230);
+  display: inline-block;
+}
+
+#clockdiv div > span {
+  padding: 12px;
+  border-radius: 3px;
+  background: rgba(90, 90, 90, 0.5);
+  display: inline-block;
+}
+
+.smalltext {
+  padding-top: 5px;
+  font-size: 12px;
+  color: rgb(90, 90, 90);
+}
+
+
+/* Apply Dark Mode Color Scheme to Form Inputs */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type=file],
+textarea,
+select {
+  background-color: #f0f0f0 !important; /* Original background color */
+  color: #000 !important; /* Original text color */
+  border: 1px solid #ccc !important; /* Original border color */
+  border-radius: 5px !important; /* Original border radius */
+  padding: 8px !important; /* Original padding */
+}
+
+input[type="text"]:focus,
+input[type="email"]:focus,
+input[type="password"]:focus,
+input[type="number"]:focus,
+textarea:focus,
+select:focus {
+  outline: none; /* Remove default focus outline */
+  border-color: #1e6f5c !important; /* Original focus border color */
+}
+
+label {
+  color: #000 !important; /* Original text color */
+  font-weight: bold !important; /* Original font weight */
+  margin-bottom: 5px !important; /* Original margin */
+}
+
+/* Apply Original Color Scheme to Dropdowns */
+.ui.selection.dropdown {
+  background-color: #fff !important; /* Original background color */
+  color: #000 !important; /* Original text color */
+  border: 1px solid #ccc !important; /* Original border color */
+  border-radius: 5px !important; /* Original border radius */
+}
+
+select option {
+  background-color: #fff; /* Original background color */
+  color: #000; /* Original text color */
+}
+
+/* Apply Original Color Scheme to Hovered Dropdown Options */
+select option:hover {
+  background-color: #f0f0f0; /* Original background color on hover */
+}
+
+.ui.table thead th {
+  background-color: #f0f0f0 !important; /* Original background color */
+  color: #000 !important; /* Original text color */
+}
+
+.card .content {
+  background-color: #fff !important; /* Original background color */
+}
+
+.ui.card > .content > .header,
+.ui.cards > .card > .content > .header,
+.ui.card .meta,
+.ui.cards > .card .meta,
+.ui.card > .content > .description,
+.ui.cards > .card > .content > .description {
+  color: #000 !important; /* Original text color */
+}
+
+.app-container {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 20px;
+  display: flex; /* Add flex display */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  flex-direction: column; /* Align content in a column */
+}
+
+.app-description {
+  font-size: 16px;
+  line-height: 1.6;
+  padding: 10px;
+  color: #333;
+  text-align: justify; /* Justify text */
+  max-width: 1000px; /* Limit width for better readability */
+}
+
+.app-description h1 {
+  font-size: 24px;
+  color: #1e6f5c;
+  margin-bottom: 20px;
+}
