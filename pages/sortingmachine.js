@@ -247,4 +247,4 @@ class sortingmachine extends Component {
 
 //At the end of each page, a component is expected to be returned 
 // If not, Next.js throws an error 
-export default sortingmachine; 
+export default sortingmachine;

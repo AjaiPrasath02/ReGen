@@ -13,13 +13,14 @@ export default (props) => {
     return (
         <>
             <Header />
+            {!isHomePage && <br />}
             {isHomePage &&
                 <>
                     <Carousel />
                     <hr style={{ margin: "50px 20px" }} />
                 </>
             }
-            <Container style={{ 'min-height': '100vh', 'position': 'relative' }}>
+            <Container style={{ 'minHeight': '100vh', 'position': 'relative' }}>
                 {props.children}
             </Container>
             <hr style={{ margin: "10px 20px" }} />

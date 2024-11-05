@@ -163,20 +163,21 @@ export default class index extends Component {
                                 </div>
 
                                 <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555' }}>
-                                    Industrialization and the rapid increase in the world population have led to the generation of a large amount of plastic waste. Efficient recycling of such waste and fairly rewarding the general public for their services and efforts are two challenging problems. A large portion of today’s systems and technologies that are leveraged for managing plastic waste disposal processes and rewarding people for their services fall short of providing transparency, traceability, reliability, security, and trust features.
+                                    At ReGen, we are committed to addressing two of the most pressing issues of our time—plastic waste management and the fair recognition of individuals contributing to a cleaner environment. With industrialization and rapid population growth leading to unprecedented levels of plastic waste, there is an urgent need for innovative solutions that ensure efficiency, transparency, and trust.
                                 </p>
 
                                 <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555' }}>
-                                    In this paper, we propose a blockchain-based solution for managing and tracking recyclable plastic waste using the Ethereum blockchain, along with decentralized storage technology to handle massive volumes of data. Our proposed solution also introduces a reward scheme for people to honor their efforts.
+                                    We leverage cutting-edge blockchain technology to revolutionize how recyclable plastic waste is managed and tracked. Using the Ethereum blockchain and decentralized storage solutions, our platform offers unparalleled transparency, security, and reliability. By integrating smart contracts, we ensure that every individual contributing to waste recycling is fairly rewarded, establishing trust and accountability across all stakeholders.
                                 </p>
 
                                 <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555' }}>
-                                    Furthermore, our solution establishes trust and accountability among stakeholders who participate in the waste management system, ensuring fair reward practices. We present the system architecture along with full implementation and testing details, deploying a decentralized application (DApp) on top of smart contracts.
+                                    Our decentralized application (DApp) simplifies the waste tracking process while providing a clear reward system to honor the efforts of everyone involved. This innovation not only promotes environmental sustainability but also ensures that people are compensated fairly for their contributions.
                                 </p>
 
                                 <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555', marginBottom: '20px' }}>
-                                    We evaluate the solution’s functionality and performance through security and cost analyses, comparing it with existing solutions. Our results demonstrate that a blockchain-based approach reduces inefficiencies and is a commercially viable solution.
+                                    At ReGen, we are building a more transparent and efficient waste management ecosystem, one that aligns environmental responsibility with commercial viability.
                                 </p>
+                                <h2 style={{ fontSize: '2.5rem', color: '#333', marginBottom: '20px' }}>Know about recycling</h2>
                                 <img src={img1.src} alt="" width="700" height="1000" />
                             </div>
                         </div>
@@ -185,12 +186,13 @@ export default class index extends Component {
 
                     {(activeItem === 'contact') && (
                         <div className="contactSection" style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-                            <h2 style={{ textAlign: 'center', marginBottom: '20px' }}>Contact Us</h2>
+                            <br />
+                            <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Contact Us</h1>
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                 <div style={{ display: 'table', margin: '20px 0', borderCollapse: 'collapse' }}>
                                     <div style={{ display: 'table-row' }}>
                                         <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                            <Icon circular inverted name='pin' color='teal' />
+                                            <Icon circular inverted name='pin' color='green' />
                                         </div>
                                         <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
                                             <p><strong>CIT Coimbatore</strong></p>
@@ -200,7 +202,7 @@ export default class index extends Component {
 
                                     <div style={{ display: 'table-row' }}>
                                         <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                            <Icon circular inverted name='mail' color='teal' />
+                                            <Icon circular inverted name='mail' color='green' />
                                         </div>
                                         <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
                                             <p><strong>Email:</strong> <a href="mailto:info@cit.ac.in">info@cit.ac.in</a></p>
@@ -209,7 +211,7 @@ export default class index extends Component {
 
                                     <div style={{ display: 'table-row' }}>
                                         <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                            <Icon circular inverted name='phone' color='teal' />
+                                            <Icon circular inverted name='phone' color='green' />
                                         </div>
                                         <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
                                             <p><strong>Phone:</strong> +91 123 456 7890</p>
@@ -217,7 +219,7 @@ export default class index extends Component {
                                     </div>
                                 </div>
                             </div>
-                            <h2 style={{ textAlign: 'center' }}>Get in Touch</h2>
+                            <h1 style={{ textAlign: 'center' }}>Get in Touch</h1>
                             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
                                 <Form style={{ maxWidth: '400px', width: '100%' }}>
                                     <Form.Field>
@@ -232,7 +234,8 @@ export default class index extends Component {
                                         <label>Message</label>
                                         <textarea placeholder='Your Message' />
                                     </Form.Field>
-                                    <Button type='submit' color='teal' fluid>Submit</Button>
+                                    <Button type='submit' color='green' fluid>Submit</Button>
+                                    <br />
                                 </Form>
                             </div>
                         </div>

@@ -3,7 +3,18 @@ import { Icon } from 'semantic-ui-react';
 
 export default () => {
     return (
-        <div style={{ position: 'relative', bottom: '0', marginTop: '0px', padding: '20px 10px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#289672' }}>
+        <div style={{
+            position: 'relative',
+            height: "100px",
+            bottom: '0',
+            marginTop: '0px',
+            padding: '20px 10px',
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            background: 'linear-gradient(to top, #289672, rgba(40, 150, 114, 0.8), rgba(40, 150, 114, 0.6))', // Bottom to top gradient
+            color: '#ffffff'
+        }}>
             <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Icon circular inverted name='pin' />
                 <p style={{ marginLeft: '10px' }}>
@@ -15,15 +26,15 @@ export default () => {
                 <div style={{ marginRight: '30px', display: 'flex', alignItems: 'center' }}>
                     <Icon circular inverted name='mail' />
                     <p style={{ marginLeft: '10px' }}>
-                        <strong>EECS14</strong><br />
-                        @ku.ac.ae
+                        <strong>EMAIL</strong><br />
+                        info@cit.ac.in
                     </p>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Icon circular inverted name='phone' />
                     <p style={{ marginLeft: '10px' }}>
-                        <strong>+971 (2)</strong><br />
-                        312 3333
+                        <strong>+91</strong><br />
+                        12312 33335
                     </p>
                 </div>
             </div>

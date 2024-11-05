@@ -63,7 +63,7 @@ function Carousel() {
         <div className="home main-section" id="Home">
             <div>
                 <section className="caroussel-1">
-                    <img src={bg.src} alt="" style={{ width: '100%' }} />
+                    {/*<img src={bg.src} alt="" style={{ width: '100%' }} />*/}
                     <div className="list">
                         <div className="item">
                             <img src={img4.src} alt="" style={{ width: '100%' }} />
