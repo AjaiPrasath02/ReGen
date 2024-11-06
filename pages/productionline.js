@@ -34,7 +34,7 @@ class manufacturingMachinePage extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            registerSCAddress: '0xe1E62A4956A0aAD7ff4bBb08d881dF80CdeBA229',
+            registerSCAddress: '0x358a6F2E06730C574101603851156c2B2463dC59',
             bottleType: '',
             bottleColor: '',
             bottleSize: '',
