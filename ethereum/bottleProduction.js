@@ -7,7 +7,8 @@ import BottleProduction from './build/BottleProduction.json';
 
 const instance = new web3.eth.Contract(
     BottleProduction.abi,
-     '0x248217588CFd0529557239F3C756b937103c0Bfc'
+    '0xBD4EBcd089d08Ed5eDd1A603C7af7E4509B45D82'
+    //  '0x248217588CFd0529557239F3C756b937103c0Bfc'
      // Address of the bottleproduction.sol contract in ropsten network
 );
 
