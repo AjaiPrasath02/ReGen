@@ -1,7 +1,9 @@
 /* Global CSS */
 html,
 body {
-    background-color: #f0f0f0 !important;
+    padding: 0;
+    margin: 0;
+    background-color: hsl(0, 0%, 94%) !important;
 }
 
 div {
@@ -12,12 +14,65 @@ div {
 h1,
 h2,
 h3 {
-    color: #1e6f5c;
+    color: #0ea432;
+}
+
+/* Header  */
+/* Header.css */
+.divider {
+    margin: 0 10px;
+    color: white;
+    font-size: 1.2em;
+    vertical-align: middle;
+    transition: color 0.3s ease;
+}
+
+.divider:hover {
+    text-decoration: underline;
+}
+
+/* Header.css */
+.link {
+    color: black;
+    font-size: 1.2em;
+    vertical-align: middle;
+    transition: color 0.3s ease;
+}
+
+.link:hover {
+    text-decoration: underline;
+    color: #ffffff;
 }
 
 /* Top Menu */
 .topMenu::-webkit-scrollbar {
     display: none;
+}
+
+/* Login */
+
+.ui.form input:focus,
+.ui.selection.dropdown:focus {
+    border-color: #21ba45 !important;
+    box-shadow: 0 0 0 1px #21ba45 !important;
+}
+
+.ui.selection.dropdown {
+    border-radius: 4px;
+}
+
+.ui.stacked.segment {
+    transition: all 0.3s ease;
+}
+
+.ui.form input,
+.ui.form .dropdown {
+    width: 100%;
+    box-sizing: border-box !important;
+}
+
+select option:hover {
+    background: #0ea432; /* Hover background color */
 }
 
 /* Index Page CSS */
@@ -60,6 +115,52 @@ h3 {
     padding-left: 20px;
 }
 
+/* Connecct-wallet */
+
+.connect-wallet-container {
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 80vh;
+}
+
+.connect-wallet-container .column {
+    padding: 50px;
+}
+
+.connect-wallet-grid {
+    max-width: 450px;
+    width: 100%;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    background-color: white;
+    padding: 30px;
+}
+
+.connect-wallet-header {
+    color: #000;
+    text-align: center;
+    margin-bottom: 20px;
+    font-size: 1.8em;
+    font-weight: 600;
+}
+
+.message {
+    margin-top: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.message a {
+    color: #0ea432;
+    text-decoration: underline;
+}
+
+.message a:hover {
+    color: #1ea441;
+}
+
 /* Registration Page CSS */
 .Registration h1 {
     text-align: center;
@@ -67,6 +168,12 @@ h3 {
 
 .Registration div {
     text-align: center;
+}
+
+.left-aligned-label {
+    text-align: left !important;
+    display: block;
+    margin-bottom: 0.5em;
 }
 
 /* Production Line Machine Page CSS */
@@ -287,7 +394,7 @@ select option:hover {
 /* Caroussel */
 
 .caroussel-1 {
-    height: 500px;
+    height: 600px;
     width: 100%;
     overflow: hidden;
     position: relative;
@@ -307,7 +414,7 @@ select option:hover {
     max-width: 90%;
     left: 50%;
     transform: translateX(-50%);
-    height: 100%;
+    height: 85%;
     display: flex;
     align-items: center;
 }
@@ -319,7 +426,7 @@ select option:hover {
     transform: translateX(-50%);
     display: flex;
     border-radius: 10px;
-    height: 85%;
+    height: 90%;
 }
 
 .item-button {
@@ -357,7 +464,7 @@ select option:hover {
 
 .caroussel-1 .list .item img {
     width: 100%;
-    height: 450px;
+    height: 500px;
     border-radius: 20px;
 }
 

@@ -22,17 +22,25 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-<<<<<<< HEAD
-    "/registration": [
+    "/about": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/registration.js"
-=======
+      "static/chunks/pages/about.js"
+    ],
+    "/connect-wallet": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/connect-wallet.js"
+    ],
+    "/login": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/login.js"
+    ],
     "/productionline": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/productionline.js"
->>>>>>> ad46a1a861d8f9d7b075c011edefa07ebb3c4749
     ]
   },
   "ampFirstPages": []

@@ -1,65 +1,88 @@
 import React from 'react';
 import { Link } from '../routes';
+import { useRouter } from 'next/router';
 
 const Header = () => {
+    const router = useRouter();
+    const isAuthenticated = typeof window !== 'undefined' && localStorage.getItem('token');
+    const userRole = typeof window !== 'undefined' && localStorage.getItem('role');
+
+    const handleLogout = () => {
+        localStorage.clear();
+        router.push('/login');
+    };
+
     const headerStyle = {
-        backgroundColor: 'rgba(40, 150, 114, 0.8)', // Transparent green background at the top
         height: '100px',
         display: 'flex',
         alignItems: 'center',
         padding: '0 20px',
         color: 'white',
-        fontFamily: 'Lato, "Helvetica Neue", Arial, Helvetica, sans-serif',
+        fontFamily: '"Poppins", sans-serif',
         justifyContent: 'space-between',
-        background: 'linear-gradient(to bottom, rgba(40, 150, 114, 1), rgba(40, 150, 114, 0.9), rgba(40, 150, 114, 0.6))', // Glass effect gradient
-        backdropFilter: 'blur(10px)', // Frosted glass effect
-        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)', // Subtle shadow for depth
-        // borderRadius: '8px', // Rounded edges (optional)
-        border: '1px solid rgba(255, 255, 255, 0.3)', // Light border for glass feel
+        backgroundColor: '#0ea432',
+        backdropFilter: 'blur(10px)',
+        boxShadow: '0 4px 10px rgba(0, 0, 0, 0.3)',
     };
-    
 
     const logoStyle = {
         fontSize: '24px',
-        fontWeight: 'bold',
     };
 
     const navStyle = {
         display: 'flex',
-        gap: '20px', // Space between items
+        gap: '20px',
     };
 
-    const linkStyle = {
-        color: 'white',
-        fontWeight: 'bold',
-        textDecoration: 'none',
+    const renderNavLinks = () => {
+        if (!isAuthenticated) {
+            return (
+                <>
+                    <Link route='/about' legacyBehavior>
+                        <a className="link">About</a>
+                    </Link>
+                    <span className="divider">|</span>
+                    <Link route='/login' legacyBehavior>
+                        <a className="link">Login</a>
+                    </Link>
+                </>
+            );
+        }
+
+        const roleBasedLinks = {
+            municipality: [
+                { route: '/registration', text: 'Registration' },
+                { route: '/about', text: 'About' }
+            ],
+            manufacturer: [
+                { route: '/productionline', text: 'Production Line' },
+                { route: '/about', text: 'About' }
+            ]
+        };
+
+        return (
+            <>
+                {roleBasedLinks[userRole]?.map((link, index) => (
+                    <React.Fragment key={link.route}>
+                        <Link route={link.route} legacyBehavior>
+                            <a className="link">{link.text}</a>
+                        </Link>
+                        {index < roleBasedLinks[userRole].length - 1 && (
+                            <span className="divider">|</span>
+                        )}
+                    </React.Fragment>
+                ))}
+                <span className="divider">|</span>
+                <a className="link" onClick={handleLogout}>Logout</a>
+            </>
+        );
     };
 
     return (
         <div style={headerStyle}>
             <div style={logoStyle}>ReGen</div>
             <div style={navStyle}>
-                <Link route='/' legacyBehavior>
-                    <a style={linkStyle}>About</a>
-                </Link>
-                <Link route='/registration' legacyBehavior>
-                    <a style={linkStyle}>Local Municipality</a>
-                </Link>
-                <Link route='/productionline' legacyBehavior>
-                    <a style={linkStyle}>Production Line Machine</a>
-                </Link>
-                <Link route='/recycler' legacyBehavior>
-                    <a style={linkStyle}>Recycler</a>
-                </Link>
-                <Link route='/auctions/viewbales' legacyBehavior>
-                    <a style={linkStyle}>Seller</a>
-                </Link>
-                <Link route='/sortingmachine' legacyBehavior>
-                    <a style={linkStyle}>Sorting Machine</a>
-                </Link>
-                <Link route='/auctions/viewauctions' legacyBehavior>
-                    <a style={linkStyle}>Buyer</a>
-                </Link>
+                {renderNavLinks()}
             </div>
         </div>
     );

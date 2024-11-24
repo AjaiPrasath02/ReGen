@@ -2,10 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/registration": "pages/registration.js",
-<<<<<<< HEAD
-  "/": "pages/index.js"
-=======
-  "/productionline": "pages/productionline.js"
->>>>>>> ad46a1a861d8f9d7b075c011edefa07ebb3c4749
+  "/connect-wallet": "pages/connect-wallet.js",
+  "/login": "pages/login.js",
+  "/productionline": "pages/productionline.js",
+  "/about": "pages/about.js"
 }

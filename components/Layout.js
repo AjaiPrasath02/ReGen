@@ -1,30 +1,54 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container } from 'semantic-ui-react';
+import { useRouter } from 'next/router';
 import Header from './Header';
 import Footer from './Footer';
 import Carousel from "./Carousel";
-import HomePage from "../pages/index";
 
-export default (props) => {
-    const isHomePage = props.children && props.children._source && props.children._source.fileName.includes('index.js');    
-    useEffect(()=> {
-        console.log(isHomePage);
-    }, [])
-    return (
-        <>
-            <Header />
-            {!isHomePage && <br />}
-            {isHomePage &&
-                <>
-                    <Carousel />
-                    <hr style={{ margin: "50px 20px" }} />
-                </>
+const Layout = ({ children }) => {  // Changed props to { children }
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(true);
+    
+    const publicPages = ['/login', '/about', '/'];
+    const isHomePage = router.pathname === '/' || router.pathname === '/about';
+
+    useEffect(() => {
+        const checkAuth = () => {
+            const token = localStorage.getItem('token');
+            const currentPath = router.pathname;
+
+            if (!token && !publicPages.includes(currentPath)) {
+                router.push('/login');
+                return;
             }
-            <Container style={{ 'minHeight': '100vh', 'position': 'relative' }}>
-                {props.children}
-            </Container>
-            <hr style={{ margin: "10px 20px" }} />
+            setIsLoading(false);
+        };
+
+        checkAuth();
+        console.log(router.pathname)
+    }, [router.pathname]);
+
+    if (isLoading) {
+        return <div>Loading...</div>;
+    }
+
+    return (
+        <div style={{ 
+            display: 'flex', 
+            flexDirection: 'column', 
+            minHeight: '100vh',
+            position: 'relative'  // Added position relative
+        }}>
+            <Header />
+            <main style={{ flex: 1 }}>
+                {isHomePage && <Carousel />}
+                <Container style={{ padding: '20px 0' }}>
+                    {children}
+                </Container>
+            </main>
             <Footer />
-        </>
+        </div>
     );
 };
+
+export default Layout;

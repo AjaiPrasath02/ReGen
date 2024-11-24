@@ -1,10 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import img1 from "../public/1.jpg";
 import img2 from "../public/7.jpg";
 import img3 from "../public/3.webp";
 import img4 from "../public/8.jpg";
 import img5 from "../public/5.jpg";
-import bg from "../public/9.webp";
 
 function Carousel() {
     const autoClickInterval = useRef(null);

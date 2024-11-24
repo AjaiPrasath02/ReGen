@@ -1,0 +1,256 @@
+{
+    "contractName": "CPUProduction",
+    "abi": [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": false,
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "manufacturerID",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "model",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "frequency",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "ramSize",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "storageSize",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "time",
+                    "type": "uint256"
+                }
+            ],
+            "name": "CPURegistered",
+            "type": "event"
+        },
+        {
+            "inputs": [],
+            "name": "cpuAddress",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "getCPUAddress",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "manufacturingEntity",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "registerContractAddr",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "model",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "frequency",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "ramSize",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "storageSize",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                }
+            ],
+            "name": "registerCPU",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "manufacturerID",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "model",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "frequency",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "ramSize",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "storageSize",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                }
+            ],
+            "name": "generateUniqueCPUAddress",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                }
+            ],
+            "name": "registeredCPUs",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "manufacturerID",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "model",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "frequency",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "ramSize",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "storageSize",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ]
+}
