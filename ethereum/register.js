@@ -7,9 +7,10 @@ import register from './build/Register.json';
 
 const instance = new web3.eth.Contract(
     register.abi,
+    '0x24eaCB0b427C5312A53e259718FfCdB89317Ad96'
     //  '0xe1E62A4956A0aAD7ff4bBb08d881dF80CdeBA229'
-    '0x358a6F2E06730C574101603851156c2B2463dC59'
-     // Address of the regist.sol contract in ropsten network
+    //  '0x358a6F2E06730C574101603851156c2B2463dC59'
+    //  Address of the regist.sol contract in ropsten network
 );
 
 export default instance; 

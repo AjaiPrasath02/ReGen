@@ -1,154 +1,267 @@
-import React, { Component } from 'react';
-import { Button, Message, Form, Dropdown, Container, Grid } from 'semantic-ui-react';
-import web3 from '../ethereum/web3';
-import bottleContract from '../ethereum/bottleProduction';
-import dynamic from 'next/dynamic';
-const QrCode = dynamic(() => import('react.qrcode.generator'), { ssr: false });
-import Layout from '../components/Layout';
+import React, { Component } from "react";
+import {
+  Button,
+  Message,
+  Form,
+  Container,
+  Grid,
+  Input,
+} from "semantic-ui-react";
+import web3 from "../ethereum/web3";
+import cpuContract from "../ethereum/cpuProduction"; // Updated contract
+import dynamic from "next/dynamic";
+const QrCode = dynamic(() => import("react.qrcode.generator"), { ssr: false });
+import Layout from "../components/Layout";
+import { withRouter } from "next/router";
 
-//Dropdownmenu selections
-const bottleTypesOptions = [
-    { key: 1, text: 'PET (Polyethylene Terephthalate)', value: 0 },
-    { key: 2, text: 'LDPE/HDPE (Low- and High-Density Polyethylene)', value: 1 },
-    { key: 3, text: 'PP (Polypropylene)', value: 2 },
-    { key: 4, text: 'PC (Polycarbonate)', value: 3 },
-]
+// Component Types
+const componentTypeOptions = [
+  { key: 1, text: "Processor", value: "Processor" },
+  { key: 2, text: "RAM", value: "RAM" },
+  { key: 3, text: "Hard Disk", value: "Hard Disk" },
+  { key: 4, text: "Motherboard", value: "Motherboard" },
+  { key: 5, text: "PSU", value: "PSU" },
+];
 
-const bottleColorOptions = [
-    { key: 1, text: 'Clear', value: 0 },
-    { key: 2, text: 'White', value: 1 },
-    { key: 3, text: 'Red', value: 2 },
-    { key: 4, text: 'Blue', value: 3 },
-    { key: 4, text: 'Black', value: 4 },
-]
-
-const bottleSizeOptions = [
-    { key: 1, text: '100 mL', value: 0 },
-    { key: 2, text: '200 mL', value: 1 },
-    { key: 3, text: '330 mL', value: 2 },
-    { key: 4, text: '500 mL', value: 3 },
-    { key: 4, text: '1.5L', value: 4 },
-]
-
-class manufacturingMachinePage extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            registerSCAddress: '0x358a6F2E06730C574101603851156c2B2463dC59',
-            bottleType: '',
-            bottleColor: '',
-            bottleSize: '',
-            bottleQR: '',
-            errorMessage: '',
-            hasNoError: false,
-            loading: false, 
-            QRcodePic: false
-        };
-    }
-
-
-    //produce bottle QR code
-
-    onSubmit = async (event) => {
-        event.preventDefault(); // prevents the browser from submitting the form immediately
-        this.setState({ loading: true, errorMessage: '' });
-    
-        try {
-            const accounts = await web3.eth.getAccounts();
-            await bottleContract.methods
-                // .registerBottle(this.state.bottleType, this.state.bottleColor, this.state.bottleSize)
-                .registerBottle(this.state.registerSCAddress, this.state.bottleType, this.state.bottleColor, this.state.bottleSize)
-                .send({ from: accounts[0] });
-    
-            const bottleQR = await bottleContract.methods.getBottleAddress().call(); 
-            console.log(bottleQR);
-            this.setState({ bottleQR, QRcodePic: true, hasNoError: true });
-        } catch (err) {
-            console.error(err);
-            this.setState({ errorMessage: err.message, hasNoError: false });
-        } finally {
-            this.setState({ loading: false });
-        }
+class ManufacturingMachinePage extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      registerSCAddress: "0x24eaCB0b427C5312A53e259718FfCdB89317Ad96",
+      modelName: "",
+      serialNumber: "",
+      productionDate: "",
+      componentDetails: {
+        Processor: "",
+        RAM: "",
+        "Hard Disk": "",
+        Motherboard: "",
+        PSU: "",
+      },
+      cpuQR: "",
+      errorMessage: "",
+      successMessage: "",
+      loading: false,
+      QRcodePic: false,
+      isAuthenticated: false,
+      userRole: null,
+      userAddress: "",
     };
-    
+  }
 
-    handleChangeType = (e, { value }) => this.setState({ bottleType: value })
-    handleChangeColor = (e, { value }) => this.setState({ bottleColor: value })
-    handleChangeSize = (e, { value }) => this.setState({ bottleSize: value })
+  componentDidMount = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const role = localStorage.getItem("role");
+      const userAddress = localStorage.getItem("userAddress");
+      const accounts = await web3.eth.getAccounts();
 
-    render() {
-        const { value } = this.state
+      console.log("=== Debug Information ===");
+      console.log("Token:", token);
+      console.log("Role:", role);
+      console.log("User Address:", userAddress);
+      console.log("Connected Account:", accounts[0]);
+      console.log("All Accounts:", accounts);
+      console.log("=====================");
 
-        return (
-            <Layout>
-                <div className='ProductionLine'>
-                    <h2>Production Line</h2>
-                    <br />
-                    <link rel="stylesheet" href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css" />
-                    <Container>
-                        <Grid>
-                            <Grid.Row centered>
-                                <Grid.Column width={12} textAlign="center">
-                                    <Form onSubmit={this.onSubmit} error={!!this.state.errorMessage} success={this.state.hasNoError}>
-                                        <Form.Field><label>Bottle Material:   </label>
-                                            <Dropdown
-                                                placeholder='Choose Bottle Material'
-                                                clearable
-                                                options={bottleTypesOptions}
-                                                selection
-                                                onChange={this.handleChangeType} />
-                                        </Form.Field>
+      // Check basic auth
+      if (!token || !role || !userAddress) {
+        console.log("Missing authentication data");
+        this.props.router.push("/login");
+        return;
+      }
 
-                                        <Form.Field><label>Bottle Color:   </label>
-                                            <Dropdown
-                                                placeholder='Choose Bottle Color'
-                                                clearable
-                                                options={bottleColorOptions}
-                                                selection
-                                                onChange={this.handleChangeColor} />
-                                        </Form.Field>
+      // Check role - only manufacturer can access this page
+      if (role !== "manufacturer") {
+        console.log("User is not a manufacturer");
+        this.props.router.push("/unauthorized");
+        return;
+      }
 
-                                        <Form.Field><label>Bottle Size:   </label>
-                                            <Dropdown
-                                                placeholder='Choose Bottle Size'
-                                                clearable
-                                                options={bottleSizeOptions}
-                                                selection
-                                                onChange={this.handleChangeSize} />
-                                        </Form.Field>
+      // Check wallet connection
+      if (!accounts || !accounts[0]) {
+        console.log("No wallet connected");
+        this.props.router.push("/connect-wallet");
+        return;
+      }
 
-                                        <Message error header="Error!" content={this.state.errorMessage} />
-
-
-                                        <Message success header="Success!" content="QR code generated successfully!" />
-
-                                        <Button loading={this.state.loading} type='submit'>Submit</Button>
-                                    </Form>
-
-                                    <label>{this.state.bottleQR}</label>
-                                    <h1>{this.state.QRcodePic == true ? 
-                                    <QrCode value={this.state.bottleQR} QrCode size={'400'} /> : ''} </h1>
-
-                                </Grid.Column>
-                            </Grid.Row>
-                        </Grid>
-                    </Container>
-                </div>
-            </Layout>
+      // Check if connected wallet matches userAddress
+      if (accounts[0].toLowerCase() !== userAddress.toLowerCase()) {
+        console.log(
+          "Connected wallet does not match registered manufacturer address"
         );
+        this.props.router.push("/connect-wallet");
+        return;
+      }
+
+      // Set authenticated state
+      this.setState({
+        isAuthenticated: true,
+        userRole: role,
+        userAddress: userAddress,
+      });
+    } catch (error) {
+      console.error("Error in componentDidMount:", error);
+      this.props.router.push("/unauthorized");
+      return;
     }
+  };
+
+  // Handle component details input
+  handleComponentDetailsChange = (componentType, value) => {
+    this.setState((prevState) => ({
+      componentDetails: {
+        ...prevState.componentDetails,
+        [componentType]: value,
+      },
+    }));
+  };
+
+  // Register CPU with components
+  registerCPUWithComponents = async (event) => {
+    event.preventDefault();
+
+    // Check authentication before proceeding
+    if (!this.state.isAuthenticated) {
+      this.setState({ errorMessage: "Not authenticated" });
+      return;
+    }
+
+    this.setState({ loading: true, errorMessage: "", successMessage: "" });
+
+    const {
+      modelName,
+      serialNumber,
+      productionDate,
+      componentDetails,
+      registerSCAddress,
+    } = this.state;
+
+    try {
+      const accounts = await web3.eth.getAccounts();
+
+      // Convert component details into arrays
+      const componentTypes = Object.keys(componentDetails);
+      const componentDetailsArray = Object.values(componentDetails);
+
+      await cpuContract.methods
+        .registerCPUWithComponents(
+          registerSCAddress,
+          modelName,
+          serialNumber,
+          parseInt(productionDate), // Ensure productionDate is a number
+          componentTypes,
+          componentDetailsArray
+        )
+        .send({ from: accounts[0] });
+
+      const cpuQR = await cpuContract.methods.getCPUAddress().call();
+      this.setState({
+        cpuQR,
+        QRcodePic: true,
+        successMessage: "CPU and components registered successfully!",
+      });
+    } catch (err) {
+      this.setState({ errorMessage: err.message });
+    } finally {
+      this.setState({ loading: false });
+    }
+  };
+
+  render() {
+    const { componentDetails, productionDate } = this.state;
+
+    return (
+      <Container>
+        <link
+          rel="stylesheet"
+          href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
+        />
+        <Grid centered>
+          <Grid.Column width={12}>
+            <h2>Register CPU with Components</h2>
+            <Form
+              onSubmit={this.registerCPUWithComponents}
+              error={!!this.state.errorMessage}
+              success={!!this.state.successMessage}
+            >
+              <Form.Field>
+                <label>Model Name:</label>
+                <Input
+                  placeholder="Enter Model Name"
+                  value={this.state.modelName}
+                  onChange={(e) => this.setState({ modelName: e.target.value })}
+                />
+              </Form.Field>
+
+              <Form.Field>
+                <label>Serial Number:</label>
+                <Input
+                  placeholder="Enter Serial Number"
+                  value={this.state.serialNumber}
+                  onChange={(e) =>
+                    this.setState({ serialNumber: e.target.value })
+                  }
+                />
+              </Form.Field>
+
+              <Form.Field>
+                <label>Production Date:</label>
+                <Input
+                  type="date" // Native HTML date picker
+                  value={productionDate}
+                  onChange={(e) =>
+                    this.setState({ productionDate: e.target.value })
+                  }
+                  placeholder="Select Production Date"
+                />
+              </Form.Field>
+
+              <h3>Component Details</h3>
+              {componentTypeOptions.map((option) => (
+                <Form.Field key={option.key}>
+                  <label>{option.text} Details:</label>
+                  <Input
+                    placeholder={`Enter ${option.text} Details`}
+                    value={componentDetails[option.value]}
+                    onChange={(e) =>
+                      this.handleComponentDetailsChange(
+                        option.value,
+                        e.target.value
+                      )
+                    }
+                  />
+                </Form.Field>
+              ))}
+
+              <Message
+                error
+                header="Error!"
+                content={this.state.errorMessage}
+              />
+              <Message
+                success
+                header="Success!"
+                content={this.state.successMessage}
+              />
+              <center><Button loading={this.state.loading} type="submit">
+                Register CPU
+              </Button></center>
+            </Form>
+
+            {/* QR Code */}
+            {this.state.cpuQR && (
+              <div style={{ marginTop: "20px" }}>
+                <h4>CPU QR Code:</h4>
+                <QrCode value={this.state.cpuQR} size={400} />
+              </div>
+            )}
+          </Grid.Column>
+        </Grid>
+      </Container>
+    );
+  }
 }
-export default manufacturingMachinePage; 
 
-/*
-//<Button type='submit'>Submit</Button> 
-    onGenerate = async (event) => {
-        this.state.bottleQR = await bottleContract.methods.getBottleAddress().call();
-        console.log(this.state.bottleQR);
-        this.setState({ QRcodePic: true });
-
-    }
-                                        <Form onSubmit={this.onGenerate}>
-                                        <Button type='submit'>Generate QR Code</Button>
-                                    </Form>
-    */ //(old)
+// Export with router
+export default withRouter(ManufacturingMachinePage);

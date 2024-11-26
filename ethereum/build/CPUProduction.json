@@ -1,0 +1,415 @@
+{
+    "contractName": "CPUProduction",
+    "abi": [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "manufacturerID",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "productionDate",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "uint256",
+                    "name": "time",
+                    "type": "uint256"
+                }
+            ],
+            "name": "CPURegistered",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "newStatus",
+                    "type": "string"
+                }
+            ],
+            "name": "CPUStatusUpdated",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "componentID",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "componentType",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "details",
+                    "type": "string"
+                }
+            ],
+            "name": "ComponentAdded",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "componentID",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "componentType",
+                    "type": "string"
+                }
+            ],
+            "name": "ComponentRemoved",
+            "type": "event"
+        },
+        {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "uint256",
+                    "name": "componentID",
+                    "type": "uint256"
+                },
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "newStatus",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "newDetails",
+                    "type": "string"
+                }
+            ],
+            "name": "ComponentUpdated",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "registerContractAddr",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "productionDate",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string[]",
+                    "name": "componentTypes",
+                    "type": "string[]"
+                },
+                {
+                    "internalType": "string[]",
+                    "name": "componentDetails",
+                    "type": "string[]"
+                }
+            ],
+            "name": "registerCPUWithComponents",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "componentID",
+                    "type": "uint256"
+                }
+            ],
+            "name": "removeComponent",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "componentID",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "newStatus",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "newDetails",
+                    "type": "string"
+                }
+            ],
+            "name": "updateComponent",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "name": "componentRegistry",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "componentID",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "componentType",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "details",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "componentID",
+                    "type": "uint256"
+                }
+            ],
+            "name": "getComponent",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "id",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "componentType",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "details",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "status",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                }
+            ],
+            "name": "getCPU",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "productionDate",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "componentCount",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "manufacturingEntity",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "registeredCPUs",
+            "outputs": [
+                {
+                    "internalType": "string",
+                    "name": "modelName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "serialNumber",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "status",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "productionDate",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "manufacturerID",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ]
+    
+    
+}
