@@ -4,7 +4,8 @@ import { Menu, Form, Button, Message, Grid, Dropdown } from 'semantic-ui-react';
 
 const roleOptions = [
     { key: 'municipality', text: 'Local Municipality', value: 'municipality' },
-    { key: 'manufacturer', text: 'Manufacturer', value: 'manufacturer' }
+    { key: 'manufacturer', text: 'Manufacturer', value: 'manufacturer' },
+    { key: 'technician', text: 'Technician', value: 'technician' }  // Added technician role
 ];
 
 // Static user database
@@ -13,19 +14,25 @@ const STATIC_USERS = {
         password: 'municipality123',
         role: 'municipality',
         name: 'City Municipality',
-        walletAddress: '0xEb3F6Ce646A835D56A992C919Cb8a47e882cBe5e'
+        walletAddress: '0xF74c5343B72DbF48A8F0A91813D8104915E915F8'
     },
     'manufacturer1@regen.com': {
         password: 'manufacturer123',
         role: 'manufacturer',
         name: 'Manufacturer 1',
-        walletAddress: '0xEb3F6Ce646A835D56A992C919Cb8a47e882cBe5e'
+        walletAddress: '0xF74c5343B72DbF48A8F0A91813D8104915E915F8'
     },
     'manufacturer2@regen.com': {
         password: 'manufacturer123',
         role: 'manufacturer',
         name: 'Manufacturer 2',
         walletAddress: '0x789B52f8F5E41d44591C7dE7F2c830fEAfC3F3Fb'
+    },
+    'technician@regen.com': {  // Added technician user
+        password: 'technician123',
+        role: 'technician',
+        name: 'CPU Technician',
+        walletAddress: '0xF74c5343B72DbF48A8F0A91813D8104915E915F8'
     }
 };
 
@@ -90,7 +97,6 @@ class LoginPage extends Component {
     };
 
     componentDidMount() {
-        // Check if already logged in and session is valid
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
         const sessionExpiry = localStorage.getItem('sessionExpiry');
@@ -98,7 +104,6 @@ class LoginPage extends Component {
         if (token && role && sessionExpiry && new Date().getTime() < parseInt(sessionExpiry)) {
             this.props.router.push(`/${role.toLowerCase()}`);
         } else {
-            // Clear expired session
             localStorage.clear();
         }
     }
@@ -137,14 +142,11 @@ class LoginPage extends Component {
                 throw new Error('Please fill in all fields');
             }
 
-            // Validate credentials against static database
             const user = this.validateCredentials(email, password, role);
 
-            // Create authentication token (in real app, this would be JWT)
             const authToken = btoa(`${email}:${role}:${Date.now()}`);
             const sessionExpiry = new Date().getTime() + (24 * 60 * 60 * 1000);
 
-            // Store user data in localStorage
             localStorage.setItem('token', authToken);
             localStorage.setItem('role', role);
             localStorage.setItem('userAddress', user.walletAddress);
@@ -153,9 +155,13 @@ class LoginPage extends Component {
 
             this.setState({ success: true });
 
-            // Add a small delay before redirect
+            // Redirect based on role
             setTimeout(() => {
-                this.props.router.push('/connect-wallet');
+                if (role === 'technician') {
+                    this.props.router.push('/recycler');  // Redirect to modify CPU page
+                } else {
+                    this.props.router.push('/connect-wallet');
+                }
             }, 1500);
 
         } catch (error) {
@@ -258,6 +264,9 @@ class LoginPage extends Component {
                                             <Message.Item>
                                                 Manufacturer: manufacturer1@regen.com / manufacturer123
                                             </Message.Item>
+                                            <Message.Item>
+                                                Technician: technician@regen.com / technician123
+                                            </Message.Item>
                                         </Message.List>
                                     </Message>
 
@@ -275,7 +284,7 @@ class LoginPage extends Component {
 }
 
 LoginPage.getLayout = (page) => {
-    return page; // Use default layout from _app.js
+    return page;
 };
 
 export default withRouter(LoginPage);

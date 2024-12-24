@@ -170,13 +170,17 @@ contract EWasteProduction {
         string memory newStatus,
         string memory newDetails
     ) public {
+        // Ensure the component exists
         require(componentRegistry[componentID].componentID == componentID, "Component not found.");
 
-        // Update the component
+        // Get the component reference from storage
         Component storage component = componentRegistry[componentID];
+
+        // Update the component details
         component.status = newStatus;
         component.details = newDetails;
 
+        // Emit the event with the correct values
         emit ComponentUpdated(componentID, component.cpuAddress, newStatus, newDetails);
     }
 
@@ -225,4 +229,12 @@ contract EWasteProduction {
             component.status
         );
     }
+    function getCPUAddress(
+    uint manufacturerID,
+    string memory modelName,
+    string memory serialNumber
+    ) public view returns (address) {
+    return generateUniqueCPUAddress(manufacturerID, modelName, serialNumber);
+}
+
 }

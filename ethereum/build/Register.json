@@ -2,34 +2,31 @@
     "contractName": "Register",
     "abi": [
         {
-            "inputs": [],
-            "stateMutability": "nonpayable",
-            "type": "constructor"
-        },
-        {
-            "inputs": [],
-            "name": "governmentEntity",
-            "outputs": [
+            "inputs": [
                 {
                     "internalType": "address",
-                    "name": "",
+                    "name": "addr",
                     "type": "address"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [],
-            "name": "x",
-            "outputs": [
+                },
                 {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
+                    "internalType": "string",
+                    "name": "buyerName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "buyerLocation",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "buyerBusinessType",
+                    "type": "string"
                 }
             ],
-            "stateMutability": "view",
+            "name": "registerBuyer",
+            "outputs": [],
+            "stateMutability": "nonpayable",
             "type": "function"
         },
         {
@@ -61,56 +58,32 @@
                     "internalType": "address",
                     "name": "addr",
                     "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "sellerLocation",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "sellerName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "address[]",
+                    "name": "sortingMachineAddress",
+                    "type": "address[]"
                 }
             ],
-            "name": "getManufacturerDetails",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                },
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "",
-                    "type": "string"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "addr",
-                    "type": "address"
-                },
-                {
-                    "internalType": "string",
-                    "name": "buyerName",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "buyerLocation",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "buyerBusinessType",
-                    "type": "string"
-                }
-            ],
-            "name": "registerBuyer",
+            "name": "registerSeller",
             "outputs": [],
             "stateMutability": "nonpayable",
             "type": "function"
+        },
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
         },
         {
             "inputs": [
@@ -152,26 +125,46 @@
                     "internalType": "address",
                     "name": "addr",
                     "type": "address"
-                },
-                {
-                    "internalType": "string",
-                    "name": "sellerLocation",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "sellerName",
-                    "type": "string"
-                },
-                {
-                    "internalType": "address[]",
-                    "name": "sortingMachineAddress",
-                    "type": "address[]"
                 }
             ],
-            "name": "registerSeller",
-            "outputs": [],
-            "stateMutability": "nonpayable",
+            "name": "getManufacturerDetails",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "manufacturerAddress",
+                    "type": "address"
+                }
+            ],
+            "name": "getManufacturerIdentifier",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
             "type": "function"
         },
         {
@@ -223,6 +216,19 @@
             "type": "function"
         },
         {
+            "inputs": [],
+            "name": "governmentEntity",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
             "inputs": [
                 {
                     "internalType": "address",
@@ -245,25 +251,6 @@
             "inputs": [
                 {
                     "internalType": "address",
-                    "name": "manufacturerAddress",
-                    "type": "address"
-                }
-            ],
-            "name": "getManufacturerIdentifier",
-            "outputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "",
-                    "type": "uint256"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
                     "name": "addr",
                     "type": "address"
                 }
@@ -273,45 +260,6 @@
                 {
                     "internalType": "bool",
                     "name": "",
-                    "type": "bool"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "name": "registeredManufacturers",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "manufacturerAddress",
-                    "type": "address"
-                },
-                {
-                    "internalType": "string",
-                    "name": "manufacturerLocation",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "manufacturerName",
-                    "type": "string"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "manufacturerIdentifier",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "bool",
-                    "name": "isExist",
                     "type": "bool"
                 }
             ],
@@ -365,6 +313,45 @@
                     "type": "address"
                 }
             ],
+            "name": "registeredManufacturers",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "manufacturerAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "manufacturerLocation",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "manufacturerName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "manufacturerIdentifier",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "isExist",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
             "name": "registeredSellers",
             "outputs": [
                 {
@@ -383,14 +370,22 @@
                     "type": "string"
                 },
                 {
-                    "internalType": "address[]",
-                    "name": "sortingMachineAddress",
-                    "type": "address[]"
-                },
-                {
                     "internalType": "bool",
                     "name": "isExist",
                     "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "x",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
                 }
             ],
             "stateMutability": "view",

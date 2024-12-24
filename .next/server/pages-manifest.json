@@ -2,7 +2,7 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
-  "/registration": "pages/registration.js",
   "/login": "pages/login.js",
-  "/connect-wallet": "pages/connect-wallet.js"
+  "/recycler": "pages/recycler.js",
+  "/about": "pages/about.js"
 }

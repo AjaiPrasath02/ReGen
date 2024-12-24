@@ -8,7 +8,10 @@ import CPUProduction from './build/CPUProduction.json';
 
 const instance = new web3.eth.Contract(
     CPUProduction.abi,
-    '0x183Af8c5435d50171c383685B21d00aD4E117F37'
+    // '0xf0C741189C6814d5A022b131A991cc43d5DC48C8'
+    '0xD480df134E4743f7D5FEf70e12446005287311ce'
+    // '0xf6d4Ed1d2e2274648a549bAD4481A78d5543c8Cc'
+    // '0x183Af8c5435d50171c383685B21d00aD4E117F37'
     // '0x4D34A4A5EaAca5BcFfb0e37c605B8BB57f7361ae'
     // BottleProduction.abi,
     // '0x2FFe4FBAeCb080E29501873538dE8FD14F52D8e7'

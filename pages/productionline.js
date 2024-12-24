@@ -9,6 +9,7 @@ import {
 } from "semantic-ui-react";
 import web3 from "../ethereum/web3";
 import cpuContract from "../ethereum/cpuProduction"; // Updated contract
+import registerSC from "../ethereum/register";
 import dynamic from "next/dynamic";
 const QrCode = dynamic(() => import("react.qrcode.generator"), { ssr: false });
 import Layout from "../components/Layout";
@@ -27,7 +28,7 @@ class ManufacturingMachinePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      registerSCAddress: "0x24eaCB0b427C5312A53e259718FfCdB89317Ad96",
+      registerSCAddress: "0x55cC96dDBE947f14bd3472eDa1ce70aDF32A9322",
       modelName: "",
       serialNumber: "",
       productionDate: "",
@@ -116,19 +117,23 @@ class ManufacturingMachinePage extends Component {
       },
     }));
   };
+ 
+  
+
+  
 
   // Register CPU with components
   registerCPUWithComponents = async (event) => {
     event.preventDefault();
-
+  
     // Check authentication before proceeding
     if (!this.state.isAuthenticated) {
       this.setState({ errorMessage: "Not authenticated" });
       return;
     }
-
+  
     this.setState({ loading: true, errorMessage: "", successMessage: "" });
-
+  
     const {
       modelName,
       serialNumber,
@@ -136,14 +141,14 @@ class ManufacturingMachinePage extends Component {
       componentDetails,
       registerSCAddress,
     } = this.state;
-
+  
     try {
       const accounts = await web3.eth.getAccounts();
-
+  
       // Convert component details into arrays
       const componentTypes = Object.keys(componentDetails);
       const componentDetailsArray = Object.values(componentDetails);
-
+  
       await cpuContract.methods
         .registerCPUWithComponents(
           registerSCAddress,
@@ -154,19 +159,28 @@ class ManufacturingMachinePage extends Component {
           componentDetailsArray
         )
         .send({ from: accounts[0] });
-
-      const cpuQR = await cpuContract.methods.getCPUAddress().call();
-      this.setState({
-        cpuQR,
-        QRcodePic: true,
-        successMessage: "CPU and components registered successfully!",
-      });
+  
+      const manufacturerID = await registerSC.methods.getManufacturerIdentifier(accounts[0]).call();
+  
+      // Now call getCPUAddress with the required parameters
+      const cpuQR = await cpuContract.methods.getCPUAddress(
+        manufacturerID, // Pass manufacturer ID
+        modelName,      // Pass model name
+        serialNumber    // Pass serial number
+      ).call();
+  
+      // Set the cpuQR state to update the QR code
+      this.setState({ cpuQR });
+  
     } catch (err) {
       this.setState({ errorMessage: err.message });
     } finally {
       this.setState({ loading: false });
     }
   };
+  
+
+  
 
   render() {
     const { componentDetails, productionDate } = this.state;
@@ -252,6 +266,7 @@ class ManufacturingMachinePage extends Component {
             {/* QR Code */}
             {this.state.cpuQR && (
               <div style={{ marginTop: "20px" }}>
+                <h2>{this.state.cpuQR}</h2>
                 <h4>CPU QR Code:</h4>
                 <QrCode value={this.state.cpuQR} size={400} />
               </div>
