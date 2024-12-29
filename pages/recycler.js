@@ -6,13 +6,18 @@ import {
   Container,
   Grid,
   Input,
+  Segment,
+  Header
 } from "semantic-ui-react";
 import web3 from "../ethereum/web3";
-import cpuContract from "../ethereum/cpuProduction"; // Updated contract
-import registerSC from "../ethereum/register";
-import dynamic from "next/dynamic";
-import Layout from "../components/Layout";
+import cpuContract from "../ethereum/cpuProduction";
 import { withRouter } from "next/router";
+import dynamic from "next/dynamic";
+import AllCPUs from "../components/CPUsTable"
+// 1) Import QrScanner
+import QrScanner from "qr-scanner";
+
+// 2) Dynamically import react-qr-reader (camera-based)
 const QrReader = dynamic(() => import("react-qr-reader"), { ssr: false });
 
 class TechnicianPage extends Component {
@@ -20,7 +25,9 @@ class TechnicianPage extends Component {
     super(props);
     this.state = {
       cpuAddress: "",
-      components: [], // Store components array
+      components: [],
+      loading: false,
+      loadingButton: null,
       componentDetails: {
         Processor: "",
         RAM: "",
@@ -30,7 +37,6 @@ class TechnicianPage extends Component {
       },
       errorMessage: "",
       successMessage: "",
-      loading: false,
       isAuthenticated: false,
       userRole: null,
       userAddress: "",
@@ -48,31 +54,27 @@ class TechnicianPage extends Component {
       const userAddress = localStorage.getItem("userAddress");
       const accounts = await web3.eth.getAccounts();
 
-      // Check basic auth
+      // Basic checks
       if (!token || !role || !userAddress) {
         this.props.router.push("/login");
         return;
       }
 
-      // Check role - only technician can access this page
       if (role !== "technician") {
         this.props.router.push("/unauthorized");
         return;
       }
 
-      // Check wallet connection
       if (!accounts || !accounts[0]) {
         this.props.router.push("/connect-wallet");
         return;
       }
 
-      // Check if connected wallet matches userAddress
       if (accounts[0].toLowerCase() !== userAddress.toLowerCase()) {
         this.props.router.push("/connect-wallet");
         return;
       }
 
-      // Set authenticated state
       this.setState({
         isAuthenticated: true,
         userRole: role,
@@ -83,129 +85,186 @@ class TechnicianPage extends Component {
     }
   };
 
+  /**
+   * Handle scanning from the camera (react-qr-reader onScan callback)
+   */
   handleScan = async (data) => {
     if (data) {
-      console.log("Scanned Data (CPU Address):", data); // Log the scanned CPU address
-  
-      try {
-        const cpuAddress = data.trim(); // The QR code contains the CPU address
-        this.setState({ cpuAddress, qrScanned: true });
-  
-        console.log("Fetching CPU details from contract...");
-        const Address = generateUniqueCPUAddress(manufacturerID, modelName, serialNumber);
-        console.log("Generated CPU Address: ", cpuAddress);
-    
-        // Fetch CPU details from the smart contract
-        const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
-  
-        console.log("Fetched CPU Details:", cpuDetails); // Log the result of the getCPU call
-  
-        // Check the response structure
-        if (cpuDetails && cpuDetails.length >= 5) {
-          console.log("Model Name:", cpuDetails[0]);
-          console.log("Serial Number:", cpuDetails[1]);
-          console.log("Status:", cpuDetails[2]);
-          console.log("Production Date:", cpuDetails[3]);
-          console.log("Component Count:", cpuDetails[4]);
-  
-          // Update state with fetched CPU details
-          this.setState({
-            cpuModel: cpuDetails[0],  // Model name
-            cpuSerial: cpuDetails[1], // Serial number
-            cpuStatus: cpuDetails[2], // Status
-            cpuProductionDate: new Date(cpuDetails[3] * 1000).toLocaleDateString(), // Convert Unix timestamp to date string
-          });
-  
-          // Now fetch components for this CPU (if needed)
-          const componentCount = parseInt(cpuDetails[4], 10); // Ensure it's a number
-          let components = [];
-          for (let i = 0; i < componentCount; i++) {
-            const component = await cpuContract.methods.getComponent(i).call();
-            components.push(component);
-          }
-  
-          // Update state with the list of components
-          this.setState({ components });
-        } else {
-          console.log("No CPU details found or invalid data format.");
-        }
-  
-      } catch (err) {
-        console.error("Error fetching CPU details:", err);
-        this.setState({ errorMessage: "Error fetching CPU details." });
-      }
+      await this.fetchCPUDetails(data.trim());
     }
   };
-  
-  
-
 
   handleError = (err) => {
     this.setState({ errorMessage: err.message });
   };
 
-  // Handle component details change
-  handleComponentDetailsChange = (componentType, value) => {
-    this.setState((prevState) => ({
-      componentDetails: {
-        ...prevState.componentDetails,
-        [componentType]: value,
-      },
-    }));
-  };
-
-  // Update component details
-  updateComponentDetails = async (componentID) => {
-    const { cpuAddress, componentDetails } = this.state;
-    const updatedValue = componentDetails[componentID];
-
+  /**
+   * Handle file upload for a QR code image.
+   */
+  handleFileUpload = async (event) => {
     try {
-      this.setState({ loading: true, errorMessage: "", successMessage: "" });
+      const file = event.target.files[0];
+      if (!file) return;
 
-      const accounts = await web3.eth.getAccounts();
+      // 3) Scan the uploaded image with QrScanner
+      const result = await QrScanner.scanImage(file, {
+        returnDetailedScanResult: false,
+      });
+      console.log("QR code content from uploaded image:", result);
 
-      // Update the component using the contract
-      await cpuContract.methods
-        .updateComponent(componentID, "Updated", updatedValue) // Pass correct values for status/details
-        .send({ from: accounts[0] });
-
-      this.setState({ successMessage: `${componentID} updated successfully!` });
-    } catch (err) {
-      this.setState({ errorMessage: "Error updating component." });
-    } finally {
-      this.setState({ loading: false });
+      // If successful, fetch CPU details
+      if (result) {
+        await this.fetchCPUDetails(result.data.trim());
+      }
+    } catch (error) {
+      console.error("Error scanning uploaded image:", error);
+      this.setState({
+        errorMessage: "Could not detect a valid QR code in the image.",
+      });
     }
   };
 
-  // Remove component
-  removeComponent = async (componentID) => {
-    const { cpuAddress } = this.state;
+  /**
+   * Common method to fetch CPU details from the contract
+   * once we have the QR code data (CPU address).
+   */
+  fetchCPUDetails = async (cpuAddress) => {
+    try {
+      this.setState({ cpuAddress, qrScanned: true });
+
+      const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
+      console.log("Fetched CPU Details:", cpuDetails);
+
+      if (cpuDetails) {
+        this.setState({
+          cpuModel: cpuDetails.modelName,
+          cpuSerial: cpuDetails.serialNumber,
+          cpuStatus: cpuDetails.status,
+          components: cpuDetails.components,
+        });
+      } else {
+        console.log("No CPU details found or invalid data format.");
+      }
+    } catch (err) {
+      console.error("Error fetching CPU details:", err);
+      this.setState({ errorMessage: "Error fetching CPU details." });
+    }
+  };
+
+  // Update the text in components array
+  handleComponentDetailsChange = (index, value) => {
+    this.setState((prevState) => {
+      const updatedComponents = [...prevState.components];
+      updatedComponents[index] = {
+        ...updatedComponents[index],
+        details: value,
+      };
+      return { components: updatedComponents };
+    });
+  };
+
+  // Update a component in the contract
+  updateComponentDetails = async (componentIndex) => {
+    const { cpuAddress, components } = this.state;
+    const updatedValue = components[componentIndex].details;
+    const updatedComponentType = components[componentIndex].componentType;
 
     try {
-      this.setState({ loading: true, errorMessage: "", successMessage: "" });
-
+      this.setState({
+        loadingButton: `update-${componentIndex}`,
+        errorMessage: "",
+        successMessage: "",
+      });
       const accounts = await web3.eth.getAccounts();
 
-      // Call contract method to remove component
-      await cpuContract.methods.removeComponent(cpuAddress, componentID).send({
-        from: accounts[0],
-      });
+      await cpuContract.methods
+        .updateComponent(cpuAddress, componentIndex, "Working", updatedValue)
+        .send({ from: accounts[0] });
 
-      // Remove the component from state
+      // Re-fetch CPU details so state is up to date
+      const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
+      if (cpuDetails) {
+        this.setState({
+          cpuStatus: cpuDetails.status,
+          components: cpuDetails.components,
+        });
+      }
+
       this.setState((prevState) => ({
-        components: prevState.components.filter(comp => comp.componentID !== componentID)
+        components: prevState.components.map((comp, idx) =>
+          idx === componentIndex ? { ...comp, status: "Working" } : comp
+        ),
+        successMessage: `${updatedComponentType} updated successfully!`,
       }));
+    } catch (err) {
+      this.setState({ errorMessage: "Error updating component." });
+    } finally {
+      this.setState({ loadingButton: null });
+    }
+  };
 
-      this.setState({ successMessage: `Component ${componentID} removed successfully!` });
+  // Remove a component
+  removeComponent = async (componentIndex) => {
+    const { cpuAddress, components } = this.state;
+    const removedComponentType = components[componentIndex].componentType;
+
+    try {
+      this.setState({
+        loadingButton: `remove-${componentIndex}`,
+        errorMessage: "",
+        successMessage: "",
+      });
+      const accounts = await web3.eth.getAccounts();
+
+      await cpuContract.methods
+        .removeComponent(cpuAddress, componentIndex)
+        .send({ from: accounts[0] });
+
+      // Re-fetch CPU details
+      const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
+      if (cpuDetails) {
+        this.setState({
+          cpuStatus: cpuDetails.status,
+          components: cpuDetails.components,
+        });
+      }
+
+      this.setState((prevState) => ({
+        components: prevState.components.map((comp, idx) =>
+          idx === componentIndex ? { ...comp, status: "Removed" } : comp
+        ),
+        successMessage: `${removedComponentType} removed successfully!`,
+      }));
     } catch (err) {
       this.setState({ errorMessage: "Error removing component." });
     } finally {
-      this.setState({ loading: false });
+      this.setState({ loadingButton: null });
+    }
+  };
+
+  // Helper to render the status icon
+  renderStatusIcon = (status) => {
+    switch (status) {
+      case "Working":
+        return "Working";
+      case "Removed":
+        return "Removed";
+      default:
+        return "Unknown";
     }
   };
 
   render() {
-    const { components, cpuAddress, qrScanned, cpuModel, cpuSerial, cpuStatus } = this.state;
+    const {
+      components,
+      qrScanned,
+      cpuModel,
+      cpuSerial,
+      cpuStatus,
+      errorMessage,
+      successMessage,
+      loadingButton,
+    } = this.state;
 
     return (
       <Container>
@@ -213,59 +272,160 @@ class TechnicianPage extends Component {
           rel="stylesheet"
           href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
         />
-        <Grid centered>
+
+        {/* Page Heading */}
+        <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
+          Technician - Update/Remove Components
+        </Header>
+
+        <Grid centered style={{ marginTop: "2em" }}>
           <Grid.Column width={12}>
-            <h2>Technician - Update/Remove Components</h2>
-
-            {/* QR Scanner */}
+            {/* If not scanned yet, show QR Reader + Upload option */}
             {!qrScanned ? (
-              <div>
-                <h3>Scan CPU QR Code to fetch details</h3>
-                <QrReader
-                  delay={300}
-                  style={{ width: "50%" }}
-                  onScan={this.handleScan}
-                  onError={this.handleError}
-                />
-              </div>
+              <Segment>
+			  <Grid stackable columns={2}>
+				<Grid.Row>
+				  {/* LEFT COLUMN: QR scanning + upload */}
+				  <Grid.Column>
+					<Header as="h2" style={{ marginTop: "10px" }} textAlign="center">
+					  Scan or Upload QR Code
+					</Header>
+			
+					{/* 1) Camera-based scanning */}
+					<QrReader
+					  delay={300}
+					  style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
+					  onScan={this.handleScan}
+					  onError={this.handleError}
+					/>
+			
+					<div style={{ marginTop: "1.5em", textAlign: "center" }}>
+					  <Button  htmlFor="file" type="button" color= "green"
+					//   style={{
+					// 	backgroundColor: "#21ba45", // the 'green' shade
+					// 	color: "#fff"               // white text
+					//   }}
+					  >
+						Upload QR Image
+					  </Button>
+					  <input
+						type="file"
+						id="file"
+						accept="image/*"
+						style={{ display: "none" }}
+						onChange={this.handleFileUpload}
+					  />
+					</div>
+				  </Grid.Column>
+			
+				  {/* RIGHT COLUMN: AllCPUs component */}
+				  <Grid.Column>
+					{/* <Header as="h2" textAlign="center" style={{ marginTop: "10px" }}>
+					  All CPUs
+					</Header> */}
+					<AllCPUs />
+				  </Grid.Column>
+				</Grid.Row>
+			  </Grid>
+			</Segment>
+			
             ) : (
-              <div>
-                <h3>CPU Address: {cpuAddress}</h3>
-                <h4>Model: {cpuModel}</h4>
-                <h4>Serial Number: {cpuSerial}</h4>
-                <h4>Status: {cpuStatus}</h4>
-                <Form error={!!this.state.errorMessage} success={!!this.state.successMessage}>
-                  {components.map((component, idx) => (
-                    <Form.Field key={idx}>
-                      <label>{component.componentType} Details:</label>
-                      <Input
-                        placeholder={`Enter ${component.componentType} Details`}
-                        value={component.details}
-                        onChange={(e) =>
-                          this.handleComponentDetailsChange(component.componentType, e.target.value)
-                        }
-                      />
-                      <Button
-                        color="green"
-                        onClick={() => this.updateComponentDetails(component.componentID)}
-                        loading={this.state.loading}
-                      >
-                        Update {component.componentType}
-                      </Button>
-                      <Button
-                        color="red"
-                        onClick={() => this.removeComponent(component.componentID)}
-                        loading={this.state.loading}
-                      >
-                        Remove {component.componentType}
-                      </Button>
+              <>
+                {/* Top row: Model, Serial, Status */}
+                <Form>
+                  <Form.Group widths="equal">
+                    <Form.Field>
+                      <label>Model</label>
+                      <Input readOnly placeholder="Model" value={cpuModel} />
                     </Form.Field>
-                  ))}
-
-                  <Message error header="Error" content={this.state.errorMessage} />
-                  <Message success header="Success" content={this.state.successMessage} />
+                    <Form.Field>
+                      <label>Serial</label>
+                      <Input readOnly placeholder="Serial" value={cpuSerial} />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Status</label>
+                      <Input readOnly placeholder="Status" value={cpuStatus} />
+                    </Form.Field>
+                  </Form.Group>
                 </Form>
-              </div>
+
+                <Segment>
+                  <Header
+                    as="h2"
+                    textAlign="center"
+                    style={{ marginTop: "10px", marginBottom: "10px" }}
+                  >
+                    Components
+                  </Header>
+
+                  <Form
+                    error={!!errorMessage}
+                    success={!!successMessage}
+                    style={{ marginTop: "1em" }}
+                  >
+                    {components.map((component, idx) => (
+                      <Form.Group key={idx} widths="equal">
+                        {/* Label & Input */}
+                        <Form.Field width={6}>
+                          <label>{component.componentType}</label>
+                          <Input
+                            placeholder={`Enter ${component.componentType} Details`}
+                            value={component.details}
+                            onChange={(e) =>
+                              this.handleComponentDetailsChange(
+                                idx,
+                                e.target.value
+                              )
+                            }
+                          />
+                        </Form.Field>
+
+                        {/* Update / Remove / Status */}
+                        <Form.Field
+                          width={3}
+                          style={{
+                            display: "flex",
+                            alignItems: "flex-end",
+                            gap: "0.5em",
+                          }}
+                        >
+                          <Button
+                            color="green"
+                            onClick={() => this.updateComponentDetails(idx)}
+                            loading={loadingButton === `update-${idx}`}
+                          >
+                            Update
+                          </Button>
+
+                          <Button
+                            color="red"
+                            disabled={component.status === "Removed"}
+                            onClick={() => this.removeComponent(idx)}
+                            loading={loadingButton === `remove-${idx}`}
+                          >
+                            Remove
+                          </Button>
+
+                          <Button color="orange" style={{cursor: "default"}}>
+                            {this.renderStatusIcon(component.status)}
+                          </Button>
+                        </Form.Field>
+                      </Form.Group>
+                    ))}
+
+                    <Message
+                      error
+                      header="Error"
+                      content={errorMessage}
+                    />
+                    <Message
+                      success
+                      header="Success"
+                      content={successMessage}
+                    />
+                  </Form>
+                </Segment>
+              </>
             )}
           </Grid.Column>
         </Grid>

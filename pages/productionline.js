@@ -149,7 +149,7 @@ class ManufacturingMachinePage extends Component {
       const componentTypes = Object.keys(componentDetails);
       const componentDetailsArray = Object.values(componentDetails);
   
-      await cpuContract.methods
+      const result = await cpuContract.methods
         .registerCPUWithComponents(
           registerSCAddress,
           modelName,
@@ -159,15 +159,20 @@ class ManufacturingMachinePage extends Component {
           componentDetailsArray
         )
         .send({ from: accounts[0] });
+        // Extract the `cpuAddress` from the emitted event
+        const cpuRegisteredEvent = result.events.CPURegistered;
+        const cpuQR = cpuRegisteredEvent.returnValues.cpuAddress;
+
+        console.log("CPU Address:", cpuQR);
   
-      const manufacturerID = await registerSC.methods.getManufacturerIdentifier(accounts[0]).call();
+      // const manufacturerID = await registerSC.methods.getManufacturerIdentifier(accounts[0]).call();
   
       // Now call getCPUAddress with the required parameters
-      const cpuQR = await cpuContract.methods.getCPUAddress(
-        manufacturerID, // Pass manufacturer ID
-        modelName,      // Pass model name
-        serialNumber    // Pass serial number
-      ).call();
+      // const cpuQR = await cpuContract.methods.getCPUAddress(
+      //   manufacturerID, // Pass manufacturer ID
+      //   modelName,      // Pass model name
+      //   serialNumber    // Pass serial number
+      // ).call();
   
       // Set the cpuQR state to update the QR code
       this.setState({ cpuQR });

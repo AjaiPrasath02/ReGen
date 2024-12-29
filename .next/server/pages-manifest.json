@@ -3,6 +3,5 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/login": "pages/login.js",
-  "/recycler": "pages/recycler.js",
-  "/about": "pages/about.js"
+  "/recycler": "pages/recycler.js"
 }
