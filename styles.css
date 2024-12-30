@@ -305,7 +305,7 @@ select:focus {
 }
 
 label {
-    color: #000 !important;
+    color: #000;
     /* Original text color */
     font-weight: bold !important;
     /* Original font weight */

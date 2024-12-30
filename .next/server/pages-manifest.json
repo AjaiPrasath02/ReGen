@@ -3,5 +3,8 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/login": "pages/login.js",
-  "/recycler": "pages/recycler.js"
+  "/productionline": "pages/productionline.js",
+  "/about": "pages/about.js",
+  "/connect-wallet": "pages/connect-wallet.js",
+  "/registration": "pages/registration.js"
 }

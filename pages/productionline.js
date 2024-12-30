@@ -117,23 +117,23 @@ class ManufacturingMachinePage extends Component {
       },
     }));
   };
- 
-  
 
-  
+
+
+
 
   // Register CPU with components
   registerCPUWithComponents = async (event) => {
     event.preventDefault();
-  
+
     // Check authentication before proceeding
     if (!this.state.isAuthenticated) {
       this.setState({ errorMessage: "Not authenticated" });
       return;
     }
-  
+
     this.setState({ loading: true, errorMessage: "", successMessage: "" });
-  
+
     const {
       modelName,
       serialNumber,
@@ -141,14 +141,14 @@ class ManufacturingMachinePage extends Component {
       componentDetails,
       registerSCAddress,
     } = this.state;
-  
+
     try {
       const accounts = await web3.eth.getAccounts();
-  
+
       // Convert component details into arrays
       const componentTypes = Object.keys(componentDetails);
       const componentDetailsArray = Object.values(componentDetails);
-  
+
       const result = await cpuContract.methods
         .registerCPUWithComponents(
           registerSCAddress,
@@ -159,33 +159,33 @@ class ManufacturingMachinePage extends Component {
           componentDetailsArray
         )
         .send({ from: accounts[0] });
-        // Extract the `cpuAddress` from the emitted event
-        const cpuRegisteredEvent = result.events.CPURegistered;
-        const cpuQR = cpuRegisteredEvent.returnValues.cpuAddress;
+      // Extract the `cpuAddress` from the emitted event
+      const cpuRegisteredEvent = result.events.CPURegistered;
+      const cpuQR = cpuRegisteredEvent.returnValues.cpuAddress;
 
-        console.log("CPU Address:", cpuQR);
-  
+      console.log("CPU Address:", cpuQR);
+
       // const manufacturerID = await registerSC.methods.getManufacturerIdentifier(accounts[0]).call();
-  
+
       // Now call getCPUAddress with the required parameters
       // const cpuQR = await cpuContract.methods.getCPUAddress(
       //   manufacturerID, // Pass manufacturer ID
       //   modelName,      // Pass model name
       //   serialNumber    // Pass serial number
       // ).call();
-  
+
       // Set the cpuQR state to update the QR code
       this.setState({ cpuQR });
-  
+
     } catch (err) {
       this.setState({ errorMessage: err.message });
     } finally {
       this.setState({ loading: false });
     }
   };
-  
 
-  
+
+
 
   render() {
     const { componentDetails, productionDate } = this.state;
@@ -198,7 +198,7 @@ class ManufacturingMachinePage extends Component {
         />
         <Grid centered>
           <Grid.Column width={12}>
-            <h2>Register CPU with Components</h2>
+            <h2 style={{textAlign:"center"}} >Register CPU with Components</h2>
             <Form
               onSubmit={this.registerCPUWithComponents}
               error={!!this.state.errorMessage}
@@ -236,7 +236,7 @@ class ManufacturingMachinePage extends Component {
                 />
               </Form.Field>
 
-              <h3>Component Details</h3>
+              <h2 style={{textAlign:"center"}} >Component Details</h2>
               {componentTypeOptions.map((option) => (
                 <Form.Field key={option.key}>
                   <label>{option.text} Details:</label>
@@ -263,19 +263,45 @@ class ManufacturingMachinePage extends Component {
                 header="Success!"
                 content={this.state.successMessage}
               />
-              <center><Button loading={this.state.loading} type="submit">
+              <center><Button color="green" loading={this.state.loading} type="submit">
                 Register CPU
               </Button></center>
             </Form>
 
-            {/* QR Code */}
             {this.state.cpuQR && (
-              <div style={{ marginTop: "20px" }}>
+
+            <div style={{ marginTop: "20px", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+                <h2>{this.state.cpuQR}</h2>
+                <h4>CPU QR Code:</h4>
+                <div ref={(ref) => this.qrRef = ref}>
+                  <QrCode value={this.state.cpuQR} size={400} />
+                </div>
+                <Button 
+                  style={{ marginTop: "10px" }}
+                  color="green"
+                  onClick={() => {
+                    const canvas = this.qrRef.querySelector('canvas');
+                    if (canvas) {
+                      const link = document.createElement('a');
+                      link.download = `CPU-QR-${this.state.serialNumber || 'code'}.png`;
+                      link.href = canvas.toDataURL('image/png');
+                      link.click();
+                    }
+                  }}
+                >
+                  Download QR Code
+                </Button>
+              </div>
+              )}
+      
+            {/* QR Code
+            {this.state.cpuQR && (
+              <div style={{ marginTop: "20px", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
                 <h2>{this.state.cpuQR}</h2>
                 <h4>CPU QR Code:</h4>
                 <QrCode value={this.state.cpuQR} size={400} />
               </div>
-            )}
+            )} */}
           </Grid.Column>
         </Grid>
       </Container>

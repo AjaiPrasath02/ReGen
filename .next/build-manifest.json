@@ -22,15 +22,25 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
+    "/about": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/about.js"
+    ],
+    "/connect-wallet": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/connect-wallet.js"
+    ],
     "/login": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/login.js"
     ],
-    "/recycler": [
+    "/registration": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
-      "static/chunks/pages/recycler.js"
+      "static/chunks/pages/registration.js"
     ]
   },
   "ampFirstPages": []

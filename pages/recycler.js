@@ -279,56 +279,56 @@ class TechnicianPage extends Component {
         </Header>
 
         <Grid centered style={{ marginTop: "2em" }}>
-          <Grid.Column width={12}>
+          <Grid.Column width="100%">
             {/* If not scanned yet, show QR Reader + Upload option */}
             {!qrScanned ? (
               <Segment>
-			  <Grid stackable columns={2}>
-				<Grid.Row>
-				  {/* LEFT COLUMN: QR scanning + upload */}
-				  <Grid.Column>
-					<Header as="h2" style={{ marginTop: "10px" }} textAlign="center">
-					  Scan or Upload QR Code
-					</Header>
-			
-					{/* 1) Camera-based scanning */}
-					<QrReader
-					  delay={300}
-					  style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
-					  onScan={this.handleScan}
-					  onError={this.handleError}
-					/>
-			
-					<div style={{ marginTop: "1.5em", textAlign: "center" }}>
-					  <Button  htmlFor="file" type="button" color= "green"
-					//   style={{
-					// 	backgroundColor: "#21ba45", // the 'green' shade
-					// 	color: "#fff"               // white text
-					//   }}
-					  >
-						Upload QR Image
-					  </Button>
-					  <input
-						type="file"
-						id="file"
-						accept="image/*"
-						style={{ display: "none" }}
-						onChange={this.handleFileUpload}
-					  />
-					</div>
-				  </Grid.Column>
-			
-				  {/* RIGHT COLUMN: AllCPUs component */}
-				  <Grid.Column>
-					{/* <Header as="h2" textAlign="center" style={{ marginTop: "10px" }}>
+                <Grid stackable columns={2}>
+                  <Grid.Row>
+                    {/* LEFT COLUMN: QR scanning + upload */}
+                    <Grid.Column>
+                      <Header as="h2" style={{ marginTop: "10px" }} textAlign="center">
+                        Scan or Upload QR Code
+                      </Header>
+
+                      {/* 1) Camera-based scanning */}
+                      <QrReader
+                        delay={300}
+                        style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
+                        onScan={this.handleScan}
+                        onError={this.handleError}
+                      />
+
+                      <div style={{ marginTop: "1.5em", textAlign: "center" }}>
+                        <Button as="label" htmlFor="file" type="button" color="green"
+                          style={{
+                        	backgroundColor: "#21ba45", // the 'green' shade
+                        	color: "#fff"               // white text
+                          }}
+                        >
+                          Upload QR Image
+                        </Button>
+                        <input
+                          type="file"
+                          id="file"
+                          accept="image/*"
+                          style={{ display: "none" }}
+                          onChange={this.handleFileUpload}
+                        />
+                      </div>
+                    </Grid.Column>
+
+                    {/* RIGHT COLUMN: AllCPUs component */}
+                    <Grid.Column>
+                      {/* <Header as="h2" textAlign="center" style={{ marginTop: "10px" }}>
 					  All CPUs
 					</Header> */}
-					<AllCPUs />
-				  </Grid.Column>
-				</Grid.Row>
-			  </Grid>
-			</Segment>
-			
+                      <AllCPUs />
+                    </Grid.Column>
+                  </Grid.Row>
+                </Grid>
+              </Segment>
+
             ) : (
               <>
                 {/* Top row: Model, Serial, Status */}
@@ -349,7 +349,8 @@ class TechnicianPage extends Component {
                   </Form.Group>
                 </Form>
 
-                <Segment>
+                <div style={{width: "100%"}}>
+
                   <Header
                     as="h2"
                     textAlign="center"
@@ -361,12 +362,12 @@ class TechnicianPage extends Component {
                   <Form
                     error={!!errorMessage}
                     success={!!successMessage}
-                    style={{ marginTop: "1em" }}
+                    style={{ marginTop: "1em", width: "100%" }}
                   >
                     {components.map((component, idx) => (
-                      <Form.Group key={idx} widths="equal">
+                      <Form.Group key={idx} style={{display: "flex", alignItems: "flex-end", justifyContent: "space-between"}}>
                         {/* Label & Input */}
-                        <Form.Field width={6}>
+                        <Form.Field width={"100%"} style={{flex: "1"}}>
                           <label>{component.componentType}</label>
                           <Input
                             placeholder={`Enter ${component.componentType} Details`}
@@ -377,12 +378,12 @@ class TechnicianPage extends Component {
                                 e.target.value
                               )
                             }
+                            // width="50%"
                           />
                         </Form.Field>
 
                         {/* Update / Remove / Status */}
                         <Form.Field
-                          width={3}
                           style={{
                             display: "flex",
                             alignItems: "flex-end",
@@ -406,7 +407,7 @@ class TechnicianPage extends Component {
                             Remove
                           </Button>
 
-                          <Button color="orange" style={{cursor: "default"}}>
+                          <Button color="orange" style={{ cursor: "default" }}>
                             {this.renderStatusIcon(component.status)}
                           </Button>
                         </Form.Field>
@@ -424,7 +425,7 @@ class TechnicianPage extends Component {
                       content={successMessage}
                     />
                   </Form>
-                </Segment>
+                </div>
               </>
             )}
           </Grid.Column>
