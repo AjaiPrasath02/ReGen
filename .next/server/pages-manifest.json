@@ -3,7 +3,7 @@
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
   "/login": "pages/login.js",
-  "/productionline": "pages/productionline.js",
+  "/recycler": "pages/recycler.js",
   "/about": "pages/about.js",
   "/connect-wallet": "pages/connect-wallet.js",
   "/registration": "pages/registration.js"

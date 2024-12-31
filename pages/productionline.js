@@ -149,12 +149,15 @@ class ManufacturingMachinePage extends Component {
       const componentTypes = Object.keys(componentDetails);
       const componentDetailsArray = Object.values(componentDetails);
 
+      // Convert date string to Unix timestamp (seconds since epoch)
+      const dateTimestamp = Math.floor(new Date(productionDate).getTime() / 1000);
+
       const result = await cpuContract.methods
         .registerCPUWithComponents(
           registerSCAddress,
           modelName,
           serialNumber,
-          parseInt(productionDate), // Ensure productionDate is a number
+          dateTimestamp, // Now sending proper Unix timestamp
           componentTypes,
           componentDetailsArray
         )

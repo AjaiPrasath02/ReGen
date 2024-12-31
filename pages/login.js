@@ -3,38 +3,10 @@ import { withRouter } from 'next/router';
 import { Menu, Form, Button, Message, Grid, Dropdown } from 'semantic-ui-react';
 
 const roleOptions = [
-    { key: 'municipality', text: 'Local Municipality', value: 'municipality' },
-    { key: 'manufacturer', text: 'Manufacturer', value: 'manufacturer' },
-    { key: 'technician', text: 'Technician', value: 'technician' }  // Added technician role
+    { key: 'm', text: 'Municipality', value: 'municipality' },
+    { key: 'mf', text: 'Manufacturer', value: 'manufacturer' },
+    { key: 't', text: 'Technician', value: 'technician' }
 ];
-
-// Static user database
-const STATIC_USERS = {
-    'municipality@regen.com': {
-        password: 'municipality123',
-        role: 'municipality',
-        name: 'City Municipality',
-        walletAddress: '0xF74c5343B72DbF48A8F0A91813D8104915E915F8'
-    },
-    'manufacturer1@regen.com': {
-        password: 'manufacturer123',
-        role: 'manufacturer',
-        name: 'Manufacturer 1',
-        walletAddress: '0xF74c5343B72DbF48A8F0A91813D8104915E915F8'
-    },
-    'manufacturer2@regen.com': {
-        password: 'manufacturer123',
-        role: 'manufacturer',
-        name: 'Manufacturer 2',
-        walletAddress: '0x789B52f8F5E41d44591C7dE7F2c830fEAfC3F3Fb'
-    },
-    'technician@regen.com': {  // Added technician user
-        password: 'technician123',
-        role: 'technician',
-        name: 'CPU Technician',
-        walletAddress: '0xF74c5343B72DbF48A8F0A91813D8104915E915F8'
-    }
-};
 
 const styles = {
     pageWrapper: {
@@ -117,20 +89,6 @@ class LoginPage extends Component {
         this.setState({ role: value });
     }
 
-    validateCredentials = (email, password, role) => {
-        const user = STATIC_USERS[email];
-        if (!user) {
-            throw new Error('User not found');
-        }
-        if (user.password !== password) {
-            throw new Error('Invalid password');
-        }
-        if (user.role !== role) {
-            throw new Error('Selected role does not match user role');
-        }
-        return user;
-    }
-
     handleSubmit = async (event) => {
         event.preventDefault();
         const { email, password, role } = this.state;
@@ -142,23 +100,34 @@ class LoginPage extends Component {
                 throw new Error('Please fill in all fields');
             }
 
-            const user = this.validateCredentials(email, password, role);
+            // Call backend API
+            const response = await fetch('http://localhost:4000/api/user/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ email, password, role })
+            });
 
-            const authToken = btoa(`${email}:${role}:${Date.now()}`);
-            const sessionExpiry = new Date().getTime() + (24 * 60 * 60 * 1000);
+            const data = await response.json();
 
-            localStorage.setItem('token', authToken);
-            localStorage.setItem('role', role);
-            localStorage.setItem('userAddress', user.walletAddress);
-            localStorage.setItem('userName', user.name);
-            localStorage.setItem('sessionExpiry', sessionExpiry.toString());
+            if (!response.ok) {
+                throw new Error(data.error);
+            }
+
+            // Store user data in localStorage
+            localStorage.setItem('token', data.token);
+            localStorage.setItem('role', data.role);
+            localStorage.setItem('userAddress', data.walletAddress);
+            localStorage.setItem('userName', data.name);
+            localStorage.setItem('sessionExpiry', (new Date().getTime() + (24 * 60 * 60 * 1000)).toString());
 
             this.setState({ success: true });
 
             // Redirect based on role
             setTimeout(() => {
                 if (role === 'technician') {
-                    this.props.router.push('/recycler');  // Redirect to modify CPU page
+                    this.props.router.push('/recycler');
                 } else {
                     this.props.router.push('/connect-wallet');
                 }
@@ -262,7 +231,7 @@ class LoginPage extends Component {
                                                 Municipality: municipality@regen.com / municipality123
                                             </Message.Item>
                                             <Message.Item>
-                                                Manufacturer: manufacturer1@regen.com / manufacturer123
+                                                Manufacturer: manufacturer@regen.com / manufacturer123
                                             </Message.Item>
                                             <Message.Item>
                                                 Technician: technician@regen.com / technician123

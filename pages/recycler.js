@@ -44,6 +44,7 @@ class TechnicianPage extends Component {
       cpuModel: "",
       cpuSerial: "",
       cpuStatus: "",
+      productionDate: "",
     };
   }
 
@@ -134,6 +135,7 @@ class TechnicianPage extends Component {
 
       const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
       console.log("Fetched CPU Details:", cpuDetails);
+      // console.log("date:", cpuDetails.productionDate);
 
       if (cpuDetails) {
         this.setState({
@@ -141,6 +143,7 @@ class TechnicianPage extends Component {
           cpuSerial: cpuDetails.serialNumber,
           cpuStatus: cpuDetails.status,
           components: cpuDetails.components,
+          productionDate: new Date(parseInt(cpuDetails.productionDate) * 1000).toLocaleDateString()
         });
       } else {
         console.log("No CPU details found or invalid data format.");
@@ -345,6 +348,10 @@ class TechnicianPage extends Component {
                     <Form.Field>
                       <label>Status</label>
                       <Input readOnly placeholder="Status" value={cpuStatus} />
+                    </Form.Field>
+                    <Form.Field>
+                      <label>Production Date</label>
+                      <Input readOnly placeholder="Production Date" value={this.state.productionDate} />
                     </Form.Field>
                   </Form.Group>
                 </Form>

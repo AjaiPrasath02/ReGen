@@ -22,11 +22,6 @@
       "static/chunks/main.js",
       "static/chunks/pages/_error.js"
     ],
-    "/about": [
-      "static/chunks/webpack.js",
-      "static/chunks/main.js",
-      "static/chunks/pages/about.js"
-    ],
     "/connect-wallet": [
       "static/chunks/webpack.js",
       "static/chunks/main.js",
@@ -36,6 +31,11 @@
       "static/chunks/webpack.js",
       "static/chunks/main.js",
       "static/chunks/pages/login.js"
+    ],
+    "/recycler": [
+      "static/chunks/webpack.js",
+      "static/chunks/main.js",
+      "static/chunks/pages/recycler.js"
     ],
     "/registration": [
       "static/chunks/webpack.js",

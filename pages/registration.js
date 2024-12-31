@@ -17,28 +17,19 @@ class RegistrationPage extends Component {
         super(props);
         this.state = {
             selectManufacturer: true,
-            selectSortingFacility: false,
-            selectBuyer: false,
+            selectTechnician: false,
             manufacturerName: '',
             manufacturerAddr: '',
             manufacturerLocation: '',
-            buyerName: '',
-            buyerAddr: '',
-            buyerLocation: '',
-            buyerBusiness: '',
-            sellerName: '',
-            sellerAddr: '',
-            sellerLocation: '',
-            sortingMachines: [],
-            inputSize: 0,
+            manufacturerEmail: '',
+            manufacturerPassword: '',
+            technicianName: '',
+            technicianAddr: '',
+            technicianLocation: '',
+            technicianEmail: '',
+            technicianPassword: '',
             errorMessage: '',
-            hasNoError: false,
-            errorMessage1: '',
-            hasNoError1: false,
-            errorMessage2: '',
-            hasNoError2: false,
             loading: false,
-            visible: '',
             // Add authentication check
             isAuthenticated: false,
             userRole: null,
@@ -46,40 +37,14 @@ class RegistrationPage extends Component {
             // Consolidate error messages
             errors: {
                 manufacturer: '',
-                buyer: '',
-                sortingFacility: ''
+                technician: ''
             },
             // Consolidate success states
             success: {
                 manufacturer: false,
-                buyer: false,
-                sortingFacility: false
+                technician: false
             },
         };
-    }
-
-    renderInputs(value) {
-        const inputs = [];
-        if (value > 0) {
-            inputs.push(<label key="label">Sorting Machine Addresses</label>);
-        }
-
-        for (let i = 0; i < value; i++) {
-            inputs.push(
-                <div key={i}>
-                    <Input
-                        value={this.state.sortingMachines[i] || ''}
-                        onChange={(event) => {
-                            const newSortingMachines = [...this.state.sortingMachines];
-                            newSortingMachines[i] = event.target.value;
-                            this.setState({ sortingMachines: newSortingMachines });
-                        }}
-                        icon="ethereum"
-                    />
-                </div>
-            );
-        }
-        return inputs;
     }
 
     componentDidMount = async () => {
@@ -179,11 +144,7 @@ class RegistrationPage extends Component {
                 throw new Error('No wallet connected');
             }
 
-            // Add input validation
-            if (!this.state.manufacturerName || !this.state.manufacturerAddr || !this.state.manufacturerLocation) {
-                throw new Error('Please fill in all manufacturer details');
-            }
-
+            // First register on blockchain
             await registerContract.methods
                 .registerManufacturer(
                     this.state.manufacturerAddr,
@@ -191,17 +152,41 @@ class RegistrationPage extends Component {
                     this.state.manufacturerName
                 )
                 .send({ from: accounts[0] });
+                
+            // Then register in MongoDB
+            const response = await fetch('http://localhost:4000/api/user/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: this.state.manufacturerEmail,
+                    password: this.state.manufacturerPassword,
+                    name: this.state.manufacturerName,
+                    role: 'manufacturer',
+                    walletAddress: this.state.manufacturerAddr,
+                    location: this.state.manufacturerLocation
+                })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error);
+            }
+
 
             this.setState({
                 success: { ...this.state.success, manufacturer: true },
                 errors: { ...this.state.errors, manufacturer: '' }
             });
 
-            // Reset form after successful registration
+            // Reset form
             this.setState({
                 manufacturerName: '',
                 manufacturerAddr: '',
-                manufacturerLocation: ''
+                manufacturerLocation: '',
+                manufacturerEmail: '',
+                manufacturerPassword: ''
             });
 
         } catch (err) {
@@ -238,233 +223,271 @@ class RegistrationPage extends Component {
         }
     };
 
-
-    //Register a buyer & interact with the register SC
-    onRegisterBuyer = async (event) => {
-
+    //Register a technician & interact with the register SC
+    onRegisterTechnician = async (event) => {
         event.preventDefault();
-
-        const accounts = await web3.eth.getAccounts();
-
-        this.setState({ loading: true, errorMessage1: '' });
+        this.setState({ loading: true });
 
         try {
-            web3.eth.handleRevert = true;
-            //registerContract.handleRevert = true; 
+            const accounts = await web3.eth.getAccounts();
+            if (!accounts[0]) {
+                throw new Error('No wallet connected');
+            }
+            
+            // First register on blockchain
             await registerContract.methods
-                .registerBuyer(this.state.buyerAddr, this.state.buyerName, this.state.buyerLocation, this.state.buyerBusiness)
+                .registerTechnician(
+                    this.state.technicianAddr,
+                    this.state.technicianLocation,
+                    this.state.technicianName
+                )
                 .send({ from: accounts[0] });
+
+            // Then register in MongoDB
+            const response = await fetch('http://localhost:4000/api/user/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: this.state.technicianEmail,
+                    password: this.state.technicianPassword,
+                    name: this.state.technicianName,
+                    role: 'technician',
+                    walletAddress: this.state.technicianAddr,
+                    location: this.state.technicianLocation
+                })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error);
+            }
+
+
+            this.setState({
+                success: { ...this.state.success, technician: true },
+                errors: { ...this.state.errors, technician: '' }
+            });
+
+            // Reset form
+            this.setState({
+                technicianName: '',
+                technicianAddr: '',
+                technicianLocation: '',
+                technicianEmail: '',
+                technicianPassword: ''
+            });
+
         } catch (err) {
-            console.log(err);
-            this.setState({ errorMessage1: err });
-            this.setState({ hasError1: false });
+            this.setState({
+                errors: {
+                    ...this.state.errors,
+                    technician: err.message || 'Registration failed'
+                },
+                success: { ...this.state.success, technician: false }
+            });
+        } finally {
+            this.setState({ loading: false });
         }
-
-        // if errorMsg is empty, registration is successful
-        if (!this.state.errorMessage1)
-            this.setState({ hasNoError1: true });
-
-        this.setState({ loading: false });
     };
-
-    //Register a sorting facility & interact with the register SC
-    onRegisterSeller = async (event) => {
-
-        event.preventDefault();
-
-        const accounts = await web3.eth.getAccounts();
-
-        this.setState({ loading: true, errorMessage2: '' });
-
-        try {
-
-            await registerContract.methods
-                .registerSeller(this.state.sellerAddr, this.state.sellerLocation, this.state.sellerName, this.state.sortingMachines)
-                .send({ from: accounts[0] });
-        } catch (err) {
-            this.setState({ errorMessage2: err });
-            this.setState({ hasError2: false });
-        }
-
-        // if errorMsg is empty, registration is successful
-        if (!this.state.errorMessage2)
-            this.setState({ hasNoError2: true });
-
-        this.setState({ loading: false });
-    };
-
-
 
     render() {
-
-        console.log(this.state.inputSize);
-
         const {
             selectManufacturer,
-            selectSortingFacility,
-            selectBuyer,
+            selectTechnician,
             manufacturerName,
             manufacturerAddr,
             manufacturerLocation,
-            buyerName,
-            buyerAddr,
-            buyerLocation,
-            buyerBusiness,
-            sellerName,
-            sellerAddr,
-            sellerLocation,
-            sortingMachines } = this.state
+            manufacturerEmail,
+            manufacturerPassword,
+            technicianName,
+            technicianAddr,
+            technicianLocation,
+            technicianEmail,
+            technicianPassword
+        } = this.state;
 
         return (
-            <div className="Registration " style={{ minHeight: '500px' }}>
+            <div className="Registration" style={{ minHeight: '500px' }}>
                 <link rel="stylesheet"
                     href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
                 />
                 <h2>Select a stakeholder to register</h2>
-                <Menu widths={3}>
-                    <Menu.Item name='Manufacturer' onClick={() => this.setState({ selectManufacturer: true, selectSortingFacility: false, selectBuyer: false })} > Manufacturer</Menu.Item>
-                    <Menu.Item name='SortingFacility' onClick={() => this.setState({ selectSortingFacility: true, selectManufacturer: false, selectBuyer: false })} > Sorting Facility</Menu.Item>
-                    <Menu.Item name='Buyer' onClick={() => this.setState({ selectBuyer: true, selectSortingFacility: false, selectManufacturer: false })} > Buyer </Menu.Item>
+                <Menu widths={2}>
+                    <Menu.Item 
+                        name='Manufacturer' 
+                        active={selectManufacturer}
+                        onClick={() => this.setState({ 
+                            selectManufacturer: true, 
+                            selectTechnician: false 
+                        })}
+                    >
+                        Manufacturer
+                    </Menu.Item>
+                    <Menu.Item 
+                        name='Technician' 
+                        active={selectTechnician}
+                        onClick={() => this.setState({ 
+                            selectTechnician: true, 
+                            selectManufacturer: false 
+                        })}
+                    >
+                        Technician
+                    </Menu.Item>
                 </Menu>
                 <br />
                 <br />
 
                 {selectManufacturer && (
-
-                    <div className='Manufacturer' >
+                    <div className='Manufacturer'>
                         <Container>
                             <Grid>
                                 <Grid.Row centered>
                                     <Grid.Column width={10} textAlign="center">
-                                        <Form onSubmit={this.onRegisterManu} error={!!this.state.errorMessage} success={this.state.hasNoError}>
+                                        <Form onSubmit={this.onRegisterManu} error={!!this.state.errors.manufacturer} success={this.state.success.manufacturer}>
+                                            <Form.Field>
+                                                <label className="left-aligned-label">Manufacturer Email</label>
+                                                <Input 
+                                                    value={manufacturerEmail}
+                                                    type="email"
+                                                    icon="mail"
+                                                    onChange={event => this.setState({ manufacturerEmail: event.target.value })} 
+                                                />
+                                            </Form.Field>
+                                            <Form.Field>
+                                                <label className="left-aligned-label">Password</label>
+                                                <Input 
+                                                    value={manufacturerPassword}
+                                                    type="password"
+                                                    icon="lock"
+                                                    onChange={event => this.setState({ manufacturerPassword: event.target.value })} 
+                                                />
+                                            </Form.Field>
                                             <Form.Field>
                                                 <label className="left-aligned-label">Manufacturer Name</label>
-                                                <Input value={this.state.manufacturerName}
-                                                    onChange={event => this.setState({ manufacturerName: event.target.value })} />
+                                                <Input 
+                                                    value={manufacturerName}
+                                                    onChange={event => this.setState({ manufacturerName: event.target.value })} 
+                                                />
                                             </Form.Field>
                                             <Form.Field>
                                                 <label className="left-aligned-label">Manufacturer Ethereum Address</label>
-                                                <Input value={this.state.manufacturerAddr}
+                                                <Input 
+                                                    value={manufacturerAddr}
                                                     icon="ethereum"
-                                                    onChange={event => this.setState({ manufacturerAddr: event.target.value })} />
+                                                    onChange={event => this.setState({ manufacturerAddr: event.target.value })} 
+                                                />
                                             </Form.Field>
                                             <Form.Field>
                                                 <label className="left-aligned-label">Manufacturer Location</label>
-                                                <Input value={this.state.manufacturerLocation}
-                                                    onChange={event => this.setState({ manufacturerLocation: event.target.value })} />
+                                                <Input 
+                                                    value={manufacturerLocation}
+                                                    onChange={event => this.setState({ manufacturerLocation: event.target.value })} 
+                                                />
                                             </Form.Field>
 
-                                            <Message error header="Error!"
-                                                onDismiss={this.handleDismiss}
-                                                content={this.state.errorMessage} />
+                                            <Message 
+                                                error 
+                                                header="Error!"
+                                                content={this.state.errors.manufacturer} 
+                                            />
 
+                                            <Message 
+                                                success 
+                                                header="Success!"
+                                                content="Manufacturer registered successfully!" 
+                                            />
 
-                                            <Message success header="Success!"
-                                                onDismiss={this.handleDismiss}
-                                                content="Manufacturer registered successfully!" />
-
-
-                                            <Button color='green' loading={this.state.loading} type='submit'>Register</Button>
+                                            <Button 
+                                                color='green' 
+                                                loading={this.state.loading} 
+                                                type='submit'
+                                            >
+                                                Register
+                                            </Button>
                                         </Form>
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
                         </Container>
                     </div>
-
                 )}
 
-                {selectBuyer && (
-                    <div>
+                {selectTechnician && (
+                    <div className='Technician'>
                         <Container>
                             <Grid>
                                 <Grid.Row centered>
                                     <Grid.Column width={10} textAlign="center">
-                                        <Form onSubmit={this.onRegisterBuyer} error={!!this.state.errorMessage1} success={this.state.hasNoError1} >
+                                        <Form onSubmit={this.onRegisterTechnician} error={!!this.state.errors.technician} success={this.state.success.technician}>
                                             <Form.Field>
-                                                <label className="left-aligned-label">Buyer Name</label>
-                                                <Input value={this.state.buyerName}
-                                                    onChange={event => this.setState({ buyerName: event.target.value })} />
+                                                <label className="left-aligned-label">Technician Email</label>
+                                                <Input 
+                                                    value={technicianEmail}
+                                                    type="email"
+                                                    icon="mail"
+                                                    onChange={event => this.setState({ technicianEmail: event.target.value })} 
+                                                />
                                             </Form.Field>
                                             <Form.Field>
-                                                <label className="left-aligned-label">Buyer Ethereum Address</label>
-                                                <Input value={this.state.buyerAddr}
+                                                <label className="left-aligned-label">Password</label>
+                                                <Input 
+                                                    value={technicianPassword}
+                                                    type="password"
+                                                    icon="lock"
+                                                    onChange={event => this.setState({ technicianPassword: event.target.value })} 
+                                                />
+                                            </Form.Field>
+                                            <Form.Field>
+                                                <label className="left-aligned-label">Technician Name</label>
+                                                <Input 
+                                                    value={technicianName}
+                                                    onChange={event => this.setState({ technicianName: event.target.value })} 
+                                                />
+                                            </Form.Field>
+                                            <Form.Field>
+                                                <label className="left-aligned-label">Technician Ethereum Address</label>
+                                                <Input 
+                                                    value={technicianAddr}
                                                     icon="ethereum"
-                                                    onChange={event => this.setState({ buyerAddr: event.target.value })} />
-                                            </Form.Field>
-                                            <Form.Field >
-                                                <label className="left-aligned-label">Buyer Business Type</label>
-                                                <Input value={this.state.BuyerBusiness}
-                                                    onChange={event => this.setState({ buyerBusiness: event.target.value })} />
-                                            </Form.Field>
-                                            <Form.Field >
-                                                <label className="left-aligned-label">Buyer Location</label>
-                                                <Input value={this.state.buyerLocation}
-                                                    onChange={event => this.setState({ buyerLocation: event.target.value })} />
-                                            </Form.Field>
-
-                                            <Message error header="Error!" content={this.state.errorMessage1} />
-
-                                            <Message success header="Success!" content="Buyer registered successfully!" />
-
-                                            <Button color='green' loading={this.state.loading} type='submit'>Register</Button>
-                                        </Form>
-
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
-                        </Container>
-                    </div>
-
-                )}
-
-                {selectSortingFacility && (
-                    <div>
-                        <Container>
-                            <Grid>
-                                <Grid.Row centered>
-                                    <Grid.Column width={10} textAlign="center">
-                                        <Form onSubmit={this.onRegisterSeller} error={!!this.state.errorMessage2} success={this.state.hasNoError2}>
-                                            <Form.Field >
-                                                <label className="left-aligned-label">Sorting Facility Name</label>
-                                                <Input value={this.state.sellerName}
-                                                    onChange={event => this.setState({ sellerName: event.target.value })} />
+                                                    onChange={event => this.setState({ technicianAddr: event.target.value })} 
+                                                />
                                             </Form.Field>
                                             <Form.Field>
-                                                <label className="left-aligned-label">Sorting Facility Ethereum Address</label>
-                                                <Input value={this.state.sellerAddr}
-                                                    icon="ethereum"
-                                                    onChange={event => this.setState({ sellerAddr: event.target.value })} />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Sorting Facility Location</label>
-                                                <Input value={this.state.sellerLocation}
-                                                    onChange={event => this.setState({ sellerLocation: event.target.value })} />
+                                                <label className="left-aligned-label">Technician Location</label>
+                                                <Input 
+                                                    value={technicianLocation}
+                                                    onChange={event => this.setState({ technicianLocation: event.target.value })} 
+                                                />
                                             </Form.Field>
 
-                                            <Form.Field >
-                                                <label className="left-aligned-label">Number of Sorting Machines</label>
-                                                <input type="number" name="quantity" min="1" max="7" placeholder="Enter a number from 1 to 7" onChange={(value) => this.handleOnChange(value)} />
-                                                <div>
-                                                    {this.renderInputs(this.state.inputSize)}
-                                                </div>
-                                            </Form.Field>
+                                            <Message 
+                                                error 
+                                                header="Error!"
+                                                content={this.state.errors.technician} 
+                                            />
 
-                                            <Message error header="Error!" content={this.state.errorMessage2} />
+                                            <Message 
+                                                success 
+                                                header="Success!"
+                                                content="Technician registered successfully!" 
+                                            />
 
-                                            <Message success header="Success!" content="Seller registered successfully!" />
-
-                                            <Button color='green' loading={this.state.loading} type='submit'>Register</Button>
+                                            <Button 
+                                                color='green' 
+                                                loading={this.state.loading} 
+                                                type='submit'
+                                            >
+                                                Register
+                                            </Button>
                                         </Form>
                                     </Grid.Column>
                                 </Grid.Row>
                             </Grid>
                         </Container>
                     </div>
-
                 )}
-
-
             </div>
         );
     }

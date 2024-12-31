@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { withRouter } from 'next/router';
-import { Menu, Icon, Form, Button } from 'semantic-ui-react';
+import { Menu, Icon, Form, Button, Message } from 'semantic-ui-react';
 import Image from 'next/image';
 import trackingContract from '../ethereum/tracking';
 import { useRouter } from 'next/router';
@@ -15,7 +15,13 @@ class Index extends Component {
             recycledBottles: 0,
             notRecycledBottles: 0,
             isAuthenticated: false,
-            userRole: null
+            userRole: null,
+            name: '',
+            email: '',
+            message: '',
+            loading: false,
+            error: '',
+            success: ''
         }
     }
 
@@ -65,6 +71,48 @@ class Index extends Component {
         const { userRole } = this.state;
         if (userRole) {
             this.props.router.push(`/logout`);
+        }
+    };
+
+    handleSubmit = async (event) => {
+        event.preventDefault();
+        const { name, email, message } = this.state;
+
+        try {
+            this.setState({ loading: true, error: '', success: '' });
+
+            const response = await fetch('http://localhost:4000/api/feedback/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    name,
+                    email,
+                    message
+                })
+            });
+
+            const data = await response.json();
+            console.log(data)
+            if (!response.ok) {
+                throw new Error(data.error || 'Something went wrong');
+            }
+
+            // Clear form and show success message
+            this.setState({
+                name: '',
+                email: '',
+                message: '',
+                success: 'Thank you for your feedback!',
+                loading: false
+            });
+
+        } catch (error) {
+            this.setState({
+                error: error.message,
+                loading: false
+            });
         }
     };
 
@@ -232,20 +280,54 @@ class Index extends Component {
                         </div>
                         <h1 style={{ textAlign: 'center' }}>Get in Touch</h1>
                         <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                            <Form style={{ maxWidth: '400px', width: '100%' }}>
+                            <Form 
+                                style={{ maxWidth: '400px', width: '100%' }}
+                                onSubmit={this.handleSubmit}
+                                error={!!this.state.error}
+                                success={!!this.state.success}
+                                loading={this.state.loading}
+                            >
                                 <Form.Field>
                                     <label>Name</label>
-                                    <input placeholder='Your Name' />
+                                    <input 
+                                        placeholder='Your Name' 
+                                        value={this.state.name}
+                                        onChange={e => this.setState({ name: e.target.value })}
+                                    />
                                 </Form.Field>
                                 <Form.Field>
                                     <label>Email</label>
-                                    <input placeholder='Your Email' />
+                                    <input 
+                                        placeholder='Your Email' 
+                                        type="email"
+                                        value={this.state.email}
+                                        onChange={e => this.setState({ email: e.target.value })}
+                                    />
                                 </Form.Field>
                                 <Form.Field>
                                     <label>Message</label>
-                                    <textarea placeholder='Your Message' />
+                                    <textarea 
+                                        placeholder='Your Message'
+                                        value={this.state.message}
+                                        onChange={e => this.setState({ message: e.target.value })}
+                                    />
                                 </Form.Field>
-                                <Button type='submit' color='green' fluid>Submit</Button>
+
+                                <Message
+                                    error
+                                    header='Error'
+                                    content={this.state.error}
+                                />
+
+                                <Message
+                                    success
+                                    header='Success'
+                                    content={this.state.success}
+                                />
+
+                                <Button type='submit' color='green' fluid>
+                                    Submit
+                                </Button>
                                 <br />
                             </Form>
                         </div>
