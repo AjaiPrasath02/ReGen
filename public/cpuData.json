@@ -1,0 +1,227 @@
+[
+    {
+        "modelName": "m1",
+        "serialNumber": "s1",
+        "status": "Not Working",
+        "productionDate": "15/08/24",
+        "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60",
+        "manufacturerID": 0,
+        "components": [
+            {
+                "componentID": 0,
+                "componentType": "Processor",
+                "details": "p1.4",
+                "status": "Removed",
+                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
+            },
+            {
+                "componentID": 1,
+                "componentType": "RAM",
+                "details": "r1.12",
+                "status": "Working",
+                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
+            },
+            {
+                "componentID": 2,
+                "componentType": "Hard Disk",
+                "details": "h1",
+                "status": "Working",
+                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
+            },
+            {
+                "componentID": 3,
+                "componentType": "Motherboard",
+                "details": "m1",
+                "status": "Removed",
+                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
+            },
+            {
+                "componentID": 4,
+                "componentType": "PSU",
+                "details": "ps1",
+                "status": "Working",
+                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
+            }
+        ]
+    },
+    {
+        "modelName": "m2",
+        "serialNumber": "s2",
+        "status": "Working",
+        "productionDate": "23/03/23",
+        "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B",
+        "manufacturerID": 1,
+        "components": [
+            {
+                "componentID": 0,
+                "componentType": "Processor",
+                "details": "p2.5",
+                "status": "Working",
+                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
+            },
+            {
+                "componentID": 1,
+                "componentType": "RAM",
+                "details": "r2.16",
+                "status": "Removed",
+                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
+            },
+            {
+                "componentID": 2,
+                "componentType": "Hard Disk",
+                "details": "h2",
+                "status": "Working",
+                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
+            },
+            {
+                "componentID": 3,
+                "componentType": "Motherboard",
+                "details": "m2",
+                "status": "Working",
+                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
+            },
+            {
+                "componentID": 4,
+                "componentType": "PSU",
+                "details": "ps2",
+                "status": "Removed",
+                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
+            }
+        ]
+    },
+    {
+        "modelName": "m3",
+        "serialNumber": "s3",
+        "status": "Working",
+        "productionDate": "07/11/25",
+        "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD",
+        "manufacturerID": 2,
+        "components": [
+            {
+                "componentID": 0,
+                "componentType": "Processor",
+                "details": "p3.8",
+                "status": "Removed",
+                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
+            },
+            {
+                "componentID": 1,
+                "componentType": "Motherboard",
+                "details": "m3",
+                "status": "Working",
+                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
+            },
+            {
+                "componentID": 2,
+                "componentType": "Graphics Card",
+                "details": "g3.10",
+                "status": "Working",
+                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
+            },
+            {
+                "componentID": 3,
+                "componentType": "RAM",
+                "details": "r3.16",
+                "status": "Removed",
+                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
+            },
+            {
+                "componentID": 4,
+                "componentType": "PSU",
+                "details": "ps3",
+                "status": "Working",
+                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
+            }
+        ]
+    },
+    {
+        "modelName": "m4",
+        "serialNumber": "s4",
+        "status": "Not Working",
+        "productionDate": "30/06/22",
+        "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789",
+        "manufacturerID": 3,
+        "components": [
+            {
+                "componentID": 0,
+                "componentType": "Processor",
+                "details": "p4.2",
+                "status": "Removed",
+                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
+            },
+            {
+                "componentID": 1,
+                "componentType": "Power Supply",
+                "details": "ps4.1",
+                "status": "Working",
+                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
+            },
+            {
+                "componentID": 2,
+                "componentType": "Hard Disk",
+                "details": "h4",
+                "status": "Removed",
+                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
+            },
+            {
+                "componentID": 3,
+                "componentType": "Motherboard",
+                "details": "m4",
+                "status": "Working",
+                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
+            },
+            {
+                "componentID": 4,
+                "componentType": "RAM",
+                "details": "r4.8",
+                "status": "Removed",
+                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
+            }
+        ]
+    },
+    {
+        "modelName": "m5",
+        "serialNumber": "s5",
+        "status": "Working",
+        "productionDate": "12/09/21",
+        "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF",
+        "manufacturerID": 4,
+        "components": [
+            {
+                "componentID": 0,
+                "componentType": "Processor",
+                "details": "p5.9",
+                "status": "Working",
+                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
+            },
+            {
+                "componentID": 1,
+                "componentType": "RAM",
+                "details": "r5.32",
+                "status": "Removed",
+                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
+            },
+            {
+                "componentID": 2,
+                "componentType": "Hard Disk",
+                "details": "h5",
+                "status": "Working",
+                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
+            },
+            {
+                "componentID": 3,
+                "componentType": "Motherboard",
+                "details": "m5",
+                "status": "Removed",
+                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
+            },
+            {
+                "componentID": 4,
+                "componentType": "PSU",
+                "details": "ps5",
+                "status": "Working",
+                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
+            }
+        ]
+    }
+]

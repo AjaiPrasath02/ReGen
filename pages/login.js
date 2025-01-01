@@ -24,7 +24,8 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-        background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
+        // background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
+        background: 'white',
         boxSizing: 'border-box',
         minWidth: '500px',
         minHeight: '600px'
@@ -224,7 +225,7 @@ class LoginPage extends Component {
 
                             {!success && (
                                 <>
-                                    <Message info style={styles.message}>
+                                    {/* <Message info style={styles.message}>
                                         <Message.Header style={{ color: '#0ea432' }}>Demo Credentials</Message.Header>
                                         <Message.List>
                                             <Message.Item>
@@ -237,7 +238,7 @@ class LoginPage extends Component {
                                                 Technician: technician@regen.com / technician123
                                             </Message.Item>
                                         </Message.List>
-                                    </Message>
+                                    </Message> */}
 
                                     <Message warning style={styles.message}>
                                         Note: Please ensure you have MetaMask extension installed and enabled.

@@ -49,6 +49,10 @@ h3 {
     display: none;
 }
 
+.ui.striped.table tr:nth-child(even) {
+    background-color: rgba(0,0,0,.07) !important;
+}
+
 /* Login */
 
 .ui.form input:focus,

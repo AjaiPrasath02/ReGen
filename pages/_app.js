@@ -1,6 +1,7 @@
 import { AuthProvider } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import '../styles.css';
+import '../styles/Visualization.css';
 
 function MyApp({ Component, pageProps }) {
   const getLayout = Component.getLayout || ((page) => page);

@@ -287,7 +287,7 @@ class TechnicianPage extends Component {
             {!qrScanned ? (
               <Segment>
                 <Grid stackable columns={2}>
-                  <Grid.Row>
+                  <Grid.Row style={{ paddingRight: "3em" }}>
                     {/* LEFT COLUMN: QR scanning + upload */}
                     <Grid.Column>
                       <Header as="h2" style={{ marginTop: "10px" }} textAlign="center">
@@ -296,17 +296,18 @@ class TechnicianPage extends Component {
 
                       {/* 1) Camera-based scanning */}
                       <QrReader
-                        delay={300}
+                        delay={1000}
                         style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
                         onScan={this.handleScan}
                         onError={this.handleError}
+
                       />
 
                       <div style={{ marginTop: "1.5em", textAlign: "center" }}>
                         <Button as="label" htmlFor="file" type="button" color="green"
                           style={{
-                        	backgroundColor: "#21ba45", // the 'green' shade
-                        	color: "#fff"               // white text
+                            backgroundColor: "#21ba45", // the 'green' shade
+                            color: "#fff"               // white text
                           }}
                         >
                           Upload QR Image
@@ -327,6 +328,48 @@ class TechnicianPage extends Component {
 					  All CPUs
 					</Header> */}
                       <AllCPUs />
+
+                      <center>
+                        <Button
+                          color="blue"
+                          style={{ marginTop: '2em', marginBottom: '2em' }}
+                          onClick={async () => {
+                            try {
+                              // const accounts = await web3.eth.getAccounts();
+                              // const allCPUs = await cpuContract.methods.getAllCPUDetails().call({
+                              //   from: accounts[0],
+                              // });
+
+                              // const formattedCPUs = allCPUs.map(cpu => ({
+                              //   modelName: cpu.modelName,
+                              //   serialNumber: cpu.serialNumber,
+                              //   status: cpu.status,
+                              //   productionDate: cpu.productionDate.toString(), // Convert BigInt to string
+                              //   cpuAddress: cpu.cpuAddress,
+                              //   manufacturerID: cpu.manufacturerID.toString(), // Convert BigInt to string
+                              //   components: cpu.components.map(comp => ({
+                              //     componentID: comp.componentID.toString(), // Convert BigInt to string
+                              //     componentType: comp.componentType,
+                              //     details: comp.details,
+                              //     status: comp.status,
+                              //     cpuAddress: comp.cpuAddress
+                              //   }))
+                              // }));
+                              const response = await fetch('/cpuData.json');
+                              const formattedCPUs = await response.json();
+                              this.props.router.push({
+                                pathname: '/visualization',
+                                query: { cpuArray: JSON.stringify(formattedCPUs) }
+                              });
+                            } catch (error) {
+                              console.error("Error fetching CPU data:", error);
+                              this.setState({ errorMessage: "Error fetching CPU data for visualization" });
+                            }
+                          }}
+                        >
+                          View All CPUs Visualization
+                        </Button>
+                      </center>
                     </Grid.Column>
                   </Grid.Row>
                 </Grid>
@@ -356,7 +399,7 @@ class TechnicianPage extends Component {
                   </Form.Group>
                 </Form>
 
-                <div style={{width: "100%"}}>
+                <div style={{ width: "100%" }}>
 
                   <Header
                     as="h2"
@@ -372,9 +415,9 @@ class TechnicianPage extends Component {
                     style={{ marginTop: "1em", width: "100%" }}
                   >
                     {components.map((component, idx) => (
-                      <Form.Group key={idx} style={{display: "flex", alignItems: "flex-end", justifyContent: "space-between"}}>
+                      <Form.Group key={idx} style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
                         {/* Label & Input */}
-                        <Form.Field width={"100%"} style={{flex: "1"}}>
+                        <Form.Field width={"100%"} style={{ flex: "1" }}>
                           <label>{component.componentType}</label>
                           <Input
                             placeholder={`Enter ${component.componentType} Details`}
@@ -385,7 +428,7 @@ class TechnicianPage extends Component {
                                 e.target.value
                               )
                             }
-                            // width="50%"
+                          // width="50%"
                           />
                         </Form.Field>
 

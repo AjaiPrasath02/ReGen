@@ -1,5 +1,5 @@
 import React, { Component } from "react";
-import { Table, Container, Header, Input, Message } from "semantic-ui-react";
+import { Table, Container, Header, Input, Message, Button } from "semantic-ui-react";
 import web3 from "../ethereum/web3";
 import cpuContract from "../ethereum/cpuProduction"; // Adjust to your contract path
 
@@ -87,6 +87,11 @@ class AllCPUs extends Component {
         )}
 
         <div style={{ width: "100%" }}>
+          {/* Number of matched records */}
+          <Button color="grey" style={{ marginBottom: "1em", float: "right", cursor: "default" }}>
+            <strong>Records Found:</strong> {filteredCPUs.length}
+          </Button>
+
           {/* Search bar */}
           <Input
             icon="search"
@@ -96,14 +101,10 @@ class AllCPUs extends Component {
             style={{ width: "100%", marginBottom: "1em" }}
           />
 
-          {/* Number of matched records */}
-          <div style={{ marginBottom: "1em", textAlign: "center" }}>
-            <strong>Records Found:</strong> {filteredCPUs.length}
-          </div>
 
           {/* Table */}
-          <div style={{ maxHeight: "400px", overflowY: "auto" }}>
-          <Table celled style={{ width: "100%" }} loading={loading.toString()}>
+          <div style={{ maxHeight: "300px", minHeight: "280px", overflowY: "auto" }}>
+          <Table celled striped style={{ width: "100%" }} loading={loading.toString()}>
             <Table.Header>
               <Table.Row>
                 <Table.HeaderCell>Model</Table.HeaderCell>
