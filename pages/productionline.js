@@ -28,7 +28,8 @@ class ManufacturingMachinePage extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      registerSCAddress: "0x55cC96dDBE947f14bd3472eDa1ce70aDF32A9322",
+      // registerSCAddress: "0x55cC96dDBE947f14bd3472eDa1ce70aDF32A9322" ,//old
+      registerSCAddress: "0xF804b9f3b3cf54738C435F9055A4B09423C61c81",
       modelName: "",
       serialNumber: "",
       productionDate: "",
@@ -132,7 +133,12 @@ class ManufacturingMachinePage extends Component {
       return;
     }
 
-    this.setState({ loading: true, errorMessage: "", successMessage: "" });
+    this.setState({ 
+      loading: true, 
+      errorMessage: "", 
+      successMessage: "",
+      cpuQR: "" // Clear the previous QR code before new registration
+    });
 
     const {
       modelName,
@@ -168,17 +174,11 @@ class ManufacturingMachinePage extends Component {
 
       console.log("CPU Address:", cpuQR);
 
-      // const manufacturerID = await registerSC.methods.getManufacturerIdentifier(accounts[0]).call();
-
-      // Now call getCPUAddress with the required parameters
-      // const cpuQR = await cpuContract.methods.getCPUAddress(
-      //   manufacturerID, // Pass manufacturer ID
-      //   modelName,      // Pass model name
-      //   serialNumber    // Pass serial number
-      // ).call();
-
-      // Set the cpuQR state to update the QR code
-      this.setState({ cpuQR });
+      // Update state with new QR code and success message
+      this.setState({ 
+        cpuQR,
+        successMessage: "CPU registered successfully!"
+      });
 
     } catch (err) {
       this.setState({ errorMessage: err.message });
@@ -272,14 +272,17 @@ class ManufacturingMachinePage extends Component {
             </Form>
 
             {this.state.cpuQR && (
-
-            <div style={{ marginTop: "20px", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
+              <div style={{ marginTop: "20px", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
                 <h2>{this.state.cpuQR}</h2>
                 <h4>CPU QR Code:</h4>
                 <div ref={(ref) => this.qrRef = ref}>
-                  <QrCode value={this.state.cpuQR} size={400} />
+                  <QrCode 
+                    value={this.state.cpuQR} 
+                    size={400}
+                    key={this.state.cpuQR} // Add key prop to force re-render
+                  />
                 </div>
-                <Button 
+                <Button
                   style={{ marginTop: "10px" }}
                   color="green"
                   onClick={() => {
@@ -296,15 +299,6 @@ class ManufacturingMachinePage extends Component {
                 </Button>
               </div>
               )}
-      
-            {/* QR Code
-            {this.state.cpuQR && (
-              <div style={{ marginTop: "20px", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
-                <h2>{this.state.cpuQR}</h2>
-                <h4>CPU QR Code:</h4>
-                <QrCode value={this.state.cpuQR} size={400} />
-              </div>
-            )} */}
           </Grid.Column>
         </Grid>
       </Container>

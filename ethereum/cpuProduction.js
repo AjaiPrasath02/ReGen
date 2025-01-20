@@ -3,12 +3,15 @@ purpose: To access the contract (register.sol) instance from inside the applicat
 Etherscan: https://ropsten.etherscan.io/tx/0xdd82c9e0dbc600e899aa03ef1232cbf193b16b7617335ea07f37e47a37d275c3
 */
 import web3 from './web3'; 
-import CPUProduction from './build/CPUProduction.json'; 
+// import CPUProduction from './build/CPUProduction.json'; 
+import CPUProduction from './build/newCPUProduction.json'; 
+
 // import BottleProduction from './build/BottleProduction.json'; 
 
 const instance = new web3.eth.Contract(
     CPUProduction.abi,
-    '0xAcB35f22Bc4Db867aE624b011F08E334E363ACbD'
+    '0xD443263F3271453c678974eC3C8B8C0878ddb568'
+    // '0xAcB35f22Bc4Db867aE624b011F08E334E363ACbD'
     // '0x45aAB7e88853a8Df09D7bE805E559e18bC1a6198'
     // '0x1dC3404E380BcCEED04a561ED6F266B59A8a7225'
     // '0x516bf35e8bc6C75eE1869f3aA2b17dba65DFbB3e'

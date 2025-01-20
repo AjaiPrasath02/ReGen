@@ -1,227 +1,244 @@
 [
+   
     {
-        "modelName": "m1",
-        "serialNumber": "s1",
-        "status": "Not Working",
-        "productionDate": "15/08/24",
+        "modelName": "vostro",
+        "serialNumber": "DYVG62230406842794",
+        "status": "Working",
+        "productionDate": "20/11/2014",
         "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60",
         "manufacturerID": 0,
         "components": [
-            {
-                "componentID": 0,
-                "componentType": "Processor",
-                "details": "p1.4",
-                "status": "Removed",
-                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
-            },
-            {
-                "componentID": 1,
-                "componentType": "RAM",
-                "details": "r1.12",
-                "status": "Working",
-                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
-            },
-            {
-                "componentID": 2,
-                "componentType": "Hard Disk",
-                "details": "h1",
-                "status": "Working",
-                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
-            },
-            {
-                "componentID": 3,
-                "componentType": "Motherboard",
-                "details": "m1",
-                "status": "Removed",
-                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
-            },
-            {
-                "componentID": 4,
-                "componentType": "PSU",
-                "details": "ps1",
-                "status": "Working",
-                "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"
-            }
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xC4C1A5658decd3b966B5e5d75D9d88833bB40D60"}
         ]
     },
     {
-        "modelName": "m2",
-        "serialNumber": "s2",
+        "modelName": "vostro",
+        "serialNumber": "87VG62219220600234",
         "status": "Working",
-        "productionDate": "23/03/23",
-        "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B",
-        "manufacturerID": 1,
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xA3B2C1D5E4F6078926AB3C6D8F42E0D3CC7B6F1",
+        "manufacturerID": 0,
         "components": [
-            {
-                "componentID": 0,
-                "componentType": "Processor",
-                "details": "p2.5",
-                "status": "Working",
-                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
-            },
-            {
-                "componentID": 1,
-                "componentType": "RAM",
-                "details": "r2.16",
-                "status": "Removed",
-                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
-            },
-            {
-                "componentID": 2,
-                "componentType": "Hard Disk",
-                "details": "h2",
-                "status": "Working",
-                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
-            },
-            {
-                "componentID": 3,
-                "componentType": "Motherboard",
-                "details": "m2",
-                "status": "Working",
-                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
-            },
-            {
-                "componentID": 4,
-                "componentType": "PSU",
-                "details": "ps2",
-                "status": "Removed",
-                "cpuAddress": "0xA2B3C4D567890E1234567890ABCD56789EF01A2B"
-            }
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xA3B2C1D5E4F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xA3B2C1D5E4F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xA3B2C1D5E4F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xA3B2C1D5E4F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xA3B2C1D5E4F6078926AB3C6D8F42E0D3CC7B6F1"}
         ]
     },
     {
-        "modelName": "m3",
-        "serialNumber": "s3",
-        "status": "Working",
-        "productionDate": "07/11/25",
-        "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD",
-        "manufacturerID": 2,
-        "components": [
-            {
-                "componentID": 0,
-                "componentType": "Processor",
-                "details": "p3.8",
-                "status": "Removed",
-                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
-            },
-            {
-                "componentID": 1,
-                "componentType": "Motherboard",
-                "details": "m3",
-                "status": "Working",
-                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
-            },
-            {
-                "componentID": 2,
-                "componentType": "Graphics Card",
-                "details": "g3.10",
-                "status": "Working",
-                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
-            },
-            {
-                "componentID": 3,
-                "componentType": "RAM",
-                "details": "r3.16",
-                "status": "Removed",
-                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
-            },
-            {
-                "componentID": 4,
-                "componentType": "PSU",
-                "details": "ps3",
-                "status": "Working",
-                "cpuAddress": "0x1234ABCD5678EFG90123ABCD5678EFG90123ABCD"
-            }
-        ]
-    },
-    {
-        "modelName": "m4",
-        "serialNumber": "s4",
+        "modelName": "vostro",
+        "serialNumber": "HXVG62239053505962",
         "status": "Not Working",
-        "productionDate": "30/06/22",
-        "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789",
-        "manufacturerID": 3,
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xD1E2F3A4B5C6078926AB3C6D8F42E0D3CC7B6F1",
+        "manufacturerID": 0,
         "components": [
-            {
-                "componentID": 0,
-                "componentType": "Processor",
-                "details": "p4.2",
-                "status": "Removed",
-                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
-            },
-            {
-                "componentID": 1,
-                "componentType": "Power Supply",
-                "details": "ps4.1",
-                "status": "Working",
-                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
-            },
-            {
-                "componentID": 2,
-                "componentType": "Hard Disk",
-                "details": "h4",
-                "status": "Removed",
-                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
-            },
-            {
-                "componentID": 3,
-                "componentType": "Motherboard",
-                "details": "m4",
-                "status": "Working",
-                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
-            },
-            {
-                "componentID": 4,
-                "componentType": "RAM",
-                "details": "r4.8",
-                "status": "Removed",
-                "cpuAddress": "0x56789012EFG123ABCD9012345678EFG123456789"
-            }
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xD1E2F3A4B5C6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Removed", "cpuAddress": "0xD1E2F3A4B5C6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xD1E2F3A4B5C6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xD1E2F3A4B5C6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Removed", "cpuAddress": "0xD1E2F3A4B5C6078926AB3C6D8F42E0D3CC7B6F1"}
         ]
     },
     {
-        "modelName": "m5",
-        "serialNumber": "s5",
+        "modelName": "vostro",
+        "serialNumber": "GTVG62236634858922",
         "status": "Working",
-        "productionDate": "12/09/21",
-        "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF",
-        "manufacturerID": 4,
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xF2B3D4A5E6C7089264AB3D6F8F52E0C3CC7D6B2",
+        "manufacturerID": 0,
         "components": [
-            {
-                "componentID": 0,
-                "componentType": "Processor",
-                "details": "p5.9",
-                "status": "Working",
-                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
-            },
-            {
-                "componentID": 1,
-                "componentType": "RAM",
-                "details": "r5.32",
-                "status": "Removed",
-                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
-            },
-            {
-                "componentID": 2,
-                "componentType": "Hard Disk",
-                "details": "h5",
-                "status": "Working",
-                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
-            },
-            {
-                "componentID": 3,
-                "componentType": "Motherboard",
-                "details": "m5",
-                "status": "Removed",
-                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
-            },
-            {
-                "componentID": 4,
-                "componentType": "PSU",
-                "details": "ps5",
-                "status": "Working",
-                "cpuAddress": "0x1234ABC567890123EFG4567890ABC123456789EF"
-            }
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xF2B3D4A5E6C7089264AB3D6F8F52E0C3CC7D6B2"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xF2B3D4A5E6C7089264AB3D6F8F52E0C3CC7D6B2"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xF2B3D4A5E6C7089264AB3D6F8F52E0C3CC7D6B2"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xF2B3D4A5E6C7089264AB3D6F8F52E0C3CC7D6B2"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xF2B3D4A5E6C7089264AB3D6F8F52E0C3CC7D6B2"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "7QVG62216862419370",
+        "status": "Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xE3F4A5B6D7C8097364DB3E7F8F62E1C3CC7E6B4",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xE3F4A5B6D7C8097364DB3E7F8F62E1C3CC7E6B4"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xE3F4A5B6D7C8097364DB3E7F8F62E1C3CC7E6B4"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xE3F4A5B6D7C8097364DB3E7F8F62E1C3CC7E6B4"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xE3F4A5B6D7C8097364DB3E7F8F62E1C3CC7E6B4"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xE3F4A5B6D7C8097364DB3E7F8F62E1C3CC7E6B4"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "FFVG62233611550122",
+        "status": "Not Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xD4E5A6B7F8C9018253EB4F8F63E1C4CC7E6C5B3",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xD4E5A6B7F8C9018253EB4F8F63E1C4CC7E6C5B3"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xD4E5A6B7F8C9018253EB4F8F63E1C4CC7E6C5B3"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Removed", "cpuAddress": "0xD4E5A6B7F8C9018253EB4F8F63E1C4CC7E6C5B3"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xD4E5A6B7F8C9018253EB4F8F63E1C4CC7E6C5B3"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xD4E5A6B7F8C9018253EB4F8F63E1C4CC7E6C5B3"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "LJJVG6223385414826",
+        "status": "Not Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xE3B2F1A6D5C9087364AB4E7F9F62E1C3CC7F6B5",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xE3B2F1A6D5C9087364AB4E7F9F62E1C3CC7F6B5"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xE3B2F1A6D5C9087364AB4E7F9F62E1C3CC7F6B5"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xE3B2F1A6D5C9087364AB4E7F9F62E1C3CC7F6B5"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Removed", "cpuAddress": "0xE3B2F1A6D5C9087364AB4E7F9F62E1C3CC7F6B5"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xE3B2F1A6D5C9087364AB4E7F9F62E1C3CC7F6B5"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "FJVG62233853414826",
+        "status": "Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xA1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xA1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xA1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xA1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xA1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xA1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "C9VG62226718406058",
+        "status": "Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xB2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xB2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xB2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xB2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xB2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xB2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "BVVG62218341532586",
+        "status": "Not Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xC3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xC3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Removed", "cpuAddress": "0xC3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xC3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xC3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xC3D4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "JSVG62243104739754",
+        "status": "Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xD4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xD4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xD4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xD4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xD4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xD4E5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "3JVG62214262373802",
+        "status": "Not Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xE5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3D4",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Removed", "cpuAddress": "0xE5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3D4"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Removed", "cpuAddress": "0xE5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3D4"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Removed", "cpuAddress": "0xE5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3D4"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xE5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3D4"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xE5F6078926AB3C6D8F42E0D3CC7B6F1A1B2C3D4"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "DLVG62229620782506",
+        "status": "Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xF1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xF1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xF1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xF1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xF1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xF1B2C3D4E5F6078926AB3C6D8F42E0D3CC7B6F1"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "FXVG62234699941290",
+        "status": "Not Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xB1C2D3E4F6078926AB3C6D8F42E0D3CC7B6F1A2",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xB1C2D3E4F6078926AB3C6D8F42E0D3CC7B6F1A2"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xB1C2D3E4F6078926AB3C6D8F42E0D3CC7B6F1A2"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Removed", "cpuAddress": "0xB1C2D3E4F6078926AB3C6D8F42E0D3CC7B6F1A2"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xB1C2D3E4F6078926AB3C6D8F42E0D3CC7B6F1A2"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xB1C2D3E4F6078926AB3C6D8F42E0D3CC7B6F1A2"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "6WVG62215048434090",
+        "status": "Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xC1D2E3F4B6078926AB3C6D8F42E0D3CC7B6F1A3",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xC1D2E3F4B6078926AB3C6D8F42E0D3CC7B6F1A3"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xC1D2E3F4B6078926AB3C6D8F42E0D3CC7B6F1A3"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xC1D2E3F4B6078926AB3C6D8F42E0D3CC7B6F1A3"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Working", "cpuAddress": "0xC1D2E3F4B6078926AB3C6D8F42E0D3CC7B6F1A3"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xC1D2E3F4B6078926AB3C6D8F42E0D3CC7B6F1A3"}
+        ]
+    },
+    {
+        "modelName": "vostro",
+        "serialNumber": "5KVG62212146057642",
+        "status": "Not Working",
+        "productionDate": "20/11/2014",
+        "cpuAddress": "0xD2E3F4B6C1078926AB3C6D8F42E0D3CC7B6F1A4",
+        "manufacturerID": 0,
+        "components": [
+            {"componentID": 0, "componentType": "Processor", "details": "Intel Core i3-4150", "status": "Working", "cpuAddress": "0xD2E3F4B6C1078926AB3C6D8F42E0D3CC7B6F1A4"},
+            {"componentID": 1, "componentType": "RAM", "details": "4GB DDR3", "status": "Working", "cpuAddress": "0xD2E3F4B6C1078926AB3C6D8F42E0D3CC7B6F1A4"},
+            {"componentID": 2, "componentType": "Hard Disk", "details": "512GB HDD", "status": "Working", "cpuAddress": "0xD2E3F4B6C1078926AB3C6D8F42E0D3CC7B6F1A4"},
+            {"componentID": 3, "componentType": "Motherboard", "details": "Intel H81", "status": "Removed", "cpuAddress": "0xD2E3F4B6C1078926AB3C6D8F42E0D3CC7B6F1A4"},
+            {"componentID": 4, "componentType": "PSU", "details": "Dell L240AS-00", "status": "Working", "cpuAddress": "0xD2E3F4B6C1078926AB3C6D8F42E0D3CC7B6F1A4"}
         ]
     }
+
 ]

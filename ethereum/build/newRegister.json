@@ -1,0 +1,294 @@
+{
+    "contractName": "Register",
+    "abi": [
+        {
+            "inputs": [],
+            "stateMutability": "nonpayable",
+            "type": "constructor"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                }
+            ],
+            "name": "getManufacturerDetails",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "manufacturerAddress",
+                    "type": "address"
+                }
+            ],
+            "name": "getManufacturerIdentifier",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                }
+            ],
+            "name": "getTechnicianDetails",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "",
+                    "type": "string"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "technicianAddress",
+                    "type": "address"
+                }
+            ],
+            "name": "getTechnicianIdentifier",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "governmentEntity",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                }
+            ],
+            "name": "isManufacturerExist",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                }
+            ],
+            "name": "isTechnicianExist",
+            "outputs": [
+                {
+                    "internalType": "bool",
+                    "name": "",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "manufacturerLocation",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "manufacturerName",
+                    "type": "string"
+                }
+            ],
+            "name": "registerManufacturer",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "addr",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "technicianLocation",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "technicianName",
+                    "type": "string"
+                }
+            ],
+            "name": "registerTechnician",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "registeredManufacturers",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "manufacturerAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "manufacturerLocation",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "manufacturerName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "manufacturerIdentifier",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "isExist",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "name": "registeredTechnicians",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "technicianAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "technicianLocation",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "technicianName",
+                    "type": "string"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "technicianIdentifier",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "bool",
+                    "name": "isExist",
+                    "type": "bool"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
+            "inputs": [],
+            "name": "x",
+            "outputs": [
+                {
+                    "internalType": "uint256",
+                    "name": "",
+                    "type": "uint256"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        }
+    ]
+}

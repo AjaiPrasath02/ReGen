@@ -12,7 +12,8 @@ import {
     CartesianGrid,
     Tooltip,
     Legend,
-    ResponsiveContainer
+    ResponsiveContainer,
+    ComposedChart
 } from 'recharts';
 import Link from 'next/link';
 
@@ -217,21 +218,23 @@ const Visualization = () => {
                         <div className="tab-content">
                             {activeTab === "status" && (
                                 <div className="chart-container">
-                                    <ResponsiveContainer width="100%" height={350}>
-                                        <BarChart
+                                    <ResponsiveContainer width="100%" height={Math.max(350, statusData.length * 50)}>
+                                        <ComposedChart
+                                            layout="vertical"
                                             data={statusData}
-                                            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                                            margin={{ top: 20, right: 30, left: 100, bottom: 5 }}
                                         >
                                             <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="name" />
-                                            <YAxis />
+                                            <XAxis type="number" />
+                                            <YAxis dataKey="name" type="category" />
                                             <Tooltip />
                                             <Bar
                                                 dataKey="value"
                                                 fill="#6C9BD1"
                                                 name="CPU Count"
+                                                barSize={30}
                                             />
-                                        </BarChart>
+                                        </ComposedChart>
                                     </ResponsiveContainer>
                                     <div className="chart-legend">
                                         <div className="legend-item">
@@ -243,18 +246,19 @@ const Visualization = () => {
                             )}
                             {activeTab === "comparison" && (
                                 <div className="chart-container">
-                                    <ResponsiveContainer width="100%" height={350}>
-                                        <BarChart
+                                    <ResponsiveContainer width="100%" height={Math.max(350, componentComparisonData.length * 50)}>
+                                        <ComposedChart
+                                            layout="vertical"
                                             data={componentComparisonData}
-                                            margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+                                            margin={{ top: 20, right: 30, left: 100, bottom: 5 }}
                                         >
                                             <CartesianGrid strokeDasharray="3 3" />
-                                            <XAxis dataKey="name" />
-                                            <YAxis />
+                                            <XAxis type="number" />
+                                            <YAxis dataKey="name" type="category" />
                                             <Tooltip />
-                                            <Bar dataKey="working" fill="#2ECC71" name="Working Components" />
-                                            <Bar dataKey="removed" fill="#E74C3C" name="Removed Components" />
-                                        </BarChart>
+                                            <Bar dataKey="working" fill="#2ECC71" name="Working Components" barSize={20} />
+                                            <Bar dataKey="removed" fill="#E74C3C" name="Removed Components" barSize={20} />
+                                        </ComposedChart>
                                     </ResponsiveContainer>
                                     <div className="chart-legend">
                                         <div className="legend-item">
