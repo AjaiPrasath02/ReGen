@@ -15,7 +15,8 @@ app.get('/', (req, res) => {
     res.send("Hello World");
 });
 
-mongoose.connect('mongodb+srv://root:1234@book-store-mern.5jlmcjk.mongodb.net/?retryWrites=true&w=majority&appName=Book-Store-MERN').then(() => {
+mongoose.connect('mongodb://localhost:27017/test').then(() => {
+    // mongoose.connect('mongodb+srv://root:1234@book-store-mern.5jlmcjk.mongodb.net/?retryWrites=true&w=majority&appName=Book-Store-MERN').then(() => {
     app.listen(4000, () => {
         console.log('Server is running on port 4000')
     })

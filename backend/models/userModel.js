@@ -22,7 +22,7 @@ const userSchema = new Schema({
     role: {
         type: String,
         required: true,
-        enum: ['municipality', 'manufacturer', 'technician']
+        enum: ['municipality', 'manufacturer', 'technician', 'labassistant']
     },
     walletAddress: {
         type: String,
@@ -76,7 +76,7 @@ userSchema.statics.signup = async function(email, password, name, role, walletAd
     }
 
     // Validate role
-    const validRoles = ['municipality', 'manufacturer', 'technician'];
+    const validRoles = ['municipality', 'manufacturer', 'technician', 'labassistant'];
     if (!validRoles.includes(role)) {
         throw Error('Invalid role')
     }

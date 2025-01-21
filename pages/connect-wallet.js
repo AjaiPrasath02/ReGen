@@ -74,16 +74,13 @@ class ConnectWalletPage extends Component {
                 throw new Error('MetaMask is not installed');
             }
 
-            // Log the expected address before connection
             console.log('Expected address from localStorage:', this.state.userAddress);
 
-            // Try to connect wallet
             const connected = await connectWallet();
             if (!connected) {
                 throw new Error('Failed to connect wallet');
             }
 
-            // Get the connected account
             const accounts = await web3.eth.getAccounts();
             if (accounts.length === 0) {
                 throw new Error('No accounts found');
@@ -91,25 +88,20 @@ class ConnectWalletPage extends Component {
 
             console.log('Connected with account:', accounts[0]);
 
-            // Validate the wallet address
             await this.validateWalletAddress(accounts[0]);
 
-            // Update state with connected account
             this.setState({
                 account: accounts[0],
                 errorMessage: ''
             });
 
-            // Set up event listeners
             window.ethereum.on('accountsChanged', this.handleAccountsChanged);
             window.ethereum.on('chainChanged', () => window.location.reload());
 
-            // Redirect to dashboard after successful connection
-            setTimeout(() => this.redirectToDashboard(), 1000);
+            this.redirectToDashboard();
 
         } catch (error) {
             console.error('Connection error:', error);
-            // Make the error message more helpful
             const errorMsg = error.message.includes('Please connect with wallet address')
                 ? `Wrong wallet address. ${error.message}`
                 : error.message || 'Failed to connect wallet';
@@ -145,16 +137,31 @@ class ConnectWalletPage extends Component {
     redirectToDashboard = () => {
         const role = localStorage.getItem('role');
         if (role) {
-            console.log('Redirecting to role:', role.toLowerCase()); // Debug log
+            console.log('Redirecting to role:', role.toLowerCase());
 
-            if (role.toLowerCase() === 'municipality') {
-                this.props.router.push('/registration').catch(err => {
-                    console.error('Navigation error:', err);
-                });
-            } else if (role.toLowerCase() === 'manufacturer') {
-                this.props.router.push('/productionline').catch(err => {
-                    console.error('Navigation error:', err);
-                });
+            try {
+                switch (role.toLowerCase()) {
+                    case 'municipality':
+                        this.props.router.push('/registration');
+                        break;
+                    case 'manufacturer':
+                        this.props.router.push('/productionline');
+                        break;
+                    case 'labassistant':
+                        this.props.router.push('/lab');
+                        break;
+                    default:
+                        console.error('Unknown role:', role);
+                        break;
+                }
+            } catch (err) {
+                console.error('Navigation error:', err);
+                // Fallback to window.location if router.push fails
+                const path = role.toLowerCase() === 'municipality' ? '/registration'
+                    : role.toLowerCase() === 'manufacturer' ? '/productionline'
+                        : role.toLowerCase() === 'labassistant' ? '/lab'
+                            : '/';
+                window.location.href = path;
             }
         }
     };
@@ -170,7 +177,7 @@ class ConnectWalletPage extends Component {
                 <Grid textAlign='center' className="connect-wallet-grid" verticalAlign='middle' horizontalAlign='center' style={{ minWidth: '600px' }}>
                     <Grid.Column style={{ margin: '50px' }}>
                         <h2 className="connect-wallet-header">
-                            <Icon name='plug' style={{ color: '#0ea432' }}/>
+                            <Icon name='plug' style={{ color: '#0ea432' }} />
                             Connect Your Wallet
                         </h2>
 

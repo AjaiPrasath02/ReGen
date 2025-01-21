@@ -5,7 +5,8 @@ import { Menu, Form, Button, Message, Grid, Dropdown } from 'semantic-ui-react';
 const roleOptions = [
     { key: 'm', text: 'Municipality', value: 'municipality' },
     { key: 'mf', text: 'Manufacturer', value: 'manufacturer' },
-    { key: 't', text: 'Technician', value: 'technician' }
+    { key: 't', text: 'Technician', value: 'technician' },
+    { key: 'l', text: 'Lab Assistant', value: 'labassistant' }
 ];
 
 const styles = {
@@ -191,7 +192,7 @@ class LoginPage extends Component {
                                         name="role"
                                         value={role}
                                         onChange={this.handleRoleChange}
-                                        style={{fontSize: '0.8em', color: 'black'}}
+                                        style={{ fontSize: '0.8em', color: 'black' }}
                                         required
                                     />
                                 </Form.Field>

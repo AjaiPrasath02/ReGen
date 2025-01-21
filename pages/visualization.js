@@ -68,8 +68,8 @@ const Visualization = () => {
                 rel="stylesheet"
                 href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
             />
-            <div style={{ 
-                display: 'flex', 
+            <div style={{
+                display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 margin: '1em 0'
@@ -96,7 +96,7 @@ const Visualization = () => {
                         </div>
 
                         <Grid columns={2} stackable>
-                            <Grid.Column>
+                            <Grid.Column width={7}>
                                 <div className="components-list">
                                     {selectedCpu.components.map((component, compIndex) => (
                                         <div className="component-item" key={compIndex}>
@@ -116,7 +116,7 @@ const Visualization = () => {
                                 </div>
                             </Grid.Column>
 
-                            <Grid.Column>
+                            <Grid.Column width={9}>
                                 <div className="component-graph">
                                     <h3>Component Status Distribution</h3>
                                     <ResponsiveContainer width="100%" height={400}>
