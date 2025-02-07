@@ -7,7 +7,9 @@ import {
     Grid,
     Input,
     Segment,
-    Header
+    Header,
+    Table,
+    Modal
 } from "semantic-ui-react";
 import web3 from "../ethereum/web3";
 import cpuContract from "../ethereum/cpuProduction";
@@ -45,6 +47,10 @@ class TechnicianPage extends Component {
             cpuSerial: "",
             cpuStatus: "",
             productionDate: "",
+            complaints: [],
+            loadingComplaints: false,
+            showComplaintsModal: false,
+            resolvingComplaint: false
         };
     }
 
@@ -272,6 +278,52 @@ class TechnicianPage extends Component {
         });
     };
 
+    fetchComplaints = async () => {
+        try {
+            this.setState({ loadingComplaints: true });
+            const response = await fetch('http://localhost:4000/api/complaints/pending', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch complaints');
+            }
+
+            const complaints = await response.json();
+            this.setState({ complaints });
+        } catch (error) {
+            console.error('Error fetching complaints:', error);
+        } finally {
+            this.setState({ loadingComplaints: false });
+        }
+    };
+
+    handleResolveComplaint = async (complaintId) => {
+        try {
+            this.setState({ resolvingComplaint: true });
+            const response = await fetch(`http://localhost:4000/api/complaints/resolve/${complaintId}`, {
+                method: 'PATCH',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to resolve complaint');
+            }
+
+            // Refresh complaints list
+            await this.fetchComplaints();
+            this.setState({ successMessage: 'Complaint resolved successfully' });
+        } catch (error) {
+            this.setState({ errorMessage: error.message });
+        } finally {
+            this.setState({ resolvingComplaint: false });
+        }
+    };
+
     render() {
         const {
             components,
@@ -282,6 +334,9 @@ class TechnicianPage extends Component {
             errorMessage,
             successMessage,
             loadingButton,
+            complaints,
+            loadingComplaints,
+            showComplaintsModal
         } = this.state;
 
         return (
@@ -291,9 +346,20 @@ class TechnicianPage extends Component {
                     href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
                 />
 
-                <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
-                    Technician - Update/Remove Components
-                </Header>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1em' }}>
+                    <Header as="h1" textAlign="center" style={{ marginTop: "1em", flex: 1 }}>
+                        Technician - Update/Remove Components
+                    </Header>
+                    <Button
+                        icon="warning circle"
+                        content="View Reported Issues"
+                        color="orange"
+                        onClick={() => {
+                            this.setState({ showComplaintsModal: true });
+                            this.fetchComplaints();
+                        }}
+                    />
+                </div>
 
                 {/* Add Back Button when QR is scanned */}
                 {qrScanned && (
@@ -505,6 +571,66 @@ class TechnicianPage extends Component {
                         )}
                     </Grid.Column>
                 </Grid>
+
+                {/* Add Complaints Modal */}
+                <Modal
+                    open={showComplaintsModal}
+                    onClose={() => this.setState({ showComplaintsModal: false })}
+                    size="large"
+                >
+                    <Modal.Header>Reported CPU Issues</Modal.Header>
+                    <Modal.Content>
+                        {loadingComplaints ? (
+                            <div>Loading complaints...</div>
+                        ) : complaints.length === 0 ? (
+                            <div>No pending issues reported</div>
+                        ) : (
+                            <Table celled>
+                                <Table.Header>
+                                    <Table.Row>
+                                        <Table.HeaderCell>CPU Model</Table.HeaderCell>
+                                        <Table.HeaderCell>Serial Number</Table.HeaderCell>
+                                        <Table.HeaderCell>Issue Description</Table.HeaderCell>
+                                        <Table.HeaderCell>Reported By</Table.HeaderCell>
+                                        <Table.HeaderCell>Date</Table.HeaderCell>
+                                        <Table.HeaderCell>Action</Table.HeaderCell>
+                                    </Table.Row>
+                                </Table.Header>
+
+                                <Table.Body>
+                                    {complaints.map(complaint => (
+                                        <Table.Row key={complaint._id}>
+                                            <Table.Cell>{complaint.modelName}</Table.Cell>
+                                            <Table.Cell>{complaint.serialNumber}</Table.Cell>
+                                            <Table.Cell>{complaint.message}</Table.Cell>
+                                            <Table.Cell>{complaint.labAssistantName}</Table.Cell>
+                                            <Table.Cell>
+                                                {new Date(complaint.createdAt).toLocaleDateString()}
+                                            </Table.Cell>
+                                            <Table.Cell>
+                                                <Button
+                                                    color="green"
+                                                    onClick={() => this.handleResolveComplaint(complaint._id)}
+                                                    loading={this.state.resolvingComplaint}
+                                                >
+                                                    Mark as Resolved
+                                                </Button>
+                                            </Table.Cell>
+                                        </Table.Row>
+                                    ))}
+                                </Table.Body>
+                            </Table>
+                        )}
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button
+                            color="black"
+                            onClick={() => this.setState({ showComplaintsModal: false })}
+                        >
+                            Close
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
             </Container>
         );
     }

@@ -2,9 +2,8 @@
   "/_app": "pages/_app.js",
   "/_error": "pages/_error.js",
   "/_document": "pages/_document.js",
+  "/": "pages/index.js",
+  "/connect-wallet": "pages/connect-wallet.js",
   "/login": "pages/login.js",
-  "/lab": "pages/lab.js",
-  "/recycler": "pages/recycler.js",
-  "/registration": "pages/registration.js",
-  "/connect-wallet": "pages/connect-wallet.js"
+  "/productionline": "pages/productionline.js"
 }

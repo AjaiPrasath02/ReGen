@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Header, Form, Input, Button, Message, Segment, Grid } from 'semantic-ui-react';
+import { Container, Header, Form, Input, Button, Message, Segment, Grid, Modal, TextArea } from 'semantic-ui-react';
 import { withRouter } from 'next/router';
 import web3 from "../ethereum/web3";
 import cpuContract from "../ethereum/cpuProduction";
@@ -25,6 +25,9 @@ class LabPage extends Component {
             cpuSerial: "",
             cpuStatus: "",
             productionDate: "",
+            isModalOpen: false,
+            complaintMessage: "",
+            submittingComplaint: false
         };
     }
 
@@ -133,6 +136,73 @@ class LabPage extends Component {
         });
     };
 
+    handleOpenModal = () => {
+        this.setState({ isModalOpen: true });
+    }
+
+    handleCloseModal = () => {
+        this.setState({ isModalOpen: false, complaintMessage: "", errorMessage: "" });
+    }
+      
+    handleSubmitComplaint = async () => {
+        const { cpuAddress, cpuModel, cpuSerial, complaintMessage } = this.state;
+
+        try {
+            if (!cpuAddress || !cpuModel || !cpuSerial || !complaintMessage) {
+                throw new Error('All fields are required');
+            }
+
+            this.setState({ submittingComplaint: true });
+
+            const labAssistantName = localStorage.getItem('userName');
+
+            console.log('Sending complaint data:', {
+                cpuAddress,
+                modelName: cpuModel,
+                serialNumber: cpuSerial,
+                message: complaintMessage,
+                labAssistantName: labAssistantName
+            });
+
+            const response = await fetch('http://localhost:4000/api/complaints/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    cpuAddress,
+                    modelName: cpuModel,
+                    serialNumber: cpuSerial,
+                    message: complaintMessage,
+                    labAssistantName: labAssistantName
+                })
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json();
+                throw new Error(errorData.error || 'Failed to submit complaint' );
+            }
+
+            const data = await response.json();
+            console.log('Response:', data);
+
+            this.setState({
+                successMessage: "Complaint submitted successfully",
+                isModalOpen: false,
+                complaintMessage: ""
+            });
+
+        } catch (error) {
+            console.error('Error submitting complaint:', error);
+            this.setState({
+                errorMessage: error.message || 'Error submitting the issue, check if resubmitted issue (not allowed)'
+            });
+        } finally {
+            this.setState({ submittingComplaint: false });
+        }
+    }
+
     render() {
         const {
             components,
@@ -155,13 +225,21 @@ class LabPage extends Component {
                 </Header>
 
                 {qrScanned && (
-                    <Button
-                        icon="arrow left"
-                        content="Back to Scanner"
-                        color="blue"
-                        onClick={this.handleBack}
-                        style={{ marginBottom: "1em" }}
-                    />
+                    <div style={{ marginBottom: "1em" }}>
+                        <Button
+                            icon="arrow left"
+                            content="Back to Scanner"
+                            color="blue"
+                            onClick={this.handleBack}
+                            style={{ marginRight: "1em" }}
+                        />
+                        <Button
+                            icon="warning circle"
+                            content="Report Issue"
+                            color="red"
+                            onClick={this.handleOpenModal}
+                        />
+                    </div>
                 )}
 
                 <Grid centered style={{ marginTop: "2em" }}>
@@ -264,6 +342,54 @@ class LabPage extends Component {
                         )}
                     </Grid.Column>
                 </Grid>
+
+                <Modal
+                    open={this.state.isModalOpen}
+                    onClose={this.handleCloseModal}
+                    size="small"
+                >
+                    <Modal.Header>Report CPU Issue</Modal.Header>
+                    <Modal.Content>
+                        {this.state.errorMessage && (
+                            <Message error>
+                                {this.state.errorMessage}
+                            </Message>
+                        )}
+                        <Form>
+                            <Form.Field>
+                                <label>CPU Model</label>
+                                <Input value={cpuModel} readOnly />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Serial Number</label>
+                                <Input value={cpuSerial} readOnly />
+                            </Form.Field>
+                            <Form.Field>
+                                <label>Issue Description</label>
+                                <TextArea
+                                    placeholder="Describe the issue..."
+                                    value={this.state.complaintMessage}
+                                    onChange={(e) => this.setState({ complaintMessage: e.target.value })}
+                                    style={{ minHeight: 100 }}
+                                />
+                            </Form.Field>
+                        </Form>
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button color='black' onClick={this.handleCloseModal}>
+                            Cancel
+                        </Button>
+                        <Button
+                            positive
+                            icon='checkmark'
+                            labelPosition='right'
+                            content='Submit'
+                            onClick={this.handleSubmitComplaint}
+                            loading={this.state.submittingComplaint}
+                            disabled={!this.state.complaintMessage.trim()}
+                        />
+                    </Modal.Actions>
+                </Modal>
             </Container>
         );
     }
