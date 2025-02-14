@@ -52,8 +52,10 @@ class RegistrationPage extends Component {
             labAssistantLocation: '',
             labAssistantEmail: '',
             labAssistantPassword: '',
+            labNumber: '',
         };
     }
+
 
     componentDidMount = async () => {
         try {
@@ -305,7 +307,7 @@ class RegistrationPage extends Component {
         event.preventDefault();
         this.setState({ loading: true });
 
-        try {
+        try {            
             // Skip blockchain registration and only register in MongoDB
             const response = await fetch('http://localhost:4000/api/user/signup', {
                 method: 'POST',
@@ -318,7 +320,8 @@ class RegistrationPage extends Component {
                     name: this.state.labAssistantName,
                     role: 'labassistant',
                     walletAddress: this.state.labAssistantAddr,
-                    location: this.state.labAssistantLocation
+                    location: this.state.labAssistantLocation,
+                    labNumber: this.state.labNumber
                 })
             });
 
@@ -326,6 +329,21 @@ class RegistrationPage extends Component {
                 const data = await response.json();
                 throw new Error(data.error);
             }
+            
+            const accounts = await web3.eth.getAccounts();
+            if (!accounts[0]) {
+                throw new Error('No wallet connected');
+            }
+
+            // First register on blockchain
+            await registerContract.methods
+                .registerLabAssistant(
+                    this.state.labAssistantAddr,
+                    this.state.labAssistantLocation,
+                    this.state.labAssistantName,
+                    this.state.labNumber
+                )
+                .send({ from: accounts[0] });
 
             this.setState({
                 success: { ...this.state.success, labAssistant: true },
@@ -373,7 +391,8 @@ class RegistrationPage extends Component {
             labAssistantAddr,
             labAssistantLocation,
             labAssistantEmail,
-            labAssistantPassword
+            labAssistantPassword,
+            labNumber
         } = this.state;
 
         return (
@@ -615,6 +634,13 @@ class RegistrationPage extends Component {
                                                 <Input
                                                     value={labAssistantLocation}
                                                     onChange={event => this.setState({ labAssistantLocation: event.target.value })}
+                                                />
+                                            </Form.Field>
+                                            <Form.Field>
+                                                <label className="left-aligned-label">Lab Number</label>
+                                                <Input
+                                                    value={labNumber}
+                                                    onChange={event => this.setState({ labNumber: event.target.value })}
                                                 />
                                             </Form.Field>
 

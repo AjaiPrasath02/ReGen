@@ -7,7 +7,8 @@ import web3 from './web3';
 import register from './build/newRegister.json'; 
 const instance = new web3.eth.Contract(
     register.abi,
-    '0xF804b9f3b3cf54738C435F9055A4B09423C61c81'
+    '0x6b2e6052d10fc6865F0504d94C18fF41970E7C23'
+    // '0xF804b9f3b3cf54738C435F9055A4B09423C61c81'
     // '0x55cC96dDBE947f14bd3472eDa1ce70aDF32A9322'
     // '0x24eaCB0b427C5312A53e259718FfCdB89317Ad96'
     //  '0xe1E62A4956A0aAD7ff4bBb08d881dF80CdeBA229'

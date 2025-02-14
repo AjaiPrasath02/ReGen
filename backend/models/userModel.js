@@ -6,96 +6,119 @@ const validator = require('validator')
 const Schema = mongoose.Schema
 
 const userSchema = new Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    password: {
-        type: String,
-        required: true
-    },
-    name: {
-        type: String,
-        required: true
-    },
-    role: {
-        type: String,
-        required: true,
-        enum: ['municipality', 'manufacturer', 'technician', 'labassistant']
-    },
-    walletAddress: {
-        type: String,
-        required: true
-    },
-    location: {
-        type: String,
-        required: true
-    }
-})
+  email: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  },
+  name: {
+    type: String,
+    required: true
+  },
+  role: {
+    type: String,
+    required: true,
+    enum: ['municipality', 'manufacturer', 'technician', 'labassistant']
+  },
+  walletAddress: {
+    type: String,
+    required: true
+  },
+  location: {
+    type: String,
+    required: true
+  },
+  labNumber: {
+    type: String,
+    // labNumber is required only if role === 'labassistant'
+    required: [
+      function() {
+        return this.role === 'labassistant';
+      },
+      'labNumber is required for labassistant role'
+    ]
+  }
+});
 
 // static login method
 userSchema.statics.login = async function (email, password, role) {
-    if (!email || !password || !role) {
-        throw Error('All fields must be filled');
-    }
+  if (!email || !password || !role) {
+    throw Error('All fields must be filled');
+  }
 
-    const user = await this.findOne({ email });
-    if (!user) {
-        throw Error('Incorrect email');
-    }
+  const user = await this.findOne({ email });
+  if (!user) {
+    throw Error('Incorrect email');
+  }
 
-    if (user.role !== role) {
-        throw Error('Invalid role for this user');
-    }
+  if (user.role !== role) {
+    throw Error('Invalid role for this user');
+  }
 
-    const match = await bcrypt.compare(password, user.password);
-    if (!match) {
-        throw Error('Incorrect password');
-    }
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    throw Error('Incorrect password');
+  }
 
-    return user;
+  return user;
 }
 
 // static signup method
-userSchema.statics.signup = async function(email, password, name, role, walletAddress, location) {
-    // Validate all required fields
-    if (!email || !password || !name || !role || !walletAddress || !location) {
-        throw Error('All fields must be filled')
-    }
+userSchema.statics.signup = async function(email, password, name, role, walletAddress, location, labNumber) {
+  // Validate all required fields
+  if (!email || !password || !name || !role || !walletAddress || !location) {
+    throw Error('All fields must be filled');
+  }
 
-    // Validate email format
-    if (!validator.isEmail(email)) {
-        throw Error('Email is not valid')
-    }
+  // For the lab assistant, we check labNumber as well
+  if (role === 'labassistant' && !labNumber) {
+    throw Error('Lab number is required for labassistant role');
+  }
 
-    // Check if email already exists
-    const exists = await this.findOne({ email })
-    if (exists) {
-        throw Error('Email already in use')
-    }
+  // Validate email format
+  if (!validator.isEmail(email)) {
+    throw Error('Email is not valid');
+  }
 
-    // Validate role
-    const validRoles = ['municipality', 'manufacturer', 'technician', 'labassistant'];
-    if (!validRoles.includes(role)) {
-        throw Error('Invalid role')
-    }
+  // Check if email already exists
+  const exists = await this.findOne({ email });
+  if (exists) {
+    throw Error('Email already in use');
+  }
 
-    // Hash password
-    const salt = await bcrypt.genSalt(10)
-    const hash = await bcrypt.hash(password, salt)
+  // Validate role
+  const validRoles = ['municipality', 'manufacturer', 'technician', 'labassistant'];
+  if (!validRoles.includes(role)) {
+    throw Error('Invalid role');
+  }
 
-    // Create user with all fields
-    const user = await this.create({ 
-        email, 
-        password: hash, 
-        name, 
-        role, 
-        walletAddress,
-        location 
-    })
+  // Hash password
+  const salt = await bcrypt.genSalt(10);
+  const hash = await bcrypt.hash(password, salt);
 
-    return user
+  // Build the user object
+  const userData = {
+    email,
+    password: hash,
+    name,
+    role,
+    walletAddress,
+    location,
+  };
+
+  // Conditionally add labNumber only if role is labassistant
+  if (role === 'labassistant') {
+    userData.labNumber = labNumber;
+  }
+
+  // Create the user with all relevant fields
+  const user = await this.create(userData);
+
+  return user;
 }
 
-module.exports = mongoose.model('User', userSchema)
+module.exports = mongoose.model('User', userSchema);
