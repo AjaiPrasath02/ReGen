@@ -1,0 +1,8 @@
+{
+    "name": "recyclechain-root",
+    "version": "1.0.0",
+    "scripts": {
+        "open": "start start.bat",
+        "install": "start install.bat"
+    }
+}
