@@ -5,6 +5,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes')
 const feedbackRoutes = require('./routes/feedbackRoutes')
 const complaintRoutes = require('./routes/complaintRoutes')
+require('dotenv').config()
 
 app.use(express.json());
 app.use(cors());
@@ -17,9 +18,9 @@ app.get('/', (req, res) => {
     res.send("Hello World");
 });
 
-mongoose.connect('mongodb+srv://Regen:Regen123@regen.f3lre.mongodb.net/?retryWrites=true&w=majority&appName=regen').then(() => {
-    app.listen(4000, () => {
-        console.log('Server is running on port 4000')
+mongoose.connect(process.env.MONGO_URI).then(() => {
+    app.listen(process.env.PORT, () => {
+        console.log('Server is running on port', process.env.PORT)
     })
 }).catch((error) => {
     console.log("Failed to start server");

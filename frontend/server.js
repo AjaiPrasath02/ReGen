@@ -1,6 +1,7 @@
 /*
 Purpose: Boots up and tells app to use routes.js to navigate 
 */
+require('dotenv').config();
 const { createServer } = require('http');
 const next = require('next');
 

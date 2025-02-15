@@ -15,7 +15,7 @@
     "@marketsystems/nextjs13-appdir-breadcrumbs": "^1.0.4",
     "axios": "^1.6.8",
     "chart.js": "^2.9.4",
-    "dotenv": "^8.2.0",
+    "dotenv": "^8.6.0",
     "eth-revert-reason": "^1.0.3",
     "fs-extra": "^9.0.1",
     "ganache-cli": "^6.12.1",

@@ -13,7 +13,7 @@ const requireAuth = async (req, res, next) => {
 
     try {
         console.log("Token verification part: ", token)
-        const { _id } = jwt.verify(token, "hcbkscsdcuosdcoopscind") // SECRET in userController jwt
+        const { _id } = jwt.verify(token, process.env.JWT_SECRET)
         req.user = await User.findOne({ _id }).select('_id')
         next()
 
