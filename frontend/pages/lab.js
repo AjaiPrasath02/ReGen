@@ -6,6 +6,7 @@ import cpuContract from "../ethereum/cpuProduction";
 import dynamic from "next/dynamic";
 import QrScanner from "qr-scanner";
 import AllCPUs from "../components/CPUsTable";
+import registerContract from "../ethereum/Register";
 
 const QrReader = dynamic(() => import("react-qr-reader"), { ssr: false });
 
@@ -24,6 +25,8 @@ class LabPage extends Component {
             cpuModel: "",
             cpuSerial: "",
             cpuStatus: "",
+            cpuLabNumber: "",
+            labAssistantLabNumber: "",
             productionDate: "",
             isModalOpen: false,
             complaintMessage: "",
@@ -57,6 +60,12 @@ class LabPage extends Component {
                 this.props.router.push('/connect-wallet');
                 return;
             }
+            const labDetails = await registerContract.methods.getLabAssistantDetails(accounts[0]).call();
+            console.log("Lab Details:", labDetails[3]);
+            this.setState({
+                labAssistantLabNumber: labDetails[3],
+            });
+
 
             this.setState({
                 isAuthenticated: true,
@@ -111,6 +120,7 @@ class LabPage extends Component {
                     cpuModel: cpuDetails.modelName,
                     cpuSerial: cpuDetails.serialNumber,
                     cpuStatus: cpuDetails.status,
+                    cpuLabNumber: cpuDetails.labNumber,
                     components: cpuDetails.components,
                     productionDate: new Date(parseInt(cpuDetails.productionDate) * 1000).toLocaleDateString()
                 });
@@ -132,7 +142,8 @@ class LabPage extends Component {
             cpuStatus: "",
             components: [],
             productionDate: "",
-            errorMessage: ""
+            errorMessage: "",
+            cpuLabNumber: ""
         });
     };
 
@@ -211,6 +222,8 @@ class LabPage extends Component {
             cpuSerial,
             cpuStatus,
             errorMessage,
+            cpuLabNumber,
+            labAssistantLabNumber
         } = this.state;
 
         return (
@@ -275,7 +288,7 @@ class LabPage extends Component {
                                         </Grid.Column>
 
                                         <Grid.Column>
-                                            <AllCPUs />
+                                            <AllCPUs cpuLabNumber={labAssistantLabNumber} />
                                         </Grid.Column>
                                     </Grid.Row>
                                 </Grid>
@@ -284,6 +297,10 @@ class LabPage extends Component {
                             <>
                                 <Form>
                                     <Form.Group widths="equal">
+                                        <Form.Field>
+                                            <label>Lab Number</label>
+                                            <Input readOnly value={cpuLabNumber} />
+                                        </Form.Field>
                                         <Form.Field>
                                             <label>Model</label>
                                             <Input readOnly value={cpuModel} />

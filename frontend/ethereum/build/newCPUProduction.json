@@ -41,6 +41,12 @@
                 },
                 {
                     "indexed": false,
+                    "internalType": "string",
+                    "name": "labNumber",
+                    "type": "string"
+                },
+                {
+                    "indexed": false,
                     "internalType": "uint256",
                     "name": "time",
                     "type": "uint256"
@@ -162,6 +168,170 @@
             "type": "event"
         },
         {
+            "anonymous": false,
+            "inputs": [
+                {
+                    "indexed": true,
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "indexed": false,
+                    "internalType": "string",
+                    "name": "newLabNumber",
+                    "type": "string"
+                }
+            ],
+            "name": "LabNumberUpdated",
+            "type": "event"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "registerContractAddr",
+                    "type": "address"
+                },
+                {
+                    "components": [
+                        {
+                            "internalType": "string",
+                            "name": "modelName",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "serialNumber",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "productionDate",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "labNumber",
+                            "type": "string"
+                        }
+                    ],
+                    "internalType": "struct EWasteProduction.CPUDetails",
+                    "name": "cpuDetails",
+                    "type": "tuple"
+                },
+                {
+                    "components": [
+                        {
+                            "internalType": "string",
+                            "name": "componentType",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "details",
+                            "type": "string"
+                        }
+                    ],
+                    "internalType": "struct EWasteProduction.ComponentInput[]",
+                    "name": "components",
+                    "type": "tuple[]"
+                }
+            ],
+            "name": "registerCPUWithComponents",
+            "outputs": [
+                {
+                    "internalType": "address",
+                    "name": "",
+                    "type": "address"
+                }
+            ],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "componentIndex",
+                    "type": "uint256"
+                }
+            ],
+            "name": "removeComponent",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "uint256",
+                    "name": "componentIndex",
+                    "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "newStatus",
+                    "type": "string"
+                },
+                {
+                    "internalType": "string",
+                    "name": "newDetails",
+                    "type": "string"
+                }
+            ],
+            "name": "updateComponent",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "newStatus",
+                    "type": "string"
+                }
+            ],
+            "name": "updateCPUStatus",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                },
+                {
+                    "internalType": "string",
+                    "name": "newLabNumber",
+                    "type": "string"
+                }
+            ],
+            "name": "updateLabNumber",
+            "outputs": [],
+            "stateMutability": "nonpayable",
+            "type": "function"
+        },
+        {
             "inputs": [
                 {
                     "internalType": "uint256",
@@ -256,6 +426,11 @@
                             "type": "uint256"
                         },
                         {
+                            "internalType": "string",
+                            "name": "labNumber",
+                            "type": "string"
+                        },
+                        {
                             "components": [
                                 {
                                     "internalType": "uint256",
@@ -291,118 +466,6 @@
                     "internalType": "struct EWasteProduction.CPU[]",
                     "name": "",
                     "type": "tuple[]"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "cpuAddress",
-                    "type": "address"
-                }
-            ],
-            "name": "getCPU",
-            "outputs": [
-                {
-                    "components": [
-                        {
-                            "internalType": "string",
-                            "name": "modelName",
-                            "type": "string"
-                        },
-                        {
-                            "internalType": "string",
-                            "name": "serialNumber",
-                            "type": "string"
-                        },
-                        {
-                            "internalType": "string",
-                            "name": "status",
-                            "type": "string"
-                        },
-                        {
-                            "internalType": "uint256",
-                            "name": "productionDate",
-                            "type": "uint256"
-                        },
-                        {
-                            "internalType": "address",
-                            "name": "cpuAddress",
-                            "type": "address"
-                        },
-                        {
-                            "internalType": "uint256",
-                            "name": "manufacturerID",
-                            "type": "uint256"
-                        },
-                        {
-                            "components": [
-                                {
-                                    "internalType": "uint256",
-                                    "name": "componentID",
-                                    "type": "uint256"
-                                },
-                                {
-                                    "internalType": "string",
-                                    "name": "componentType",
-                                    "type": "string"
-                                },
-                                {
-                                    "internalType": "string",
-                                    "name": "details",
-                                    "type": "string"
-                                },
-                                {
-                                    "internalType": "string",
-                                    "name": "status",
-                                    "type": "string"
-                                },
-                                {
-                                    "internalType": "address",
-                                    "name": "cpuAddress",
-                                    "type": "address"
-                                }
-                            ],
-                            "internalType": "struct EWasteProduction.Component[]",
-                            "name": "components",
-                            "type": "tuple[]"
-                        }
-                    ],
-                    "internalType": "struct EWasteProduction.CPU",
-                    "name": "",
-                    "type": "tuple"
-                }
-            ],
-            "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "uint256",
-                    "name": "manufacturerID",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "string",
-                    "name": "modelName",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "serialNumber",
-                    "type": "string"
-                }
-            ],
-            "name": "getCPUAddress",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
                 }
             ],
             "stateMutability": "view",
@@ -455,6 +518,94 @@
             "type": "function"
         },
         {
+            "inputs": [
+                {
+                    "internalType": "address",
+                    "name": "cpuAddress",
+                    "type": "address"
+                }
+            ],
+            "name": "getCPU",
+            "outputs": [
+                {
+                    "components": [
+                        {
+                            "internalType": "string",
+                            "name": "modelName",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "serialNumber",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "status",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "productionDate",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "cpuAddress",
+                            "type": "address"
+                        },
+                        {
+                            "internalType": "uint256",
+                            "name": "manufacturerID",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "labNumber",
+                            "type": "string"
+                        },
+                        {
+                            "components": [
+                                {
+                                    "internalType": "uint256",
+                                    "name": "componentID",
+                                    "type": "uint256"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "componentType",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "details",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "string",
+                                    "name": "status",
+                                    "type": "string"
+                                },
+                                {
+                                    "internalType": "address",
+                                    "name": "cpuAddress",
+                                    "type": "address"
+                                }
+                            ],
+                            "internalType": "struct EWasteProduction.Component[]",
+                            "name": "components",
+                            "type": "tuple[]"
+                        }
+                    ],
+                    "internalType": "struct EWasteProduction.CPU",
+                    "name": "",
+                    "type": "tuple"
+                }
+            ],
+            "stateMutability": "view",
+            "type": "function"
+        },
+        {
             "inputs": [],
             "name": "manufacturingEntity",
             "outputs": [
@@ -465,50 +616,6 @@
                 }
             ],
             "stateMutability": "view",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "registerContractAddr",
-                    "type": "address"
-                },
-                {
-                    "internalType": "string",
-                    "name": "modelName",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "serialNumber",
-                    "type": "string"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "productionDate",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "string[]",
-                    "name": "componentTypes",
-                    "type": "string[]"
-                },
-                {
-                    "internalType": "string[]",
-                    "name": "componentDetails",
-                    "type": "string[]"
-                }
-            ],
-            "name": "registerCPUWithComponents",
-            "outputs": [
-                {
-                    "internalType": "address",
-                    "name": "",
-                    "type": "address"
-                }
-            ],
-            "stateMutability": "nonpayable",
             "type": "function"
         },
         {
@@ -550,75 +657,15 @@
                     "internalType": "uint256",
                     "name": "manufacturerID",
                     "type": "uint256"
+                },
+                {
+                    "internalType": "string",
+                    "name": "labNumber",
+                    "type": "string"
                 }
             ],
             "stateMutability": "view",
             "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "cpuAddress",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "componentIndex",
-                    "type": "uint256"
-                }
-            ],
-            "name": "removeComponent",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "cpuAddress",
-                    "type": "address"
-                },
-                {
-                    "internalType": "string",
-                    "name": "newStatus",
-                    "type": "string"
-                }
-            ],
-            "name": "updateCPUStatus",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
-        },
-        {
-            "inputs": [
-                {
-                    "internalType": "address",
-                    "name": "cpuAddress",
-                    "type": "address"
-                },
-                {
-                    "internalType": "uint256",
-                    "name": "componentIndex",
-                    "type": "uint256"
-                },
-                {
-                    "internalType": "string",
-                    "name": "newStatus",
-                    "type": "string"
-                },
-                {
-                    "internalType": "string",
-                    "name": "newDetails",
-                    "type": "string"
-                }
-            ],
-            "name": "updateComponent",
-            "outputs": [],
-            "stateMutability": "nonpayable",
-            "type": "function"
         }
-    ]
-    
+    ]    
 }

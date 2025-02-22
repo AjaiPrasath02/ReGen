@@ -9,9 +9,9 @@ import {
 } from "semantic-ui-react";
 import web3 from "../ethereum/web3";
 import cpuContract from "../ethereum/cpuProduction"; // Updated contract
-import registerSC from "../ethereum/register";
-import dynamic from "next/dynamic";
-const QrCode = dynamic(() => import("react.qrcode.generator"), { ssr: false });
+// import dynamic from "next/dynamic";
+// const QrCode = dynamic(() => import("react.qrcode.generator"), { ssr: false });
+import { QRCodeSVG } from "qrcode.react";
 import Layout from "../components/Layout";
 import { withRouter } from "next/router";
 
@@ -29,10 +29,12 @@ class ManufacturingMachinePage extends Component {
     super(props);
     this.state = {
       // registerSCAddress: "0x55cC96dDBE947f14bd3472eDa1ce70aDF32A9322" ,//old
-      registerSCAddress: "0xF804b9f3b3cf54738C435F9055A4B09423C61c81",
+      // registerSCAddress: "0xF804b9f3b3cf54738C435F9055A4B09423C61c81", //old
+      registerSCAddress: "0x6b2e6052d10fc6865F0504d94C18fF41970E7C23", //new
       modelName: "",
       serialNumber: "",
       productionDate: "",
+      labNumber: "",
       componentDetails: {
         Processor: "",
         RAM: "",
@@ -41,6 +43,8 @@ class ManufacturingMachinePage extends Component {
         PSU: "",
       },
       cpuQR: "",
+      // qrKey: "",
+      // qrReady: false,
       errorMessage: "",
       successMessage: "",
       loading: false,
@@ -49,6 +53,7 @@ class ManufacturingMachinePage extends Component {
       userRole: null,
       userAddress: "",
     };
+    this.qrContainerRef = React.createRef();
   }
 
   componentDidMount = async () => {
@@ -133,9 +138,9 @@ class ManufacturingMachinePage extends Component {
       return;
     }
 
-    this.setState({ 
-      loading: true, 
-      errorMessage: "", 
+    this.setState({
+      loading: true,
+      errorMessage: "",
       successMessage: "",
       cpuQR: "" // Clear the previous QR code before new registration
     });
@@ -146,6 +151,7 @@ class ManufacturingMachinePage extends Component {
       productionDate,
       componentDetails,
       registerSCAddress,
+      labNumber,
     } = this.state;
 
     try {
@@ -158,14 +164,22 @@ class ManufacturingMachinePage extends Component {
       // Convert date string to Unix timestamp (seconds since epoch)
       const dateTimestamp = Math.floor(new Date(productionDate).getTime() / 1000);
 
+      const cpuDetails = {
+        modelName: modelName,
+        serialNumber: serialNumber,
+        productionDate: dateTimestamp, // Assuming this represents the production date
+        labNumber: labNumber, // Add this variable if you have it
+      };
+
+      const components = componentTypes.map((type, index) => ({
+        componentType: type,
+        details: componentDetailsArray[index],
+      }));
       const result = await cpuContract.methods
         .registerCPUWithComponents(
           registerSCAddress,
-          modelName,
-          serialNumber,
-          dateTimestamp, // Now sending proper Unix timestamp
-          componentTypes,
-          componentDetailsArray
+          cpuDetails,
+          components
         )
         .send({ from: accounts[0] });
       // Extract the `cpuAddress` from the emitted event
@@ -175,10 +189,17 @@ class ManufacturingMachinePage extends Component {
       console.log("CPU Address:", cpuQR);
 
       // Update state with new QR code and success message
-      this.setState({ 
+      // this.setState({
+      //   cpuQR,
+      //   successMessage: "CPU registered successfully!"
+      // });
+      this.setState({
         cpuQR,
-        successMessage: "CPU registered successfully!"
+        successMessage: "CPU registered successfully!",
+        // qrKey: Date.now(), // or any other unique value generator
+        // qrReady: false,
       });
+
 
     } catch (err) {
       this.setState({ errorMessage: err.message });
@@ -186,7 +207,30 @@ class ManufacturingMachinePage extends Component {
       this.setState({ loading: false });
     }
   };
+  handleDownload = () => {
+    // Get the SVG element by its id from the container
+    const svg = document.getElementById("qr-code");
+    if (!svg) return;
 
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    // Set canvas dimensions to SVG dimensions
+    canvas.width = svg.width.baseVal.value;
+    canvas.height = svg.height.baseVal.value;
+
+    const img = new Image();
+    img.onload = () => {
+      ctx.drawImage(img, 0, 0);
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = `CPU-QR-${this.state.serialNumber || "code"}.png`;
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
+  };
 
 
 
@@ -201,7 +245,7 @@ class ManufacturingMachinePage extends Component {
         />
         <Grid centered>
           <Grid.Column width={12}>
-            <h2 style={{textAlign:"center"}} >Register CPU with Components</h2>
+            <h2 style={{ textAlign: "center" }} >Register CPU with Components</h2>
             <Form
               onSubmit={this.registerCPUWithComponents}
               error={!!this.state.errorMessage}
@@ -228,6 +272,17 @@ class ManufacturingMachinePage extends Component {
               </Form.Field>
 
               <Form.Field>
+                <label>Lab Number:</label>
+                <Input
+                  placeholder="Enter Lab Number"
+                  value={this.state.labNumber}
+                  onChange={(e) =>
+                    this.setState({ labNumber: e.target.value })
+                  }
+                />
+              </Form.Field>
+
+              <Form.Field>
                 <label>Production Date:</label>
                 <Input
                   type="date" // Native HTML date picker
@@ -239,7 +294,7 @@ class ManufacturingMachinePage extends Component {
                 />
               </Form.Field>
 
-              <h2 style={{textAlign:"center"}} >Component Details</h2>
+              <h2 style={{ textAlign: "center" }} >Component Details</h2>
               {componentTypeOptions.map((option) => (
                 <Form.Field key={option.key}>
                   <label>{option.text} Details:</label>
@@ -271,17 +326,20 @@ class ManufacturingMachinePage extends Component {
               </Button></center>
             </Form>
 
-            {this.state.cpuQR && (
+            {/* {this.state.cpuQR && (
               <div style={{ marginTop: "20px", width: "100%", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column" }}>
                 <h2>{this.state.cpuQR}</h2>
                 <h4>CPU QR Code:</h4>
-                <div ref={(ref) => this.qrRef = ref}>
-                  <QrCode 
-                    value={this.state.cpuQR} 
-                    size={400}
-                    key={this.state.cpuQR} // Add key prop to force re-render
-                  />
-                </div>
+                {this.state.cpuQR && this.state.qrReady && (
+                  <div ref={(ref) => { this.qrRef = ref; }}>
+                    <QrCode
+                      value={this.state.cpuQR}
+                      size={400}
+                      // key={this.state.qrKey} // using a unique key to force remount
+                    />
+                  </div>
+                )}
+
                 <Button
                   style={{ marginTop: "10px" }}
                   color="green"
@@ -298,7 +356,35 @@ class ManufacturingMachinePage extends Component {
                   Download QR Code
                 </Button>
               </div>
-              )}
+            )} */}
+
+            {this.state.cpuQR && (
+              <div
+                style={{
+                  marginTop: "20px",
+                  display: "flex",
+                  flexDirection: "column",
+                  alignItems: "center",
+                }}
+              >
+                <h2>{this.state.cpuQR}</h2>
+                <h4>CPU QR Code:</h4>
+                <div ref={this.qrContainerRef}>
+                  <QRCodeSVG
+                    id="qr-code"
+                    value={this.state.cpuQR}
+                    size={256}
+                    level="H"
+                  />
+                </div>
+                <div style={{ marginTop: "10px" }}>
+                  <Button color="green" onClick={this.handleDownload}>
+                    Download QR Code
+                  </Button>
+                </div>
+              </div>
+            )}
+
           </Grid.Column>
         </Grid>
       </Container>

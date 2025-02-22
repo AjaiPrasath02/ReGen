@@ -26,7 +26,7 @@ class AllCPUs extends Component {
       });
 
 
-      
+
 
       console.log("Fetched CPU array:", cpus);
       this.setState({ cpus });
@@ -46,18 +46,26 @@ class AllCPUs extends Component {
   // Return the filtered list based on searchTerm
   getFilteredCPUs() {
     const { cpus, searchTerm } = this.state;
+    // const { labNumber } = this.props; // Get labNumber from props
     const lowerTerm = searchTerm.toLowerCase().trim();
 
-    // If no search term, show all
-    if (!lowerTerm) return cpus;
+    // If labNumber prop is provided, filter by labNumber
+    let filteredCPUs = cpus;
+    if (this.props.cpuLabNumber) {
+      filteredCPUs = filteredCPUs.filter(cpu => cpu.labNumber === this.props.cpuLabNumber);
+    }
+
+    // If no search term, show all filtered CPUs
+    if (!lowerTerm) return filteredCPUs;
 
     // Filter by modelName, serialNumber, or status
-    return cpus.filter((cpu) => {
-      const { modelName, serialNumber, status } = cpu;
+    return filteredCPUs.filter((cpu) => {
+      const { modelName, serialNumber, status, labNumber } = cpu;
       return (
         modelName?.toLowerCase().includes(lowerTerm) ||
         serialNumber?.toLowerCase().includes(lowerTerm) ||
-        status?.toLowerCase().startsWith(lowerTerm)
+        status?.toLowerCase().startsWith(lowerTerm) ||
+        (!this.props.cpuLabNumber && labNumber?.toLowerCase().includes(lowerTerm))
       );
     });
   }
@@ -65,6 +73,7 @@ class AllCPUs extends Component {
   renderRows(filteredCPUs) {
     return filteredCPUs.map((cpu, index) => (
       <Table.Row key={index}>
+        {!this.props.cpuLabNumber && <Table.Cell>{cpu.labNumber}</Table.Cell>}
         <Table.Cell>{cpu.modelName}</Table.Cell>
         <Table.Cell>{cpu.serialNumber}</Table.Cell>
         <Table.Cell>{cpu.status}</Table.Cell>
@@ -104,17 +113,18 @@ class AllCPUs extends Component {
 
           {/* Table */}
           <div style={{ maxHeight: "300px", minHeight: "280px", overflowY: "auto" }}>
-          <Table celled striped style={{ width: "100%" }} loading={loading.toString()}>
-            <Table.Header>
-              <Table.Row>
-                <Table.HeaderCell>Model</Table.HeaderCell>
-                <Table.HeaderCell>Serial Number</Table.HeaderCell>
-                <Table.HeaderCell>Status</Table.HeaderCell>
-              </Table.Row>
-            </Table.Header>
+            <Table celled striped style={{ width: "100%" }} loading={loading.toString()}>
+              <Table.Header>
+                <Table.Row>
+                  {!this.props.cpuLabNumber && <Table.HeaderCell>Lab Number</Table.HeaderCell>}
+                  <Table.HeaderCell>Model</Table.HeaderCell>
+                  <Table.HeaderCell>Serial Number</Table.HeaderCell>
+                  <Table.HeaderCell>Status</Table.HeaderCell>
+                </Table.Row>
+              </Table.Header>
 
-            <Table.Body>{this.renderRows(filteredCPUs)}</Table.Body>
-          </Table>
+              <Table.Body>{this.renderRows(filteredCPUs)}</Table.Body>
+            </Table>
           </div>
         </div>
       </Container>

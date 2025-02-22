@@ -46,6 +46,7 @@ class TechnicianPage extends Component {
             cpuModel: "",
             cpuSerial: "",
             cpuStatus: "",
+            cpuLabNumber: "",
             productionDate: "",
             complaints: [],
             loadingComplaints: false,
@@ -149,6 +150,7 @@ class TechnicianPage extends Component {
                     cpuSerial: cpuDetails.serialNumber,
                     cpuStatus: cpuDetails.status,
                     components: cpuDetails.components,
+                    cpuLabNumber: cpuDetails.labNumber,
                     productionDate: new Date(parseInt(cpuDetails.productionDate) * 1000).toLocaleDateString()
                 });
             } else {
@@ -171,6 +173,40 @@ class TechnicianPage extends Component {
             return { components: updatedComponents };
         });
     };
+
+    changeLabNumber = async () => {
+        const { cpuAddress, cpuLabNumber } = this.state;
+        try {
+          this.setState({
+            loadingButton: "updateLabNumber",
+            errorMessage: "",
+            successMessage: "",
+          });
+          const accounts = await web3.eth.getAccounts();
+      
+          await cpuContract.methods
+            .updateLabNumber(cpuAddress, cpuLabNumber)
+            .send({ from: accounts[0] });
+      
+          // Optionally, re-fetch CPU details to update state if needed
+          const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
+          if (cpuDetails) {
+            this.setState({
+              cpuLabNumber: cpuDetails.labNumber,
+              cpuStatus: cpuDetails.status,
+            });
+          }
+      
+          this.setState({
+            successMessage: "Lab number updated successfully!",
+          });
+        } catch (err) {
+          this.setState({ errorMessage: "Error updating lab number." });
+        } finally {
+          this.setState({ loadingButton: null });
+        }
+      };
+      
 
     // Update a component in the contract
     updateComponentDetails = async (componentIndex) => {
@@ -274,7 +310,8 @@ class TechnicianPage extends Component {
             components: [],
             productionDate: "",
             errorMessage: "",
-            successMessage: ""
+            successMessage: "",
+            cpuLabNumber: ""
         });
     };
 
@@ -331,6 +368,7 @@ class TechnicianPage extends Component {
             cpuModel,
             cpuSerial,
             cpuStatus,
+            cpuLabNumber,
             errorMessage,
             successMessage,
             loadingButton,
@@ -488,6 +526,21 @@ class TechnicianPage extends Component {
                                             <Input readOnly placeholder="Production Date" value={this.state.productionDate} />
                                         </Form.Field>
                                     </Form.Group>
+                                </Form>
+
+                                <Form>
+                                    <Form.Field>
+                                        <label>Lab Number</label>
+                                        <Input placeholder="Lab Number" value={cpuLabNumber} onChange={(e) => this.setState({ cpuLabNumber: e.target.value })} />
+                                    </Form.Field>
+                                    <Button
+                                        color="green"
+                                        onClick={() => this.changeLabNumber()}
+                                        loading={loadingButton === `updateLabNumber`}
+                                    >
+                                        Change Lab Number
+                                    </Button>
+
                                 </Form>
 
                                 <div style={{ width: "100%" }}>
