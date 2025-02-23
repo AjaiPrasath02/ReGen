@@ -4,8 +4,12 @@ node_modules/
 frontend/node_modules/
 backend/node_modules/
 
-# Ignore changes to start.bat but keep the file
+# First ignore all .bat files
+*.bat
+
+# Then exclude specific .bat files we want to track
 !start.bat
+!install.bat
 
 # Environment variables
 .env
