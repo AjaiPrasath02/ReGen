@@ -139,6 +139,11 @@ class TechnicianPage extends Component {
      */
     fetchCPUDetails = async (cpuAddress) => {
         try {
+            if (!cpuAddress) {
+                this.setState({ showMessage: true, errorMessage: "Please enter a valid CPU address." });
+                return;
+            }
+
             this.setState({ cpuAddress, qrScanned: true });
 
             const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
@@ -501,15 +506,38 @@ class TechnicianPage extends Component {
                                                         onChange={this.handleFileUpload}
                                                     />
                                                 </div>
+                                                <Segment basic style={{ marginTop: "2em"}}>
+                                                    <Header as="h3" textAlign="center">
+                                                        Or Enter CPU Address Manually
+                                                    </Header>
+                                                    <Form onSubmit={(e) => {
+                                                        e.preventDefault();
+                                                        this.fetchCPUDetails(this.state.cpuAddress);
+                                                    }} style={{ display: "flex", justifyContent: "space-between" }}>
+                                                        <Form.Field style={{ width: "77%" }}>
+                                                            <Input
+                                                                placeholder="Enter CPU Address..."
+                                                                value={this.state.cpuAddress}
+                                                                onChange={(e) => this.setState({ cpuAddress: e.target.value })}
+                                                                fluid
+                                                            />
+
+                                                        </Form.Field>
+                                                        <Form.Field style={{ width: "20%" }}>
+                                                            <Button
+                                                                color="blue"
+                                                                type="submit"
+                                                            >
+                                                                Search
+                                                            </Button>
+                                                        </Form.Field>
+                                                    </Form>
+                                                </Segment>
                                             </Grid.Column>
 
                                             {/* RIGHT COLUMN: AllCPUs component */}
                                             <Grid.Column>
-                                                {/* <Header as="h2" textAlign="center" style={{ marginTop: "10px" }}>
-					  All CPUs
-					</Header> */}
                                                 <AllCPUs />
-
                                                 <center>
                                                     <Button
                                                         color="blue"

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Container, Header, Form, Input, Button, Message, Segment, Grid, Modal, TextArea, Label, Table } from 'semantic-ui-react';
+import { Container, Header, Form, Input, Button, Message, Segment, Grid, Modal, TextArea, Label, Table, Icon } from 'semantic-ui-react';
 import { withRouter } from 'next/router';
 import web3 from "../ethereum/web3";
 import cpuContract from "../ethereum/cpuProduction";
@@ -114,6 +114,10 @@ class LabPage extends Component {
 
     fetchCPUDetails = async (cpuAddress) => {
         try {
+            if (!cpuAddress) {
+                this.setState({ showMessage: true, errorMessage: "Please enter a valid CPU address." });
+                return;
+            }
             this.setState({ cpuAddress, qrScanned: true });
 
             const cpuDetails = await cpuContract.methods.getCPU(cpuAddress).call();
@@ -299,32 +303,54 @@ class LabPage extends Component {
                 {qrScanned && (
                     <>
                         {labAssistantLabNumber !== cpuLabNumber ? (
-                            <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
-                                This CPU does not belong to your lab
-                            </Header>
-                        ) : (
-                            <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
-                                Lab Assistant - View Components
-                            </Header>
-                        )}
-                        <div style={{ marginBottom: "1em", display: "flex", justifyContent: "space-between" }}>
-                            <Button
-                                icon="arrow left"
-                                content="Back to Scanner"
-                                color="blue"
-                                onClick={this.handleBack}
-                                style={{ marginRight: "1em" }}
-                            />
-                            {labAssistantLabNumber === cpuLabNumber && (
+                            <>
                                 <Button
-                                    icon="warning circle"
-                                    content="Report Issue"
-                                    color="red"
-                                    onClick={this.handleOpenModal}
+                                    icon="arrow left"
+                                    content="Back to Scanner"
+                                    color="blue"
+                                    onClick={this.handleBack}
+                                    style={{ marginBottom: "1em" }}
                                 />
-                            )}
-                        </div>
-                    </>)}
+                                <Segment placeholder basic>
+                                    <Message
+                                        error
+                                        icon
+                                        size="large"
+                                        style={{ maxWidth: "500px", margin: "0 auto" }}
+                                    >
+                                        <Icon name="warning circle" />
+                                        <Message.Content>
+                                            <Message.Header>Access Denied</Message.Header>
+                                            <p>This CPU belongs to Lab #{cpuLabNumber} and cannot be accessed from Lab #{labAssistantLabNumber}.</p>
+                                            <p>Please scan a CPU that belongs to your assigned laboratory.</p>
+                                        </Message.Content>
+                                    </Message>
+                                </Segment>
+                            </>
+                        ) : (
+                            <>
+                                <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
+                                    Lab Assistant - View Components
+                                </Header>
+                                <div style={{ marginBottom: "1em", display: "flex", justifyContent: "space-between" }}>
+                                    <Button
+                                        icon="arrow left"
+                                        content="Back to Scanner"
+                                        color="blue"
+                                        onClick={this.handleBack}
+                                        style={{ marginRight: "1em" }}
+                                    />
+                                    <Button
+                                        icon="warning circle"
+                                        content="Report Issue"
+                                        color="red"
+                                        onClick={this.handleOpenModal}
+                                    />
+                                </div>
+                            </>
+                        )}
+                    </>
+                )}
 
                 <Grid centered style={{ marginTop: "2em" }}>
                     <Grid.Column width="100%">
@@ -357,6 +383,34 @@ class LabPage extends Component {
                                                         onChange={this.handleFileUpload}
                                                     />
                                                 </div>
+
+                                                <Segment basic style={{ marginTop: "2em" }}>
+                                                    <Header as="h3" textAlign="center">
+                                                        Or Enter CPU Address Manually
+                                                    </Header>
+                                                    <Form onSubmit={(e) => {
+                                                        e.preventDefault();
+                                                        this.fetchCPUDetails(this.state.cpuAddress);
+                                                    }} style={{ display: "flex", justifyContent: "space-between" }}>
+                                                        <Form.Field style={{ width: "77%" }}>
+                                                            <Input
+                                                                placeholder="Enter CPU Address..."
+                                                                value={this.state.cpuAddress}
+                                                                onChange={(e) => this.setState({ cpuAddress: e.target.value })}
+                                                                fluid
+                                                            />
+
+                                                        </Form.Field>
+                                                        <Form.Field style={{ width: "20%" }}>
+                                                            <Button
+                                                                color="blue"
+                                                                type="submit"
+                                                            >
+                                                                Search
+                                                            </Button>
+                                                        </Form.Field>
+                                                    </Form>
+                                                </Segment>
                                             </Grid.Column>
 
                                             <Grid.Column>
