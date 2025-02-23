@@ -57,6 +57,14 @@ const Header = () => {
             manufacturer: [
                 { route: '/productionline', text: 'Production Line' },
                 { route: '/about', text: 'About' }
+            ],
+            technician: [
+                { route: '/recycler', text: 'Recycler' },
+                { route: '/about', text: 'About' }
+            ],
+            labassistant: [
+                { route: '/lab', text: 'Lab' },
+                { route: '/about', text: 'About' }
             ]
         };
 

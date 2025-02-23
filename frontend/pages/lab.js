@@ -1,12 +1,12 @@
 import React, { Component } from 'react';
-import { Container, Header, Form, Input, Button, Message, Segment, Grid, Modal, TextArea } from 'semantic-ui-react';
+import { Container, Header, Form, Input, Button, Message, Segment, Grid, Modal, TextArea, Label, Table } from 'semantic-ui-react';
 import { withRouter } from 'next/router';
 import web3 from "../ethereum/web3";
 import cpuContract from "../ethereum/cpuProduction";
 import dynamic from "next/dynamic";
 import QrScanner from "qr-scanner";
 import AllCPUs from "../components/CPUsTable";
-import registerContract from "../ethereum/Register";
+import registerContract from "../ethereum/register";
 
 const QrReader = dynamic(() => import("react-qr-reader"), { ssr: false });
 
@@ -30,7 +30,11 @@ class LabPage extends Component {
             productionDate: "",
             isModalOpen: false,
             complaintMessage: "",
-            submittingComplaint: false
+            submittingComplaint: false,
+            showComplaintsModal: false,
+            complaints: [],
+            loadingComplaints: false,
+            statusFilter: 'all'
         };
     }
 
@@ -61,7 +65,7 @@ class LabPage extends Component {
                 return;
             }
             const labDetails = await registerContract.methods.getLabAssistantDetails(accounts[0]).call();
-            console.log("Lab Details:", labDetails[3]);
+            console.log("Lab Details:", labDetails);
             this.setState({
                 labAssistantLabNumber: labDetails[3],
             });
@@ -154,12 +158,12 @@ class LabPage extends Component {
     handleCloseModal = () => {
         this.setState({ isModalOpen: false, complaintMessage: "", errorMessage: "" });
     }
-      
+
     handleSubmitComplaint = async () => {
-        const { cpuAddress, cpuModel, cpuSerial, complaintMessage } = this.state;
+        const { cpuAddress, cpuModel, cpuSerial, complaintMessage, cpuLabNumber } = this.state;
 
         try {
-            if (!cpuAddress || !cpuModel || !cpuSerial || !complaintMessage) {
+            if (!cpuAddress || !cpuModel || !cpuSerial || !complaintMessage || !cpuLabNumber) {
                 throw new Error('All fields are required');
             }
 
@@ -172,7 +176,8 @@ class LabPage extends Component {
                 modelName: cpuModel,
                 serialNumber: cpuSerial,
                 message: complaintMessage,
-                labAssistantName: labAssistantName
+                labAssistantName: labAssistantName,
+                labNumber: cpuLabNumber
             });
 
             const response = await fetch('http://localhost:4000/api/complaints/submit', {
@@ -186,13 +191,14 @@ class LabPage extends Component {
                     modelName: cpuModel,
                     serialNumber: cpuSerial,
                     message: complaintMessage,
-                    labAssistantName: labAssistantName
+                    labAssistantName: labAssistantName,
+                    labNumber: cpuLabNumber
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
-                throw new Error(errorData.error || 'Failed to submit complaint' );
+                throw new Error(errorData.error || 'Failed to submit complaint');
             }
 
             const data = await response.json();
@@ -214,6 +220,46 @@ class LabPage extends Component {
         }
     }
 
+    fetchComplaints = async () => {
+        try {
+            this.setState({ loadingComplaints: true });
+            const { labAssistantLabNumber } = this.state;
+
+            const response = await fetch('http://localhost:4000/api/complaints/getComplaints', {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+
+            if (!response.ok) {
+                throw new Error('Failed to fetch complaints');
+            }
+
+            const allComplaints = await response.json();
+            // Filter complaints by lab assistant's lab number
+            const filteredComplaints = allComplaints.filter(
+                complaint => complaint.labNumber === labAssistantLabNumber
+            );
+
+            this.setState({ complaints: filteredComplaints });
+        } catch (error) {
+            console.error('Error fetching complaints:', error);
+        } finally {
+            this.setState({ loadingComplaints: false });
+        }
+    };
+
+    handleOpenComplaintsModal = async () => {
+        await this.fetchComplaints();
+        this.setState({ showComplaintsModal: true });
+    };
+
+    getFilteredComplaints = () => {
+        const { complaints, statusFilter } = this.state;
+        if (statusFilter === 'all') return complaints;
+        return complaints.filter(complaint => complaint.status === statusFilter);
+    };
+
     render() {
         const {
             components,
@@ -223,7 +269,10 @@ class LabPage extends Component {
             cpuStatus,
             errorMessage,
             cpuLabNumber,
-            labAssistantLabNumber
+            labAssistantLabNumber,
+            showComplaintsModal,
+            complaints,
+            loadingComplaints
         } = this.state;
 
         return (
@@ -233,68 +282,85 @@ class LabPage extends Component {
                     href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
                 />
 
-                <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
-                    Lab Assistant - View Components
-                </Header>
-
-                {qrScanned && (
-                    <div style={{ marginBottom: "1em" }}>
-                        <Button
-                            icon="arrow left"
-                            content="Back to Scanner"
-                            color="blue"
-                            onClick={this.handleBack}
-                            style={{ marginRight: "1em" }}
-                        />
+                {!qrScanned && (
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Header as="h1" textAlign="center" style={{ marginTop: "1em", flex: 1 }}>
+                            Lab Assistant Dashboard
+                        </Header>
                         <Button
                             icon="warning circle"
-                            content="Report Issue"
-                            color="red"
-                            onClick={this.handleOpenModal}
+                            content="View Reported Issues"
+                            color="orange"
+                            onClick={this.handleOpenComplaintsModal}
                         />
                     </div>
                 )}
 
+                {qrScanned && (
+                    <>
+                        <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
+                            Lab Assistant - View Components
+                        </Header>
+                        <div style={{ marginBottom: "1em" }}>
+                            <Button
+                                icon="arrow left"
+                                content="Back to Scanner"
+                                color="blue"
+                                onClick={this.handleBack}
+                                style={{ marginRight: "1em" }}
+                            />
+                            <Button
+                                icon="warning circle"
+                                content="Report Issue"
+                                color="red"
+                                onClick={this.handleOpenModal}
+                            />
+                        </div>
+                    </>)}
+
                 <Grid centered style={{ marginTop: "2em" }}>
                     <Grid.Column width="100%">
                         {!qrScanned ? (
-                            <Segment>
-                                <Grid stackable columns={2}>
-                                    <Grid.Row style={{ paddingRight: "3em" }}>
-                                        <Grid.Column>
-                                            <Header as="h2" style={{ marginTop: "10px" }} textAlign="center">
-                                                Scan or Upload QR Code
-                                            </Header>
+                            <>
+                                <Segment>
+                                    <Grid stackable columns={2}>
+                                        <Grid.Row style={{ paddingRight: "3em" }}>
+                                            <Grid.Column>
+                                                <Header as="h2" style={{ marginTop: "10px" }} textAlign="center">
+                                                    Scan or Upload QR Code
+                                                </Header>
 
-                                            <QrReader
-                                                delay={1000}
-                                                style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
-                                                onScan={this.handleScan}
-                                                onError={this.handleError}
-                                            />
-
-                                            <div style={{ marginTop: "1.5em", textAlign: "center" }}>
-                                                <Button as="label" htmlFor="file" type="button" color="green">
-                                                    Upload QR Image
-                                                </Button>
-                                                <input
-                                                    type="file"
-                                                    id="file"
-                                                    accept="image/*"
-                                                    style={{ display: "none" }}
-                                                    onChange={this.handleFileUpload}
+                                                <QrReader
+                                                    delay={1000}
+                                                    style={{ width: "100%", maxWidth: "400px", margin: "0 auto" }}
+                                                    onScan={this.handleScan}
+                                                    onError={this.handleError}
                                                 />
-                                            </div>
-                                        </Grid.Column>
 
-                                        <Grid.Column>
-                                            <AllCPUs cpuLabNumber={labAssistantLabNumber} />
-                                        </Grid.Column>
-                                    </Grid.Row>
-                                </Grid>
-                            </Segment>
+                                                <div style={{ marginTop: "1.5em", textAlign: "center" }}>
+                                                    <Button as="label" htmlFor="file" type="button" color="green">
+                                                        Upload QR Image
+                                                    </Button>
+                                                    <input
+                                                        type="file"
+                                                        id="file"
+                                                        accept="image/*"
+                                                        style={{ display: "none" }}
+                                                        onChange={this.handleFileUpload}
+                                                    />
+                                                </div>
+                                            </Grid.Column>
+
+                                            <Grid.Column>
+                                                <AllCPUs cpuLabNumber={labAssistantLabNumber} />
+                                            </Grid.Column>
+                                        </Grid.Row>
+                                    </Grid>
+                                </Segment>
+                            </>
                         ) : (
                             <>
+
                                 <Form>
                                     <Form.Group widths="equal">
                                         <Form.Field>
@@ -382,6 +448,10 @@ class LabPage extends Component {
                                 <Input value={cpuSerial} readOnly />
                             </Form.Field>
                             <Form.Field>
+                                <label>Lab Number</label>
+                                <Input value={cpuLabNumber} readOnly />
+                            </Form.Field>
+                            <Form.Field>
                                 <label>Issue Description</label>
                                 <TextArea
                                     placeholder="Describe the issue..."
@@ -407,9 +477,94 @@ class LabPage extends Component {
                         />
                     </Modal.Actions>
                 </Modal>
+
+                <Modal
+                    open={showComplaintsModal}
+                    onClose={() => this.setState({ showComplaintsModal: false })}
+                    size="large"
+                >
+                    <Modal.Header>Reported CPU Issues</Modal.Header>
+                    <Modal.Content>
+                        <div style={{ marginBottom: '1em' }}>
+                            <Button.Group>
+                                <Button
+                                    active={this.state.statusFilter === 'all'}
+                                    onClick={() => this.setState({ statusFilter: 'all' })}
+                                >
+                                    All
+                                </Button>
+                                <Button
+                                    active={this.state.statusFilter === 'pending'}
+                                    onClick={() => this.setState({ statusFilter: 'pending' })}
+                                    color="yellow"
+                                >
+                                    Pending
+                                </Button>
+                                <Button
+                                    active={this.state.statusFilter === 'resolved'}
+                                    onClick={() => this.setState({ statusFilter: 'resolved' })}
+                                    color="green"
+                                >
+                                    Resolved
+                                </Button>
+                            </Button.Group>
+                        </div>
+
+                        {loadingComplaints ? (
+                            <div>Loading complaints...</div>
+                        ) : this.getFilteredComplaints().length === 0 ? (
+                            <div>No {this.state.statusFilter !== 'all' ? this.state.statusFilter : ''} issues reported</div>
+                        ) : (
+                            <div style={{ maxHeight: "400px", minHeight: "350px", overflowY: "auto" }}>
+                                <Table celled>
+                                    <Table.Header>
+                                        <Table.Row>
+                                            <Table.HeaderCell>CPU Model</Table.HeaderCell>
+                                            <Table.HeaderCell>Serial Number</Table.HeaderCell>
+                                            <Table.HeaderCell>Issue Description</Table.HeaderCell>
+                                            {/* <Table.HeaderCell>Reported By</Table.HeaderCell> */}
+                                            <Table.HeaderCell>Date</Table.HeaderCell>
+                                            <Table.HeaderCell>Status</Table.HeaderCell>
+                                        </Table.Row>
+                                    </Table.Header>
+
+                                    <Table.Body>
+                                        {this.getFilteredComplaints().map(complaint => (
+                                            <Table.Row key={complaint._id}>
+                                                <Table.Cell>{complaint.modelName}</Table.Cell>
+                                                <Table.Cell>{complaint.serialNumber}</Table.Cell>
+                                                <Table.Cell>{complaint.message}</Table.Cell>
+                                                {/* <Table.Cell>{complaint.labAssistantName}</Table.Cell> */}
+                                                <Table.Cell>
+                                                    {new Date(complaint.createdAt).toLocaleDateString()}
+                                                </Table.Cell>
+                                                <Table.Cell>
+                                                    <Label
+                                                        color={complaint.status === 'pending' ? 'yellow' : 'green'}
+                                                        style={{ textTransform: 'capitalize', width: '100%', height: '35px', alignContent: 'center', textAlign: 'center' }}
+                                                    >
+                                                        {complaint.status}
+                                                    </Label>
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        ))}
+                                    </Table.Body>
+                                </Table>
+                            </div>
+                        )}
+                    </Modal.Content>
+                    <Modal.Actions>
+                        <Button
+                            color="black"
+                            onClick={() => this.setState({ showComplaintsModal: false })}
+                        >
+                            Close
+                        </Button>
+                    </Modal.Actions>
+                </Modal>
             </Container>
         );
     }
 }
 
-export default withRouter(LabPage); 
+export default withRouter(LabPage);

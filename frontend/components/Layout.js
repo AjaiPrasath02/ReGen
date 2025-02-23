@@ -37,7 +37,7 @@ const Layout = ({ children }) => {  // Changed props to { children }
             display: 'flex', 
             flexDirection: 'column', 
             minHeight: '100vh',
-            position: 'relative'  // Added position relative
+            // position: 'relative'  // Added position relative
         }}>
             <Header />
             <main style={{ flex: 1 }}>

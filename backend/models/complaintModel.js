@@ -13,7 +13,7 @@ const complaintSchema = new Schema({
     serialNumber: {
         type: String,
         required: true,
-        unique: true
+        // unique: true
     },
     message: {
         type: String,
@@ -29,6 +29,10 @@ const complaintSchema = new Schema({
         default: Date.now
     },
     labAssistantName: {
+        type: String,
+        required: true
+    },
+    labNumber: {
         type: String,
         required: true
     }

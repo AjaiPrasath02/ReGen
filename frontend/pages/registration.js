@@ -1,9 +1,3 @@
-/*
-This is the registration page where the goverment entity registers stakeholders 
-Contact used here: an instance of register.sol 
-To run the app, use the command npm run dev
-*/
-
 import React, { Component } from 'react';
 import { Menu, Form, Button, Input, Message, Container, Grid } from 'semantic-ui-react';
 import web3 from '../ethereum/web3';
@@ -31,17 +25,14 @@ class RegistrationPage extends Component {
             technicianPassword: '',
             errorMessage: '',
             loading: false,
-            // Add authentication check
             isAuthenticated: false,
             userRole: null,
             userAddress: '',
-            // Consolidate error messages
             errors: {
                 manufacturer: '',
                 technician: '',
                 labAssistant: ''
             },
-            // Consolidate success states
             success: {
                 manufacturer: false,
                 technician: false,
@@ -112,31 +103,6 @@ class RegistrationPage extends Component {
             this.props.router.push('/unauthorized');
             return;
         }
-    };
-
-    // Modified registration functions for municipality approval
-    onApproveManufacturer = async (event) => {
-        event.preventDefault();
-        const accounts = await web3.eth.getAccounts();
-        this.setState({ loading: true, errorMessage: '' });
-
-        try {
-            await registerContract.methods
-                .approveManufacturer(
-                    this.state.manufacturerAddr,
-                    this.state.manufacturerLocation,
-                    this.state.manufacturerName
-                )
-                .send({ from: accounts[0] });
-            this.setState({ hasNoError: true });
-        } catch (err) {
-            this.setState({
-                errorMessage: err.message,
-                hasNoError: false
-            });
-        }
-
-        this.setState({ loading: false });
     };
 
     // Dynamic fields appear based on number of sorting machines 
@@ -307,8 +273,24 @@ class RegistrationPage extends Component {
         event.preventDefault();
         this.setState({ loading: true });
 
-        try {            
-            // Skip blockchain registration and only register in MongoDB
+        try {
+
+            
+            const accounts = await web3.eth.getAccounts();
+            if (!accounts[0]) {
+                throw new Error('No wallet connected');
+            }
+
+            // First register on blockchain
+            await registerContract.methods
+                .registerLabAssistant(
+                    this.state.labAssistantAddr,
+                    this.state.labAssistantLocation,
+                    this.state.labAssistantName,
+                    this.state.labNumber
+                )
+                .send({ from: accounts[0] });
+            
             const response = await fetch('http://localhost:4000/api/user/signup', {
                 method: 'POST',
                 headers: {
@@ -329,21 +311,6 @@ class RegistrationPage extends Component {
                 const data = await response.json();
                 throw new Error(data.error);
             }
-            
-            const accounts = await web3.eth.getAccounts();
-            if (!accounts[0]) {
-                throw new Error('No wallet connected');
-            }
-
-            // First register on blockchain
-            await registerContract.methods
-                .registerLabAssistant(
-                    this.state.labAssistantAddr,
-                    this.state.labAssistantLocation,
-                    this.state.labAssistantName,
-                    this.state.labNumber
-                )
-                .send({ from: accounts[0] });
 
             this.setState({
                 success: { ...this.state.success, labAssistant: true },
@@ -356,7 +323,8 @@ class RegistrationPage extends Component {
                 labAssistantAddr: '',
                 labAssistantLocation: '',
                 labAssistantEmail: '',
-                labAssistantPassword: ''
+                labAssistantPassword: '',
+                labNumber: ''
             });
 
         } catch (err) {
@@ -676,6 +644,4 @@ class RegistrationPage extends Component {
 
 }
 
-//At the end of each page, a component is expected to be returned 
-// If not, Next.js throws an error 
 export default withRouter(RegistrationPage);

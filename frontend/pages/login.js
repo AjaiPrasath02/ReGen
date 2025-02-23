@@ -10,26 +10,15 @@ const roleOptions = [
 ];
 
 const styles = {
-    pageWrapper: {
-        width: '100%',
-        maxWidth: '1200px',
-        margin: '0 auto',
-        padding: '0 20px',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        boxSizing: 'border-box'
-    },
     container: {
         padding: '20px 20px',
         display: 'flex',
         flexDirection: 'column',
         minHeight: '100vh',
-        // background: 'linear-gradient(135deg, #f5f7fa 0%, #e4e8eb 100%)',
         background: 'white',
         boxSizing: 'border-box',
-        minWidth: '500px',
-        minHeight: '600px'
+        minHeight: '522px',
+        width: '45%'
     },
     form: {
         width: '70%',
@@ -149,11 +138,11 @@ class LoginPage extends Component {
         const { email, password, role, loading, errorMessage, success } = this.state;
 
         return (
-            <div style={styles.pageWrapper}>
+            <>
                 <link rel="stylesheet"
                     href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
                 />
-                <div style={styles.container}>
+                <div className='ui container' style={styles.container}>
                     <Grid textAlign='center' verticalAlign='middle' style={{ flex: 1 }}>
                         <Grid.Column style={styles.gridColumn}>
                             <h2 style={styles.header}>
@@ -226,21 +215,6 @@ class LoginPage extends Component {
 
                             {!success && (
                                 <>
-                                    {/* <Message info style={styles.message}>
-                                        <Message.Header style={{ color: '#0ea432' }}>Demo Credentials</Message.Header>
-                                        <Message.List>
-                                            <Message.Item>
-                                                Municipality: municipality@regen.com / municipality123
-                                            </Message.Item>
-                                            <Message.Item>
-                                                Manufacturer: manufacturer@regen.com / manufacturer123
-                                            </Message.Item>
-                                            <Message.Item>
-                                                Technician: technician@regen.com / technician123
-                                            </Message.Item>
-                                        </Message.List>
-                                    </Message> */}
-
                                     <Message warning style={styles.message}>
                                         Note: Please ensure you have MetaMask extension installed and enabled.
                                     </Message>
@@ -249,7 +223,7 @@ class LoginPage extends Component {
                         </Grid.Column>
                     </Grid>
                 </div>
-            </div>
+            </>
         );
     }
 }
