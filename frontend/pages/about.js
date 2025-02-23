@@ -165,46 +165,6 @@ const About = () => {
 
     return (
         <div>
-            <link rel="stylesheet"
-                href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
-            />
-            <style jsx>{`
-                       
-      @media (max-width: 600px) {
-       div {
-          }
-    }
-        .features, .statistics{
-            display: grid;
-            grid-template-columns: 50% 50%;
-            grid-auto-rows: 150px;
-            column-gap: 15px;
-            row-gap: 15px;
-        }
-        .feature {
-            height:100%;
-            padding:5px;
-            background-color:rgba(255,255,255, 0.4);
-        }
-
-        .feature p {
-            padding:0px;
-            text-align:justify;
-        }
-
-        .statistic p{
-            text-align:center;
-        }
-
-        .center{
-            Display: flex;
-            Width: 100%; 
-            Align-Items: center;
-            Justify-Content: center;
-        }
-
-  `}</style>
-
             <Menu text>
                 <Menu.Item
                     name='about'

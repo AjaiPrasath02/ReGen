@@ -64,10 +64,6 @@ const Visualization = () => {
 
     return (
         <Container className="cpu-page">
-            <link
-                rel="stylesheet"
-                href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
-            />
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',

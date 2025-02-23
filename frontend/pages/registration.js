@@ -1,33 +1,275 @@
-import React, { Component } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Menu, Form, Button, Input, Message, Container, Grid } from 'semantic-ui-react';
+import { useRouter } from 'next/router';
 import web3 from '../ethereum/web3';
-import registerContract from '../ethereum/register'; // import SC instance
-import { withRouter } from 'next/router';
+import registerContract from '../ethereum/register';
+import { useAuth } from '../context/AuthContext';
+
+const RegistrationPage = () => {
+    const router = useRouter();
+    const { isAuthenticated, userRole, walletAddress } = useAuth();
+
+    const [state, setState] = useState({
+        // Manufacturer fields
+        manufacturerName: '',
+        manufacturerAddr: '',
+        manufacturerLocation: '',
+        manufacturerEmail: '',
+        manufacturerPassword: '',
+
+        // Technician fields
+        technicianName: '',
+        technicianAddr: '',
+        technicianLocation: '',
+        technicianEmail: '',
+        technicianPassword: '',
+
+        // Lab Assistant fields
+        labAssistantName: '',
+        labAssistantAddr: '',
+        labAssistantLocation: '',
+        labAssistantEmail: '',
+        labAssistantPassword: '',
+        labNumber: '',
+
+        // UI state
+        loading: false,
+        selectManufacturer: true,
+        selectTechnician: false,
+        selectLabAssistant: false,
+
+        // Error and success states
+        errors: {
+            manufacturer: '',
+            technician: '',
+            labAssistant: ''
+        },
+        success: {
+            manufacturer: false,
+            technician: false,
+            labAssistant: false
+        }
+    });
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const accounts = await web3.eth.getAccounts();
+
+                if (!isAuthenticated || userRole !== 'municipality') {
+                    router.push('/unauthorized');
+                    return;
+                }
+
+                if (!accounts || !accounts[0]) {
+                    router.push('/connect-wallet');
+                    return;
+                }
+
+                if (accounts[0].toLowerCase() !== walletAddress?.toLowerCase()) {
+                    router.push('/connect-wallet');
+                    return;
+                }
+            } catch (error) {
+                console.error('Error checking authentication:', error);
+                router.push('/unauthorized');
+            }
+        };
+
+        checkAuth();
+    }, [isAuthenticated, userRole, walletAddress]);
+
+    const onRegisterManu = async (event) => {
+        event.preventDefault();
+        setState(prev => ({ ...prev, loading: true }));
+
+        try {
+            const accounts = await web3.eth.getAccounts();
+            if (!accounts[0]) {
+                throw new Error('No wallet connected');
+            }
 
 
-class RegistrationPage extends Component {
+            const response = await fetch('http://localhost:4000/api/user/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: state.manufacturerEmail,
+                    password: state.manufacturerPassword,
+                    name: state.manufacturerName,
+                    role: 'manufacturer',
+                    walletAddress: state.manufacturerAddr,
+                    location: state.manufacturerLocation
+                })
+            });
 
-    constructor(props) {
-        super(props);
-        this.state = {
-            selectManufacturer: true,
-            selectTechnician: false,
-            selectLabAssistant: false,
-            manufacturerName: '',
-            manufacturerAddr: '',
-            manufacturerLocation: '',
-            manufacturerEmail: '',
-            manufacturerPassword: '',
-            technicianName: '',
-            technicianAddr: '',
-            technicianLocation: '',
-            technicianEmail: '',
-            technicianPassword: '',
-            errorMessage: '',
-            loading: false,
-            isAuthenticated: false,
-            userRole: null,
-            userAddress: '',
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error);
+            }
+
+            await registerContract.methods
+                .registerManufacturer(
+                    state.manufacturerAddr,
+                    state.manufacturerLocation,
+                    state.manufacturerName
+                )
+                .send({ from: accounts[0] });
+
+            setState(prev => ({
+                ...prev,
+                success: { ...prev.success, manufacturer: true },
+                errors: { ...prev.errors, manufacturer: '' },
+                manufacturerName: '',
+                manufacturerAddr: '',
+                manufacturerLocation: '',
+                manufacturerEmail: '',
+                manufacturerPassword: ''
+            }));
+
+        } catch (err) {
+            setState(prev => ({
+                ...prev,
+                errors: { ...prev.errors, manufacturer: err.message || 'Registration failed' },
+                success: { ...prev.success, manufacturer: false }
+            }));
+        } finally {
+            setState(prev => ({ ...prev, loading: false }));
+        }
+    };
+
+    const onRegisterTechnician = async (event) => {
+        event.preventDefault();
+        setState(prev => ({ ...prev, loading: true }));
+
+        try {
+            const accounts = await web3.eth.getAccounts();
+            if (!accounts[0]) {
+                throw new Error('No wallet connected');
+            }
+
+            const response = await fetch('http://localhost:4000/api/user/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: state.technicianEmail,
+                    password: state.technicianPassword,
+                    name: state.technicianName,
+                    role: 'technician',
+                    walletAddress: state.technicianAddr,
+                    location: state.technicianLocation
+                })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error);
+            }
+
+            await registerContract.methods
+                .registerTechnician(
+                    state.technicianAddr,
+                    state.technicianLocation,
+                    state.technicianName
+                )
+                .send({ from: accounts[0] });
+
+            setState(prev => ({
+                ...prev,
+                success: { ...prev.success, technician: true },
+                errors: { ...prev.errors, technician: '' },
+                technicianName: '',
+                technicianAddr: '',
+                technicianLocation: '',
+                technicianEmail: '',
+                technicianPassword: ''
+            }));
+
+        } catch (err) {
+            setState(prev => ({
+                ...prev,
+                errors: { ...prev.errors, technician: err.message || 'Registration failed' },
+                success: { ...prev.success, technician: false }
+            }));
+        } finally {
+            setState(prev => ({ ...prev, loading: false }));
+        }
+    };
+
+    const onRegisterLabAssistant = async (event) => {
+        event.preventDefault();
+        setState(prev => ({ ...prev, loading: true }));
+
+        try {
+            const accounts = await web3.eth.getAccounts();
+            if (!accounts[0]) {
+                throw new Error('No wallet connected');
+            }
+
+            const response = await fetch('http://localhost:4000/api/user/signup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email: state.labAssistantEmail,
+                    password: state.labAssistantPassword,
+                    name: state.labAssistantName,
+                    role: 'labassistant',
+                    walletAddress: state.labAssistantAddr,
+                    location: state.labAssistantLocation,
+                    labNumber: state.labNumber
+                })
+            });
+
+            if (!response.ok) {
+                const data = await response.json();
+                throw new Error(data.error);
+            }
+
+            await registerContract.methods
+                .registerLabAssistant(
+                    state.labAssistantAddr,
+                    state.labAssistantLocation,
+                    state.labAssistantName,
+                    state.labNumber
+                )
+                .send({ from: accounts[0] });
+
+            setState(prev => ({
+                ...prev,
+                success: { ...prev.success, labAssistant: true },
+                errors: { ...prev.errors, labAssistant: '' },
+                labAssistantName: '',
+                labAssistantAddr: '',
+                labAssistantLocation: '',
+                labAssistantEmail: '',
+                labAssistantPassword: '',
+                labNumber: ''
+            }));
+
+        } catch (err) {
+            setState(prev => ({
+                ...prev,
+                errors: { ...prev.errors, labAssistant: err.message || 'Registration failed' },
+                success: { ...prev.success, labAssistant: false }
+            }));
+        } finally {
+            setState(prev => ({ ...prev, loading: false }));
+        }
+    };
+
+    const handleMenuClick = (type) => {
+        setState(prev => ({
+            ...prev,
+            selectManufacturer: type === 'manufacturer',
+            selectTechnician: type === 'technician',
+            selectLabAssistant: type === 'labAssistant',
+            // Reset errors and success when switching tabs
             errors: {
                 manufacturer: '',
                 technician: '',
@@ -37,611 +279,244 @@ class RegistrationPage extends Component {
                 manufacturer: false,
                 technician: false,
                 labAssistant: false
-            },
-            labAssistantName: '',
-            labAssistantAddr: '',
-            labAssistantLocation: '',
-            labAssistantEmail: '',
-            labAssistantPassword: '',
-            labNumber: '',
-        };
-    }
-
-
-    componentDidMount = async () => {
-        try {
-            const token = localStorage.getItem('token');
-            const role = localStorage.getItem('role');
-            const userAddress = localStorage.getItem('userAddress');
-            const accounts = await web3.eth.getAccounts();
-
-            console.log('=== Debug Information ===');
-            console.log('Token:', token);
-            console.log('Role:', role);
-            console.log('User Address:', userAddress);
-            console.log('Connected Account:', accounts[0]);
-            console.log('All Accounts:', accounts);
-            console.log('=====================');
-
-            // First check basic auth
-            if (!token || !role || !userAddress) {
-                console.log('Missing authentication data');
-                this.props.router.push('/login');
-                return;
             }
-
-            // Then check role
-            if (role !== 'municipality') {
-                console.log('User is not a municipality');
-                this.props.router.push('/unauthorized');
-                return;
-            }
-
-            // Then check if wallet is connected
-            if (!accounts || !accounts[0]) {
-                console.log('No wallet connected');
-                this.props.router.push('/connect-wallet');
-                return;
-            }
-
-            // Finally check if connected wallet matches userAddress
-            if (accounts[0].toLowerCase() !== userAddress.toLowerCase()) {
-                console.log('Connected wallet does not match registered municipality address');
-                this.props.router.push('/connect-wallet');
-                return;
-            }
-
-            // Set authenticated state
-            this.setState({
-                isAuthenticated: true,
-                userRole: role,
-                userAddress: userAddress
-            });
-
-        } catch (error) {
-            console.error('Error in componentDidMount:', error);
-            this.props.router.push('/unauthorized');
-            return;
-        }
+        }));
     };
 
-    // Dynamic fields appear based on number of sorting machines 
-    handleOnChange(value) { this.setState({ inputSize: value.target.value }); }
-    handleDismiss = () => { this.setState({ visible: false }) }
+    return (
+        <div className="Registration" style={{ minHeight: '500px' }}>
+            <h2>Select a stakeholder to register</h2>
+            <Menu widths={3}>
+                <Menu.Item
+                    name='Manufacturer'
+                    active={state.selectManufacturer}
+                    onClick={() => handleMenuClick('manufacturer')}
+                >
+                    Manufacturer
+                </Menu.Item>
+                <Menu.Item
+                    name='Technician'
+                    active={state.selectTechnician}
+                    onClick={() => handleMenuClick('technician')}
+                >
+                    Technician
+                </Menu.Item>
+                <Menu.Item
+                    name='Lab Assistant'
+                    active={state.selectLabAssistant}
+                    onClick={() => handleMenuClick('labAssistant')}
+                >
+                    Lab Assistant
+                </Menu.Item>
+            </Menu>
 
-    //Register a Manufacturer & interact with the register SC
-    onRegisterManu = async (event) => {
-        event.preventDefault();
-        this.setState({ loading: true });
-
-        try {
-            const accounts = await web3.eth.getAccounts();
-            if (!accounts[0]) {
-                throw new Error('No wallet connected');
-            }
-
-            // First register on blockchain
-            await registerContract.methods
-                .registerManufacturer(
-                    this.state.manufacturerAddr,
-                    this.state.manufacturerLocation,
-                    this.state.manufacturerName
-                )
-                .send({ from: accounts[0] });
-
-            // Then register in MongoDB
-            const response = await fetch('http://localhost:4000/api/user/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: this.state.manufacturerEmail,
-                    password: this.state.manufacturerPassword,
-                    name: this.state.manufacturerName,
-                    role: 'manufacturer',
-                    walletAddress: this.state.manufacturerAddr,
-                    location: this.state.manufacturerLocation
-                })
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error);
-            }
-
-
-            this.setState({
-                success: { ...this.state.success, manufacturer: true },
-                errors: { ...this.state.errors, manufacturer: '' }
-            });
-
-            // Reset form
-            this.setState({
-                manufacturerName: '',
-                manufacturerAddr: '',
-                manufacturerLocation: '',
-                manufacturerEmail: '',
-                manufacturerPassword: ''
-            });
-
-        } catch (err) {
-            this.setState({
-                errors: {
-                    ...this.state.errors,
-                    manufacturer: err.message || 'Registration failed'
-                },
-                success: { ...this.state.success, manufacturer: false }
-            });
-        } finally {
-            this.setState({ loading: false });
-        }
-    };
-
-    // Add form validation
-    validateForm = (type) => {
-        switch (type) {
-            case 'manufacturer':
-                return !!(this.state.manufacturerName &&
-                    this.state.manufacturerAddr &&
-                    this.state.manufacturerLocation);
-            case 'buyer':
-                return !!(this.state.buyerName &&
-                    this.state.buyerAddr &&
-                    this.state.buyerLocation &&
-                    this.state.buyerBusiness);
-            case 'sortingFacility':
-                return !!(this.state.sellerName &&
-                    this.state.sellerAddr &&
-                    this.state.sellerLocation);
-            default:
-                return false;
-        }
-    };
-
-    //Register a technician & interact with the register SC
-    onRegisterTechnician = async (event) => {
-        event.preventDefault();
-        this.setState({ loading: true });
-
-        try {
-            const accounts = await web3.eth.getAccounts();
-            if (!accounts[0]) {
-                throw new Error('No wallet connected');
-            }
-
-            // First register on blockchain
-            await registerContract.methods
-                .registerTechnician(
-                    this.state.technicianAddr,
-                    this.state.technicianLocation,
-                    this.state.technicianName
-                )
-                .send({ from: accounts[0] });
-
-            // Then register in MongoDB
-            const response = await fetch('http://localhost:4000/api/user/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: this.state.technicianEmail,
-                    password: this.state.technicianPassword,
-                    name: this.state.technicianName,
-                    role: 'technician',
-                    walletAddress: this.state.technicianAddr,
-                    location: this.state.technicianLocation
-                })
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error);
-            }
-
-
-            this.setState({
-                success: { ...this.state.success, technician: true },
-                errors: { ...this.state.errors, technician: '' }
-            });
-
-            // Reset form
-            this.setState({
-                technicianName: '',
-                technicianAddr: '',
-                technicianLocation: '',
-                technicianEmail: '',
-                technicianPassword: ''
-            });
-
-        } catch (err) {
-            this.setState({
-                errors: {
-                    ...this.state.errors,
-                    technician: err.message || 'Registration failed'
-                },
-                success: { ...this.state.success, technician: false }
-            });
-        } finally {
-            this.setState({ loading: false });
-        }
-    };
-
-    // Add new registration function
-    onRegisterLabAssistant = async (event) => {
-        event.preventDefault();
-        this.setState({ loading: true });
-
-        try {
-
-            
-            const accounts = await web3.eth.getAccounts();
-            if (!accounts[0]) {
-                throw new Error('No wallet connected');
-            }
-
-            // First register on blockchain
-            await registerContract.methods
-                .registerLabAssistant(
-                    this.state.labAssistantAddr,
-                    this.state.labAssistantLocation,
-                    this.state.labAssistantName,
-                    this.state.labNumber
-                )
-                .send({ from: accounts[0] });
-            
-            const response = await fetch('http://localhost:4000/api/user/signup', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    email: this.state.labAssistantEmail,
-                    password: this.state.labAssistantPassword,
-                    name: this.state.labAssistantName,
-                    role: 'labassistant',
-                    walletAddress: this.state.labAssistantAddr,
-                    location: this.state.labAssistantLocation,
-                    labNumber: this.state.labNumber
-                })
-            });
-
-            if (!response.ok) {
-                const data = await response.json();
-                throw new Error(data.error);
-            }
-
-            this.setState({
-                success: { ...this.state.success, labAssistant: true },
-                errors: { ...this.state.errors, labAssistant: '' }
-            });
-
-            // Reset form
-            this.setState({
-                labAssistantName: '',
-                labAssistantAddr: '',
-                labAssistantLocation: '',
-                labAssistantEmail: '',
-                labAssistantPassword: '',
-                labNumber: ''
-            });
-
-        } catch (err) {
-            this.setState({
-                errors: {
-                    ...this.state.errors,
-                    labAssistant: err.message || 'Registration failed'
-                },
-                success: { ...this.state.success, labAssistant: false }
-            });
-        } finally {
-            this.setState({ loading: false });
-        }
-    };
-
-    render() {
-        const {
-            selectManufacturer,
-            selectTechnician,
-            selectLabAssistant,
-            manufacturerName,
-            manufacturerAddr,
-            manufacturerLocation,
-            manufacturerEmail,
-            manufacturerPassword,
-            technicianName,
-            technicianAddr,
-            technicianLocation,
-            technicianEmail,
-            technicianPassword,
-            labAssistantName,
-            labAssistantAddr,
-            labAssistantLocation,
-            labAssistantEmail,
-            labAssistantPassword,
-            labNumber
-        } = this.state;
-
-        return (
-            <div className="Registration" style={{ minHeight: '500px' }}>
-                <link rel="stylesheet"
-                    href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
-                />
-                <h2>Select a stakeholder to register</h2>
-                <Menu widths={3}>
-                    <Menu.Item
-                        name='Manufacturer'
-                        active={selectManufacturer}
-                        onClick={() => this.setState({
-                            selectManufacturer: true,
-                            selectTechnician: false,
-                            selectLabAssistant: false
-                        })}
-                    >
-                        Manufacturer
-                    </Menu.Item>
-                    <Menu.Item
-                        name='Technician'
-                        active={selectTechnician}
-                        onClick={() => this.setState({
-                            selectTechnician: true,
-                            selectManufacturer: false,
-                            selectLabAssistant: false
-                        })}
-                    >
-                        Technician
-                    </Menu.Item>
-                    <Menu.Item
-                        name='Lab Assistant'
-                        active={selectLabAssistant}
-                        onClick={() => this.setState({
-                            selectLabAssistant: true,
-                            selectManufacturer: false,
-                            selectTechnician: false
-                        })}
-                    >
-                        Lab Assistant
-                    </Menu.Item>
-                </Menu>
-                <br />
-                <br />
-
-                {selectManufacturer && (
-                    <div className='Manufacturer'>
-                        <Container>
-                            <Grid>
-                                <Grid.Row centered>
-                                    <Grid.Column width={10} textAlign="center">
-                                        <Form onSubmit={this.onRegisterManu} error={!!this.state.errors.manufacturer} success={this.state.success.manufacturer}>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Manufacturer Email</label>
-                                                <Input
-                                                    value={manufacturerEmail}
-                                                    type="email"
-                                                    icon="mail"
-                                                    onChange={event => this.setState({ manufacturerEmail: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Password</label>
-                                                <Input
-                                                    value={manufacturerPassword}
-                                                    type="password"
-                                                    icon="lock"
-                                                    onChange={event => this.setState({ manufacturerPassword: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Manufacturer Name</label>
-                                                <Input
-                                                    value={manufacturerName}
-                                                    onChange={event => this.setState({ manufacturerName: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Manufacturer Ethereum Address</label>
-                                                <Input
-                                                    value={manufacturerAddr}
-                                                    icon="ethereum"
-                                                    onChange={event => this.setState({ manufacturerAddr: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Manufacturer Location</label>
-                                                <Input
-                                                    value={manufacturerLocation}
-                                                    onChange={event => this.setState({ manufacturerLocation: event.target.value })}
-                                                />
-                                            </Form.Field>
-
-                                            <Message
-                                                error
-                                                header="Error!"
-                                                content={this.state.errors.manufacturer}
-                                            />
-
-                                            <Message
-                                                success
-                                                header="Success!"
-                                                content="Manufacturer registered successfully!"
-                                            />
-
-                                            <Button
-                                                color='green'
-                                                loading={this.state.loading}
-                                                type='submit'
-                                            >
-                                                Register
-                                            </Button>
-                                        </Form>
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
-                        </Container>
-                    </div>
+            <Container>
+                {/* Manufacturer Form */}
+                {state.selectManufacturer && (
+                    <Grid>
+                        <Grid.Row centered>
+                            <Grid.Column width={10} textAlign="center">
+                                <Form onSubmit={onRegisterManu} error={!!state.errors.manufacturer} success={state.success.manufacturer}>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Manufacturer Email</label>
+                                        <Input
+                                            value={state.manufacturerEmail}
+                                            onChange={e => setState(prev => ({ ...prev, manufacturerEmail: e.target.value }))}
+                                            type="email"
+                                            placeholder="Enter email"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Password</label>
+                                        <Input
+                                            value={state.manufacturerPassword}
+                                            onChange={e => setState(prev => ({ ...prev, manufacturerPassword: e.target.value }))}
+                                            type="password"
+                                            placeholder="Enter password"
+                                            required
+                                            minLength="6"
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Manufacturer Name</label>
+                                        <Input
+                                            value={state.manufacturerName}
+                                            onChange={e => setState(prev => ({ ...prev, manufacturerName: e.target.value }))}
+                                            placeholder="Enter name"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Wallet Address</label>
+                                        <Input
+                                            value={state.manufacturerAddr}
+                                            onChange={e => setState(prev => ({ ...prev, manufacturerAddr: e.target.value }))}
+                                            placeholder="Enter wallet address"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Location</label>
+                                        <Input
+                                            value={state.manufacturerLocation}
+                                            onChange={e => setState(prev => ({ ...prev, manufacturerLocation: e.target.value }))}
+                                            placeholder="Enter location"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Message error content={state.errors.manufacturer} />
+                                    <Message success content="Manufacturer registered successfully!" />
+                                    <Button loading={state.loading} color={"green"} type="submit">
+                                        Register Manufacturer
+                                    </Button>
+                                </Form>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 )}
 
-                {selectTechnician && (
-                    <div className='Technician'>
-                        <Container>
-                            <Grid>
-                                <Grid.Row centered>
-                                    <Grid.Column width={10} textAlign="center">
-                                        <Form onSubmit={this.onRegisterTechnician} error={!!this.state.errors.technician} success={this.state.success.technician}>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Technician Email</label>
-                                                <Input
-                                                    value={technicianEmail}
-                                                    type="email"
-                                                    icon="mail"
-                                                    onChange={event => this.setState({ technicianEmail: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Password</label>
-                                                <Input
-                                                    value={technicianPassword}
-                                                    type="password"
-                                                    icon="lock"
-                                                    onChange={event => this.setState({ technicianPassword: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Technician Name</label>
-                                                <Input
-                                                    value={technicianName}
-                                                    onChange={event => this.setState({ technicianName: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Technician Ethereum Address</label>
-                                                <Input
-                                                    value={technicianAddr}
-                                                    icon="ethereum"
-                                                    onChange={event => this.setState({ technicianAddr: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Technician Location</label>
-                                                <Input
-                                                    value={technicianLocation}
-                                                    onChange={event => this.setState({ technicianLocation: event.target.value })}
-                                                />
-                                            </Form.Field>
-
-                                            <Message
-                                                error
-                                                header="Error!"
-                                                content={this.state.errors.technician}
-                                            />
-
-                                            <Message
-                                                success
-                                                header="Success!"
-                                                content="Technician registered successfully!"
-                                            />
-
-                                            <Button
-                                                color='green'
-                                                loading={this.state.loading}
-                                                type='submit'
-                                            >
-                                                Register
-                                            </Button>
-                                        </Form>
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
-                        </Container>
-                    </div>
+                {/* Technician Form */}
+                {state.selectTechnician && (
+                    <Grid>
+                        <Grid.Row centered>
+                            <Grid.Column width={10} textAlign="center">
+                                <Form onSubmit={onRegisterTechnician} error={!!state.errors.technician} success={state.success.technician}>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Technician Email</label>
+                                        <Input
+                                            value={state.technicianEmail}
+                                            onChange={e => setState(prev => ({ ...prev, technicianEmail: e.target.value }))}
+                                            type="email"
+                                            placeholder="Enter email"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Password</label>
+                                        <Input
+                                            value={state.technicianPassword}
+                                            onChange={e => setState(prev => ({ ...prev, technicianPassword: e.target.value }))}
+                                            type="password"
+                                            placeholder="Enter password"
+                                            required
+                                            minLength="6"
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Technician Name</label>
+                                        <Input
+                                            value={state.technicianName}
+                                            onChange={e => setState(prev => ({ ...prev, technicianName: e.target.value }))}
+                                            placeholder="Enter name"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Wallet Address</label>
+                                        <Input
+                                            value={state.technicianAddr}
+                                            onChange={e => setState(prev => ({ ...prev, technicianAddr: e.target.value }))}
+                                            placeholder="Enter wallet address"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Location</label>
+                                        <Input
+                                            value={state.technicianLocation}
+                                            onChange={e => setState(prev => ({ ...prev, technicianLocation: e.target.value }))}
+                                            placeholder="Enter location"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Message error content={state.errors.technician} />
+                                    <Message success content="Technician registered successfully!" />
+                                    <Button loading={state.loading} color={"green"} type="submit">
+                                        Register Technician
+                                    </Button>
+                                </Form>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 )}
 
-                {selectLabAssistant && (
-                    <div className='LabAssistant'>
-                        <Container>
-                            <Grid>
-                                <Grid.Row centered>
-                                    <Grid.Column width={10} textAlign="center">
-                                        <Form onSubmit={this.onRegisterLabAssistant} error={!!this.state.errors.labAssistant} success={this.state.success.labAssistant}>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Lab Assistant Email</label>
-                                                <Input
-                                                    value={labAssistantEmail}
-                                                    type="email"
-                                                    icon="mail"
-                                                    onChange={event => this.setState({ labAssistantEmail: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Password</label>
-                                                <Input
-                                                    value={labAssistantPassword}
-                                                    type="password"
-                                                    icon="lock"
-                                                    onChange={event => this.setState({ labAssistantPassword: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Lab Assistant Name</label>
-                                                <Input
-                                                    value={labAssistantName}
-                                                    onChange={event => this.setState({ labAssistantName: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Lab Assistant Ethereum Address</label>
-                                                <Input
-                                                    value={labAssistantAddr}
-                                                    icon="ethereum"
-                                                    onChange={event => this.setState({ labAssistantAddr: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Lab Assistant Location</label>
-                                                <Input
-                                                    value={labAssistantLocation}
-                                                    onChange={event => this.setState({ labAssistantLocation: event.target.value })}
-                                                />
-                                            </Form.Field>
-                                            <Form.Field>
-                                                <label className="left-aligned-label">Lab Number</label>
-                                                <Input
-                                                    value={labNumber}
-                                                    onChange={event => this.setState({ labNumber: event.target.value })}
-                                                />
-                                            </Form.Field>
-
-                                            <Message
-                                                error
-                                                header="Error!"
-                                                content={this.state.errors.labAssistant}
-                                            />
-
-                                            <Message
-                                                success
-                                                header="Success!"
-                                                content="Lab Assistant registered successfully!"
-                                            />
-
-                                            <Button
-                                                color='green'
-                                                loading={this.state.loading}
-                                                type='submit'
-                                            >
-                                                Register
-                                            </Button>
-                                        </Form>
-                                    </Grid.Column>
-                                </Grid.Row>
-                            </Grid>
-                        </Container>
-                    </div>
+                {/* Lab Assistant Form */}
+                {state.selectLabAssistant && (
+                    <Grid>
+                        <Grid.Row centered>
+                            <Grid.Column width={10} textAlign="center">
+                                <Form onSubmit={onRegisterLabAssistant} error={!!state.errors.labAssistant} success={state.success.labAssistant}>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Lab Assistant Email</label>
+                                        <Input
+                                            value={state.labAssistantEmail}
+                                            onChange={e => setState(prev => ({ ...prev, labAssistantEmail: e.target.value }))}
+                                            type="email"
+                                            placeholder="Enter email"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Password</label>
+                                        <Input
+                                            value={state.labAssistantPassword}
+                                            onChange={e => setState(prev => ({ ...prev, labAssistantPassword: e.target.value }))}
+                                            type="password"
+                                            placeholder="Enter password"
+                                            required
+                                            minLength="6"
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Lab Assistant Name</label>
+                                        <Input
+                                            value={state.labAssistantName}
+                                            onChange={e => setState(prev => ({ ...prev, labAssistantName: e.target.value }))}
+                                            placeholder="Enter name"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Wallet Address</label>
+                                        <Input
+                                            value={state.labAssistantAddr}
+                                            onChange={e => setState(prev => ({ ...prev, labAssistantAddr: e.target.value }))}
+                                            placeholder="Enter wallet address"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Location</label>
+                                        <Input
+                                            value={state.labAssistantLocation}
+                                            onChange={e => setState(prev => ({ ...prev, labAssistantLocation: e.target.value }))}
+                                            placeholder="Enter location"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Form.Field required>
+                                        <label className="left-aligned-label">Lab Number</label>
+                                        <Input
+                                            value={state.labNumber}
+                                            onChange={e => setState(prev => ({ ...prev, labNumber: e.target.value }))}
+                                            placeholder="Enter lab number"
+                                            required
+                                        />
+                                    </Form.Field>
+                                    <Message error content={state.errors.labAssistant} />
+                                    <Message success content="Lab Assistant registered successfully!" />
+                                    <Button loading={state.loading} color={"green"} type="submit">
+                                        Register Lab Assistant
+                                    </Button>
+                                </Form>
+                            </Grid.Column>
+                        </Grid.Row>
+                    </Grid>
                 )}
-            </div>
-        );
-    }
+            </Container>
+        </div>
+    );
+};
 
-}
-
-export default withRouter(RegistrationPage);
+export default RegistrationPage;

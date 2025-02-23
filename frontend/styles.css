@@ -213,6 +213,23 @@ select option:hover {
     /* Original text color */
 }
 
+.ui.button {
+    padding: 12px 24px !important;
+    font-size: 1rem !important;
+    min-width: 120px;
+}
+
+/* For different sizes */
+.ui.small.button {
+    padding: 8px 16px !important;
+    font-size: 0.9rem !important;
+}
+
+.ui.large.button {
+    padding: 14px 28px !important;
+    font-size: 1.1rem !important;
+}
+
 .app-description {
     font-size: 16px;
     line-height: 1.6;

@@ -1,4 +1,4 @@
-import React, { Component } from "react";
+import React, { useState, useEffect } from "react";
 import {
     Button,
     Message,
@@ -9,12 +9,10 @@ import {
     Label,
 } from "semantic-ui-react";
 import web3 from "../ethereum/web3";
-import cpuContract from "../ethereum/cpuProduction"; // Updated contract
-// import dynamic from "next/dynamic";
-// const QrCode = dynamic(() => import("react.qrcode.generator"), { ssr: false });
+import cpuContract from "../ethereum/cpuProduction";
 import { QRCodeSVG } from "qrcode.react";
-import Layout from "../components/Layout";
-import { withRouter } from "next/router";
+import { useRouter } from 'next/router';
+import { useAuth } from '../context/AuthContext';
 
 // Component Types
 const componentTypeOptions = [
@@ -25,109 +23,66 @@ const componentTypeOptions = [
     { key: 5, text: "PSU", value: "PSU" },
 ];
 
-class ManufacturingMachinePage extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            // registerSCAddress: "0x55cC96dDBE947f14bd3472eDa1ce70aDF32A9322" ,//old
-            // registerSCAddress: "0xF804b9f3b3cf54738C435F9055A4B09423C61c81", //old
-            registerSCAddress: "0x6b2e6052d10fc6865F0504d94C18fF41970E7C23", //new
-            modelName: "",
-            serialNumber: "",
-            productionDate: "",
-            labNumber: "",
-            componentDetails: {
-                Processor: "",
-                RAM: "",
-                "Hard Disk": "",
-                Motherboard: "",
-                PSU: "",
-            },
-            cpuQR: "",
-            errorMessage: "",
-            successMessage: "",
-            loading: false,
-            QRcodePic: false,
-            isAuthenticated: false,
-            userRole: null,
-            userAddress: "",
-            formErrors: {},
+const ManufacturingMachinePage = () => {
+    const router = useRouter();
+    const { isAuthenticated, userRole, walletAddress } = useAuth();
+    const [state, setState] = useState({
+        modelName: "",
+        serialNumber: "",
+        labNumber: "",
+        productionDate: "",
+        componentDetails: {},
+        loading: false,
+        errorMessage: "",
+        successMessage: "",
+        cpuQR: "",
+        registerSCAddress: "",
+        formErrors: {}
+    });
+
+    useEffect(() => {
+        const checkAuth = async () => {
+            try {
+                const accounts = await web3.eth.getAccounts();
+
+                if (!isAuthenticated || userRole !== 'manufacturer') {
+                    router.push('/unauthorized');
+                    return;
+                }
+
+                if (!accounts || !accounts[0]) {
+                    router.push('/connect-wallet');
+                    return;
+                }
+
+                if (accounts[0].toLowerCase() !== walletAddress?.toLowerCase()) {
+                    router.push('/connect-wallet');
+                    return;
+                }
+            } catch (error) {
+                console.error("Error checking authentication:", error);
+                router.push('/unauthorized');
+            }
         };
-        this.qrContainerRef = React.createRef();
-    }
 
-    componentDidMount = async () => {
-        try {
-            const token = localStorage.getItem("token");
-            const role = localStorage.getItem("role");
-            const userAddress = localStorage.getItem("userAddress");
-            const accounts = await web3.eth.getAccounts();
-
-            console.log("=== Debug Information ===");
-            console.log("Token:", token);
-            console.log("Role:", role);
-            console.log("User Address:", userAddress);
-            console.log("Connected Account:", accounts[0]);
-            console.log("All Accounts:", accounts);
-            console.log("=====================");
-
-            // Check basic auth
-            if (!token || !role || !userAddress) {
-                console.log("Missing authentication data");
-                this.props.router.push("/login");
-                return;
-            }
-
-            // Check role - only manufacturer can access this page
-            if (role !== "manufacturer") {
-                console.log("User is not a manufacturer");
-                this.props.router.push("/unauthorized");
-                return;
-            }
-
-            // Check wallet connection
-            if (!accounts || !accounts[0]) {
-                console.log("No wallet connected");
-                this.props.router.push("/connect-wallet");
-                return;
-            }
-
-            // Check if connected wallet matches userAddress
-            if (accounts[0].toLowerCase() !== userAddress.toLowerCase()) {
-                console.log(
-                    "Connected wallet does not match registered manufacturer address"
-                );
-                this.props.router.push("/connect-wallet");
-                return;
-            }
-
-            // Set authenticated state
-            this.setState({
-                isAuthenticated: true,
-                userRole: role,
-                userAddress: userAddress,
-            });
-        } catch (error) {
-            console.error("Error in componentDidMount:", error);
-            this.props.router.push("/unauthorized");
-            return;
-        }
-    };
+        checkAuth();
+    }, [isAuthenticated, userRole, walletAddress]);
 
     // Handle component details input
-    handleComponentDetailsChange = (componentType, value) => {
-        this.setState((prevState) => ({
+    const handleComponentDetailsChange = (componentType, value) => {
+        setState(prev => ({
+            ...prev,
             componentDetails: {
-                ...prevState.componentDetails,
+                ...prev.componentDetails,
                 [componentType]: value,
             },
         }));
     };
 
     // Add validation method
-    validateForm = () => {
+    const validateForm = () => {
         const errors = {};
-        const { modelName, serialNumber, labNumber, productionDate, componentDetails } = this.state;
+        const { modelName, serialNumber, labNumber, productionDate, componentDetails } = state;
 
         // Model Name validation
         if (!modelName.trim()) {
@@ -160,97 +115,82 @@ class ManufacturingMachinePage extends Component {
     };
 
     // Register CPU with components
-    registerCPUWithComponents = async (event) => {
+    const registerCPUWithComponents = async (event) => {
         event.preventDefault();
+        const formErrors = validateForm();
 
-        // Validate form
-        const formErrors = this.validateForm();
         if (Object.keys(formErrors).length > 0) {
-            this.setState({ formErrors });
+            setState(prev => ({ ...prev, formErrors }));
             return;
         }
 
-        // Check authentication before proceeding
-        if (!this.state.isAuthenticated) {
-            this.setState({ errorMessage: "Not authenticated" });
-            return;
-        }
-
-        this.setState({
+        setState(prev => ({
+            ...prev,
             loading: true,
             errorMessage: "",
             successMessage: "",
             cpuQR: ""
-        });
-
-        const {
-            modelName,
-            serialNumber,
-            productionDate,
-            componentDetails,
-            registerSCAddress,
-            labNumber,
-        } = this.state;
+        }));
 
         try {
             const accounts = await web3.eth.getAccounts();
+            const { modelName, serialNumber, productionDate, componentDetails, registerSCAddress, labNumber } = state;
 
-            // Convert component details into arrays
             const componentTypes = Object.keys(componentDetails);
             const componentDetailsArray = Object.values(componentDetails);
-
-            // Convert date string to Unix timestamp (seconds since epoch)
             const dateTimestamp = Math.floor(new Date(productionDate).getTime() / 1000);
 
             const cpuDetails = {
-                modelName: modelName,
-                serialNumber: serialNumber,
-                productionDate: dateTimestamp, // Assuming this represents the production date
-                labNumber: labNumber, // Add this variable if you have it
+                modelName,
+                serialNumber,
+                productionDate: dateTimestamp,
+                labNumber,
             };
 
             const components = componentTypes.map((type, index) => ({
                 componentType: type,
                 details: componentDetailsArray[index],
             }));
+
             const result = await cpuContract.methods
-                .registerCPUWithComponents(
-                    registerSCAddress,
-                    cpuDetails,
-                    components
-                )
+                .registerCPUWithComponents(registerSCAddress, cpuDetails, components)
                 .send({ from: accounts[0] });
-            // Extract the `cpuAddress` from the emitted event
+
             const cpuRegisteredEvent = result.events.CPURegistered;
             const cpuQR = cpuRegisteredEvent.returnValues.cpuAddress;
 
-            console.log("CPU Address:", cpuQR);
-
-            this.setState({
+            setState(prev => ({
+                ...prev,
                 cpuQR,
-                successMessage: "CPU registered successfully!",
-            });
-
+                successMessage: "CPU registered successfully!"
+            }));
 
         } catch (err) {
-            this.setState({ errorMessage: err.message });
+            setState(prev => ({
+                ...prev,
+                errorMessage: err.message
+            }));
         } finally {
-            this.setState({ loading: false });
+            setState(prev => ({
+                ...prev,
+                loading: false
+            }));
         }
     };
 
     // Add method to handle input changes and clear errors
-    handleInputChange = (field, value) => {
-        this.setState(prevState => ({
+    const handleInputChange = (field, value) => {
+        setState(prev => ({
+            ...prev,
             [field]: value,
             formErrors: {
-                ...prevState.formErrors,
+                ...prev.formErrors,
                 [field]: ''
             }
         }));
     };
 
-    handleDownload = () => {
+    const handleDownload = () => {
         // Get the SVG element by its id from the container
         const svg = document.getElementById("qr-code");
         if (!svg) return;
@@ -267,7 +207,7 @@ class ManufacturingMachinePage extends Component {
             ctx.drawImage(img, 0, 0);
             const pngFile = canvas.toDataURL("image/png");
             const downloadLink = document.createElement("a");
-            downloadLink.download = `CPU-QR-${this.state.serialNumber || "code"}.png`;
+            downloadLink.download = `CPU-QR-${state.serialNumber || "code"}.png`;
             downloadLink.href = pngFile;
             downloadLink.click();
         };
@@ -275,168 +215,161 @@ class ManufacturingMachinePage extends Component {
         img.src = "data:image/svg+xml;base64," + btoa(svgData);
     };
 
-    render() {
-        const { formErrors, componentDetails, productionDate } = this.state;
-
-        return (
-            <Container>
-                <link
-                    rel="stylesheet"
-                    href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
-                />
-                <Grid centered>
-                    <Grid.Column width={12}>
-                        <h2 style={{ textAlign: "center" }} >Register CPU with Components</h2>
-                        <Form
-                            onSubmit={this.registerCPUWithComponents}
-                            error={!!this.state.errorMessage || Object.keys(formErrors).length > 0}
-                            success={!!this.state.successMessage}
-                        >
-                            <Form.Field error={!!formErrors.modelName}>
-                                <label>Model Name:</label>
-                                <Input
-                                    placeholder="Enter Model Name"
-                                    value={this.state.modelName}
-                                    onChange={(e) => this.handleInputChange('modelName', e.target.value)}
-                                    required
-                                />
-                                {formErrors.modelName && (
-                                    <Label basic color='red' pointing>
-                                        {formErrors.modelName}
-                                    </Label>
-                                )}
-                            </Form.Field>
-
-                            <Form.Field error={!!formErrors.serialNumber}>
-                                <label>Serial Number:</label>
-                                <Input
-                                    placeholder="Enter Serial Number"
-                                    value={this.state.serialNumber}
-                                    onChange={(e) => this.handleInputChange('serialNumber', e.target.value)}
-                                    required
-                                />
-                                {formErrors.serialNumber && (
-                                    <Label basic color='red' pointing>
-                                        {formErrors.serialNumber}
-                                    </Label>
-                                )}
-                            </Form.Field>
-
-                            <Form.Field error={!!formErrors.labNumber}>
-                                <label>Lab Number:</label>
-                                <Input
-                                    placeholder="Enter Lab Number"
-                                    value={this.state.labNumber}
-                                    onChange={(e) => this.handleInputChange('labNumber', e.target.value)}
-                                    required
-                                />
-                                {formErrors.labNumber && (
-                                    <Label basic color='red' pointing>
-                                        {formErrors.labNumber}
-                                    </Label>
-                                )}
-                            </Form.Field>
-
-                            <Form.Field error={!!formErrors.productionDate}>
-                                <label>Production Date:</label>
-                                <Input
-                                    type="date"
-                                    value={productionDate}
-                                    onChange={(e) => this.handleInputChange('productionDate', e.target.value)}
-                                    placeholder="Select Production Date"
-                                    required
-                                />
-                                {formErrors.productionDate && (
-                                    <Label basic color='red' pointing>
-                                        {formErrors.productionDate}
-                                    </Label>
-                                )}
-                            </Form.Field>
-
-                            <h2 style={{ textAlign: "center" }} >Component Details</h2>
-                            {componentTypeOptions.map((option) => (
-                                <Form.Field
-                                    key={option.key}
-                                    error={!!formErrors[`component_${option.value}`]}
-                                >
-                                    <label>{option.text} Details:</label>
-                                    <Input
-                                        placeholder={`Enter ${option.text} Details`}
-                                        value={componentDetails[option.value]}
-                                        onChange={(e) => {
-                                            this.handleComponentDetailsChange(option.value, e.target.value);
-                                            // Clear component error
-                                            this.setState(prevState => ({
-                                                formErrors: {
-                                                    ...prevState.formErrors,
-                                                    [`component_${option.value}`]: ''
-                                                }
-                                            }));
-                                        }}
-                                        required
-                                    />
-                                    {formErrors[`component_${option.value}`] && (
-                                        <Label basic color='red' pointing>
-                                            {formErrors[`component_${option.value}`]}
-                                        </Label>
-                                    )}
-                                </Form.Field>
-                            ))}
-
-                            <Message
-                                error
-                                header="Error!"
-                                content={this.state.errorMessage}
+    return (
+        <Container>
+            <Grid centered>
+                <Grid.Column width={12}>
+                    <h2 style={{ textAlign: "center" }} >Register CPU with Components</h2>
+                    <Form
+                        onSubmit={registerCPUWithComponents}
+                        error={!!state.errorMessage || Object.keys(state.formErrors).length > 0}
+                        success={!!state.successMessage}
+                    >
+                        <Form.Field error={!!state.formErrors.modelName}>
+                            <label>Model Name:</label>
+                            <Input
+                                placeholder="Enter Model Name"
+                                value={state.modelName}
+                                onChange={(e) => handleInputChange('modelName', e.target.value)}
+                                required
                             />
-                            <Message
-                                success
-                                header="Success!"
-                                content={this.state.successMessage}
-                            />
-                            <center>
-                                <Button
-                                    color="green"
-                                    loading={this.state.loading}
-                                    type="submit"
-                                    disabled={this.state.loading || Object.keys(formErrors).length > 0}
-                                >
-                                    Register CPU
-                                </Button>
-                            </center>
-                        </Form>
+                            {state.formErrors.modelName && (
+                                <Label basic color='red' pointing>
+                                    {state.formErrors.modelName}
+                                </Label>
+                            )}
+                        </Form.Field>
 
-                        {this.state.cpuQR && (
-                            <div
-                                style={{
-                                    marginTop: "20px",
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    alignItems: "center",
-                                }}
+                        <Form.Field error={!!state.formErrors.serialNumber}>
+                            <label>Serial Number:</label>
+                            <Input
+                                placeholder="Enter Serial Number"
+                                value={state.serialNumber}
+                                onChange={(e) => handleInputChange('serialNumber', e.target.value)}
+                                required
+                            />
+                            {state.formErrors.serialNumber && (
+                                <Label basic color='red' pointing>
+                                    {state.formErrors.serialNumber}
+                                </Label>
+                            )}
+                        </Form.Field>
+
+                        <Form.Field error={!!state.formErrors.labNumber}>
+                            <label>Lab Number:</label>
+                            <Input
+                                placeholder="Enter Lab Number"
+                                value={state.labNumber}
+                                onChange={(e) => handleInputChange('labNumber', e.target.value)}
+                                required
+                            />
+                            {state.formErrors.labNumber && (
+                                <Label basic color='red' pointing>
+                                    {state.formErrors.labNumber}
+                                </Label>
+                            )}
+                        </Form.Field>
+
+                        <Form.Field error={!!state.formErrors.productionDate}>
+                            <label>Production Date:</label>
+                            <Input
+                                type="date"
+                                value={state.productionDate}
+                                onChange={(e) => handleInputChange('productionDate', e.target.value)}
+                                placeholder="Select Production Date"
+                                required
+                            />
+                            {state.formErrors.productionDate && (
+                                <Label basic color='red' pointing>
+                                    {state.formErrors.productionDate}
+                                </Label>
+                            )}
+                        </Form.Field>
+
+                        <h2 style={{ textAlign: "center" }} >Component Details</h2>
+                        {componentTypeOptions.map((option) => (
+                            <Form.Field
+                                key={option.key}
+                                error={!!state.formErrors[`component_${option.value}`]}
                             >
-                                <h2>{this.state.cpuQR}</h2>
-                                <h4>CPU QR Code:</h4>
-                                <div ref={this.qrContainerRef}>
-                                    <QRCodeSVG
-                                        id="qr-code"
-                                        value={this.state.cpuQR}
-                                        size={256}
-                                        level="H"
-                                    />
-                                </div>
-                                <div style={{ marginTop: "10px" }}>
-                                    <Button color="green" onClick={this.handleDownload}>
-                                        Download QR Code
-                                    </Button>
-                                </div>
+                                <label>{option.text} Details:</label>
+                                <Input
+                                    placeholder={`Enter ${option.text} Details`}
+                                    value={state.componentDetails[option.value]}
+                                    onChange={(e) => {
+                                        handleComponentDetailsChange(option.value, e.target.value);
+                                        // Clear component error
+                                        setState(prev => ({
+                                            ...prev,
+                                            formErrors: {
+                                                ...prev.formErrors,
+                                                [`component_${option.value}`]: ''
+                                            }
+                                        }));
+                                    }}
+                                    required
+                                />
+                                {state.formErrors[`component_${option.value}`] && (
+                                    <Label basic color='red' pointing>
+                                        {state.formErrors[`component_${option.value}`]}
+                                    </Label>
+                                )}
+                            </Form.Field>
+                        ))}
+
+                        <Message
+                            error
+                            header="Error!"
+                            content={state.errorMessage}
+                        />
+                        <Message
+                            success
+                            header="Success!"
+                            content={state.successMessage}
+                        />
+                        <center>
+                            <Button
+                                color="green"
+                                loading={state.loading}
+                                type="submit"
+                                disabled={state.loading || Object.keys(state.formErrors).length > 0}
+                            >
+                                Register CPU
+                            </Button>
+                        </center>
+                    </Form>
+
+                    {state.cpuQR && (
+                        <div
+                            style={{
+                                marginTop: "20px",
+                                display: "flex",
+                                flexDirection: "column",
+                                alignItems: "center",
+                            }}
+                        >
+                            <h2>{state.cpuQR}</h2>
+                            <h4>CPU QR Code:</h4>
+                            <div ref={this.qrContainerRef}>
+                                <QRCodeSVG
+                                    id="qr-code"
+                                    value={state.cpuQR}
+                                    size={256}
+                                    level="H"
+                                />
                             </div>
-                        )}
+                            <div style={{ marginTop: "10px" }}>
+                                <Button color="green" onClick={handleDownload}>
+                                    Download QR Code
+                                </Button>
+                            </div>
+                        </div>
+                    )}
 
-                    </Grid.Column>
-                </Grid>
-            </Container>
-        );
-    }
-}
+                </Grid.Column>
+            </Grid>
+        </Container>
+    );
+};
 
-export default withRouter(ManufacturingMachinePage);
+export default ManufacturingMachinePage;

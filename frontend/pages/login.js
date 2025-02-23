@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
-import { withRouter } from 'next/router';
+import React, { useState } from 'react';
+import { useRouter } from 'next/router';
 import { Menu, Form, Button, Message, Grid, Dropdown } from 'semantic-ui-react';
+import { useAuth } from '../context/AuthContext';
 
 const roleOptions = [
     { key: 'm', text: 'Municipality', value: 'municipality' },
@@ -49,187 +50,138 @@ const styles = {
     }
 };
 
-class LoginPage extends Component {
-    state = {
+const LoginPage = () => {
+    const router = useRouter();
+    const { login } = useAuth();
+    const [formData, setFormData] = useState({
         email: '',
         password: '',
-        role: '',
-        loading: false,
-        errorMessage: '',
-        success: null
-    };
+        role: ''
+    });
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState(false);
 
-    componentDidMount() {
-        const token = localStorage.getItem('token');
-        const role = localStorage.getItem('role');
-        const sessionExpiry = localStorage.getItem('sessionExpiry');
-
-        if (token && role && sessionExpiry && new Date().getTime() < parseInt(sessionExpiry)) {
-            this.props.router.push(`/${role.toLowerCase()}`);
-        } else {
-            localStorage.clear();
-        }
-    }
-
-    handleChange = (e, data) => {
-        const { name, value } = data || e.target;
-        this.setState({ [name]: value });
-    }
-
-    handleRoleChange = (e, { value }) => {
-        this.setState({ role: value });
-    }
-
-    handleSubmit = async (event) => {
-        event.preventDefault();
-        const { email, password, role } = this.state;
-
-        this.setState({ loading: true, errorMessage: '' });
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        setLoading(true);
+        setError('');
 
         try {
-            if (!email || !password || !role) {
-                throw new Error('Please fill in all fields');
-            }
-
-            // Call backend API
-            const response = await fetch('http://localhost:4000/api/user/login', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ email, password, role })
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                throw new Error(data.error);
-            }
-
-            // Store user data in localStorage
-            localStorage.setItem('token', data.token);
-            localStorage.setItem('role', data.role);
-            localStorage.setItem('userAddress', data.walletAddress);
-            localStorage.setItem('userName', data.name);
-            localStorage.setItem('sessionExpiry', (new Date().getTime() + (24 * 60 * 60 * 1000)).toString());
-
-            this.setState({ success: true });
+            const { email, password, role } = formData;
+            await login(email, password, role);
+            setSuccess(true);
 
             // Redirect based on role
             setTimeout(() => {
                 if (role === 'technician') {
-                    this.props.router.push('/recycler');
+                    router.push('/recycler');
                 } else {
-                    this.props.router.push('/connect-wallet');
+                    router.push('/connect-wallet');
                 }
             }, 1500);
-
-        } catch (error) {
-            this.setState({
-                errorMessage: error.message,
-                success: false
-            });
+        } catch (err) {
+            setError(err.message);
+            setSuccess(false);
         } finally {
-            this.setState({ loading: false });
+            setLoading(false);
         }
+    };
+
+    const handleChange = (e, data) => {
+        const { name, value } = data || e.target;
+        setFormData({ ...formData, [name]: value });
     }
 
-    render() {
-        const { email, password, role, loading, errorMessage, success } = this.state;
+    const handleRoleChange = (e, { value }) => {
+        setFormData({ ...formData, role: value });
+    }
 
-        return (
-            <>
-                <link rel="stylesheet"
-                    href="//cdn.jsdelivr.net/npm/semantic-ui@2.4.1/dist/semantic.min.css"
-                />
-                <div className='ui container' style={styles.container}>
-                    <Grid textAlign='center' verticalAlign='middle' style={{ flex: 1 }}>
-                        <Grid.Column style={styles.gridColumn}>
-                            <h2 style={styles.header}>
-                                Login to ReGen Platform
-                            </h2>
-                            <Form size='large' onSubmit={this.handleSubmit} error={!!errorMessage} success={success} style={styles.form}>
-                                <Form.Input
+    return (
+        <>
+            <div className='ui container' style={styles.container}>
+                <Grid textAlign='center' verticalAlign='middle' style={{ flex: 1 }}>
+                    <Grid.Column style={styles.gridColumn}>
+                        <h2 style={styles.header}>
+                            Login to ReGen Platform
+                        </h2>
+                        <Form size='large' onSubmit={handleSubmit} error={!!error} success={success} style={styles.form}>
+                            <Form.Input
+                                fluid
+                                icon='user'
+                                iconPosition='left'
+                                placeholder='E-mail address'
+                                name='email'
+                                value={formData.email}
+                                onChange={handleChange}
+                                required
+                                style={styles.input}
+                            />
+                            <Form.Input
+                                fluid
+                                icon='lock'
+                                iconPosition='left'
+                                placeholder='Password'
+                                type='password'
+                                name='password'
+                                value={formData.password}
+                                onChange={handleChange}
+                                required
+                                style={styles.input}
+                            />
+                            <Form.Field required>
+                                <Dropdown
+                                    placeholder='Select Role'
                                     fluid
-                                    icon='user'
-                                    iconPosition='left'
-                                    placeholder='E-mail address'
-                                    name='email'
-                                    value={email}
-                                    onChange={this.handleChange}
+                                    selection
+                                    options={roleOptions}
+                                    name="role"
+                                    value={formData.role}
+                                    onChange={handleRoleChange}
+                                    style={{ fontSize: '0.8em', color: 'black' }}
                                     required
-                                    style={styles.input}
                                 />
-                                <Form.Input
-                                    fluid
-                                    icon='lock'
-                                    iconPosition='left'
-                                    placeholder='Password'
-                                    type='password'
-                                    name='password'
-                                    value={password}
-                                    onChange={this.handleChange}
-                                    required
-                                    style={styles.input}
+                            </Form.Field>
+
+                            <Button
+                                color='green'
+                                loading={loading}
+                                disabled={loading}
+                            >
+                                Log In
+                            </Button>
+
+                            {error && (
+                                <Message
+                                    error
+                                    header='Error'
+                                    content={error}
+                                    style={styles.message}
                                 />
-                                <Form.Field required>
-                                    <Dropdown
-                                        placeholder='Select Role'
-                                        fluid
-                                        selection
-                                        options={roleOptions}
-                                        name="role"
-                                        value={role}
-                                        onChange={this.handleRoleChange}
-                                        style={{ fontSize: '0.8em', color: 'black' }}
-                                        required
-                                    />
-                                </Form.Field>
-
-                                <Button
-                                    color='green'
-                                    loading={loading}
-                                    disabled={loading}
-                                >
-                                    Log In
-                                </Button>
-
-                                {success === false && (
-                                    <Message
-                                        error
-                                        header='Error'
-                                        content={errorMessage}
-                                        style={styles.message}
-                                    />
-                                )}
-
-                                {success && (
-                                    <Message
-                                        success
-                                        header='Success'
-                                        content="Login successful! Redirecting..."
-                                        style={styles.message}
-                                    />
-                                )}
-                            </Form>
-
-                            {!success && (
-                                <>
-                                    <Message warning style={styles.message}>
-                                        Note: Please ensure you have MetaMask extension installed and enabled.
-                                    </Message>
-                                </>
                             )}
-                        </Grid.Column>
-                    </Grid>
-                </div>
-            </>
-        );
-    }
+
+                            {success && (
+                                <Message
+                                    success
+                                    header='Success'
+                                    content="Login successful! Redirecting..."
+                                    style={styles.message}
+                                />
+                            )}
+                        </Form>
+
+                        {!success && (
+                            <>
+                                <Message warning style={styles.message}>
+                                    Note: Please ensure you have MetaMask extension installed and enabled.
+                                </Message>
+                            </>
+                        )}
+                    </Grid.Column>
+                </Grid>
+            </div>
+        </>
+    );
 }
 
-LoginPage.getLayout = (page) => {
-    return page;
-};
-
-export default withRouter(LoginPage);
+export default LoginPage;
