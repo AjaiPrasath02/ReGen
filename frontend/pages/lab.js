@@ -298,10 +298,16 @@ class LabPage extends Component {
 
                 {qrScanned && (
                     <>
-                        <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
-                            Lab Assistant - View Components
-                        </Header>
-                        <div style={{ marginBottom: "1em" }}>
+                        {labAssistantLabNumber !== cpuLabNumber ? (
+                            <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
+                                This CPU does not belong to your lab
+                            </Header>
+                        ) : (
+                            <Header as="h1" textAlign="center" style={{ marginTop: "1em" }}>
+                                Lab Assistant - View Components
+                            </Header>
+                        )}
+                        <div style={{ marginBottom: "1em", display: "flex", justifyContent: "space-between" }}>
                             <Button
                                 icon="arrow left"
                                 content="Back to Scanner"
@@ -309,12 +315,14 @@ class LabPage extends Component {
                                 onClick={this.handleBack}
                                 style={{ marginRight: "1em" }}
                             />
-                            <Button
-                                icon="warning circle"
-                                content="Report Issue"
-                                color="red"
-                                onClick={this.handleOpenModal}
-                            />
+                            {labAssistantLabNumber === cpuLabNumber && (
+                                <Button
+                                    icon="warning circle"
+                                    content="Report Issue"
+                                    color="red"
+                                    onClick={this.handleOpenModal}
+                                />
+                            )}
                         </div>
                     </>)}
 
@@ -360,67 +368,70 @@ class LabPage extends Component {
                             </>
                         ) : (
                             <>
-
-                                <Form>
-                                    <Form.Group widths="equal">
-                                        <Form.Field>
-                                            <label>Lab Number</label>
-                                            <Input readOnly value={cpuLabNumber} />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <label>Model</label>
-                                            <Input readOnly value={cpuModel} />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <label>Serial</label>
-                                            <Input readOnly value={cpuSerial} />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <label>Status</label>
-                                            <Input readOnly value={cpuStatus} />
-                                        </Form.Field>
-                                        <Form.Field>
-                                            <label>Production Date</label>
-                                            <Input readOnly value={this.state.productionDate} />
-                                        </Form.Field>
-                                    </Form.Group>
-                                </Form>
-
-                                <div style={{ width: "100%" }}>
-                                    <Header
-                                        as="h2"
-                                        textAlign="center"
-                                        style={{ marginTop: "10px", marginBottom: "10px" }}
-                                    >
-                                        Components
-                                    </Header>
-
-                                    <Form error={!!errorMessage} style={{ marginTop: "1em", width: "100%" }}>
-                                        {components.map((component, idx) => (
-                                            <Form.Group key={idx} style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
-                                                <Form.Field width={"100%"} style={{ flex: "1" }}>
-                                                    <label>{component.componentType}</label>
-                                                    <Input
-                                                        readOnly
-                                                        value={component.details}
-                                                        style={{ backgroundColor: '#f9f9f9' }}
-                                                    />
+                                {labAssistantLabNumber === cpuLabNumber && (
+                                    <>
+                                        <Form>
+                                            <Form.Group widths="equal">
+                                                <Form.Field>
+                                                    <label>Lab Number</label>
+                                                    <Input readOnly value={cpuLabNumber} />
                                                 </Form.Field>
-                                                <Form.Field style={{ marginLeft: '1em' }}>
-                                                    <Button color="orange" style={{ cursor: "default" }}>
-                                                        {component.status}
-                                                    </Button>
+                                                <Form.Field>
+                                                    <label>Model</label>
+                                                    <Input readOnly value={cpuModel} />
+                                                </Form.Field>
+                                                <Form.Field>
+                                                    <label>Serial</label>
+                                                    <Input readOnly value={cpuSerial} />
+                                                </Form.Field>
+                                                <Form.Field>
+                                                    <label>Status</label>
+                                                    <Input readOnly value={cpuStatus} />
+                                                </Form.Field>
+                                                <Form.Field>
+                                                    <label>Production Date</label>
+                                                    <Input readOnly value={this.state.productionDate} />
                                                 </Form.Field>
                                             </Form.Group>
-                                        ))}
+                                        </Form>
 
-                                        <Message
-                                            error
-                                            header="Error"
-                                            content={errorMessage}
-                                        />
-                                    </Form>
-                                </div>
+                                        <div style={{ width: "100%" }}>
+                                            <Header
+                                                as="h2"
+                                                textAlign="center"
+                                                style={{ marginTop: "10px", marginBottom: "10px" }}
+                                            >
+                                                Components
+                                            </Header>
+
+                                            <Form error={!!errorMessage} style={{ marginTop: "1em", width: "100%" }}>
+                                                {components.map((component, idx) => (
+                                                    <Form.Group key={idx} style={{ display: "flex", alignItems: "flex-end", justifyContent: "space-between" }}>
+                                                        <Form.Field width={"100%"} style={{ flex: "1" }}>
+                                                            <label>{component.componentType}</label>
+                                                            <Input
+                                                                readOnly
+                                                                value={component.details}
+                                                                style={{ backgroundColor: '#f9f9f9' }}
+                                                            />
+                                                        </Form.Field>
+                                                        <Form.Field style={{ marginLeft: '1em' }}>
+                                                            <Button color="orange" style={{ cursor: "default" }}>
+                                                                {component.status}
+                                                            </Button>
+                                                        </Form.Field>
+                                                    </Form.Group>
+                                                ))}
+
+                                                <Message
+                                                    error
+                                                    header="Error"
+                                                    content={errorMessage}
+                                                />
+                                            </Form>
+                                        </div>
+                                    </>
+                                )}
                             </>
                         )}
                     </Grid.Column>
