@@ -562,6 +562,7 @@ const TechnicianPage = () => {
                 >
                     <Modal.Header>Reported CPU Issues</Modal.Header>
                     <Modal.Content>
+                        <p style={{ color: "orange" }}>Go to pending tab to set the status of the complaint to be resolved</p>
                         <div style={{ marginBottom: '1em' }}>
                             <Button.Group>
                                 <Button

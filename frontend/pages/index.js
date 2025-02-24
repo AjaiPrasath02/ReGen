@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/router';
+import { Header, Loader, Container } from 'semantic-ui-react';
 
 export default function Home() {
     const router = useRouter();
@@ -8,7 +9,7 @@ export default function Home() {
         // Check authentication status
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
-        
+
         if (token && role) {
             // Check if wallet is connected
             if (typeof window.ethereum !== 'undefined') {
@@ -38,17 +39,24 @@ export default function Home() {
 
     // Show loading state or splash screen while checking
     return (
-        <div style={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            alignItems: 'center', 
-            height: '100vh',
-            backgroundColor: '#f5f5f5'
-        }}>
+        <Container
+            fluid
+            style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                height: '100vh',
+                backgroundColor: '#f5f5f5'
+            }}
+        >
             <div style={{ textAlign: 'center' }}>
-                <h1 style={{ color: '#2c974b' }}>ReGen</h1>
-                <p>Loading...</p>
+                <Header as='h1' color='green' size='huge'>
+                    ReGen
+                </Header>
+                <Loader active inline='centered' size='large'>
+                    Loading
+                </Loader>
             </div>
-        </div>
+        </Container>
     );
 }

@@ -293,7 +293,7 @@ const LabPage = () => {
 
             {state.qrScanned && (
                 <>
-                    {state.labAssistantLabNumber !== state.cpuLabNumber ? (
+                    {state.cpuLabNumber && state.labAssistantLabNumber !== state.cpuLabNumber ? (
                         <>
                             <Button
                                 icon="arrow left"

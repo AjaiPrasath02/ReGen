@@ -26,6 +26,7 @@ const componentTypeOptions = [
 const ManufacturingMachinePage = () => {
     const router = useRouter();
     const { isAuthenticated, userRole, walletAddress } = useAuth();
+    const qrContainerRef = React.useRef();
     const [state, setState] = useState({
         modelName: "",
         serialNumber: "",
@@ -198,13 +199,20 @@ const ManufacturingMachinePage = () => {
         const svgData = new XMLSerializer().serializeToString(svg);
         const canvas = document.createElement("canvas");
         const ctx = canvas.getContext("2d");
-        // Set canvas dimensions to SVG dimensions
-        canvas.width = svg.width.baseVal.value;
-        canvas.height = svg.height.baseVal.value;
+
+        // Add margin of 10px on each side
+        const margin = 10;
+        canvas.width = svg.width.baseVal.value + (margin * 2);
+        canvas.height = svg.height.baseVal.value + (margin * 2);
+
+        // Fill the canvas with white background
+        ctx.fillStyle = 'white';
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
 
         const img = new Image();
         img.onload = () => {
-            ctx.drawImage(img, 0, 0);
+            // Draw the image with margin offset
+            ctx.drawImage(img, margin, margin);
             const pngFile = canvas.toDataURL("image/png");
             const downloadLink = document.createElement("a");
             downloadLink.download = `CPU-QR-${state.serialNumber || "code"}.png`;
@@ -350,7 +358,7 @@ const ManufacturingMachinePage = () => {
                         >
                             <h2>{state.cpuQR}</h2>
                             <h4>CPU QR Code:</h4>
-                            <div ref={this.qrContainerRef}>
+                            <div ref={qrContainerRef}>
                                 <QRCodeSVG
                                     id="qr-code"
                                     value={state.cpuQR}

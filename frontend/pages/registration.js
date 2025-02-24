@@ -89,7 +89,6 @@ const RegistrationPage = () => {
                 throw new Error('No wallet connected');
             }
 
-
             const response = await fetch('http://localhost:4000/api/user/signup', {
                 method: 'POST',
                 headers: {
