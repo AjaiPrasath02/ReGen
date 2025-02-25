@@ -10,6 +10,7 @@ import ComplaintsModal from '../components/Technician/ComplaintsModal';
 import AllCPUs from '../components/CPUsTable';
 import QrScanner from 'qr-scanner';
 import Visualization from './visualization';
+import HistoryModal from '../components/Technician/HistoryModal';
 
 const TechnicianPage = () => {
     const router = useRouter();
@@ -44,6 +45,7 @@ const TechnicianPage = () => {
         showMessage: false,
         messageTimeout: null,
         statusFilter: 'all',
+        showHistoryModal: false,
     });
 
     useEffect(() => {
@@ -319,9 +321,6 @@ const TechnicianPage = () => {
         }
     }
 
-    const handleHistory=()=>{
-        router.push('/history')
-    }
     return (
         <>
             {state.showMessage && (
@@ -368,15 +367,15 @@ const TechnicianPage = () => {
                     />
                     <Button
                         color="blue"
-                        style={{ marginTop: '2em', marginBottom: '2em' }}
+                        style={{ marginRight: '2em' }}
                         onClick={handleVisualization}
                     >
                         View All CPUs Visualization
                     </Button>
                     <Button
                         color="blue"
-                        style={{ marginTop: '2em', marginBottom: '2em' }}
-                        onClick={handleHistory}
+                        style={{ marginRight: '2em' }}
+                        onClick={() => setState((prev) => ({ ...prev, showHistoryModal: true }))}
                     >
                         View History
                     </Button>
@@ -408,7 +407,7 @@ const TechnicianPage = () => {
 
                 <Grid centered style={{ marginTop: '1em', marginBottom: '1em' }}>
                     <Grid.Column width="100%">
-                        {!state.qrScanned ? (
+                        {!state.qrScanned && !state.showHistoryModal ? (
                             <Segment>
                                 <Grid stackable columns={2}>
                                     <Grid.Row style={{ paddingRight: '3em' }}>
@@ -454,6 +453,11 @@ const TechnicianPage = () => {
                     setStatusFilter={(filter) => setState((prev) => ({ ...prev, statusFilter: filter }))}
                     onResolveComplaint={handleResolveComplaint}
                     resolvingComplaint={state.resolvingComplaint}
+                />
+
+                <HistoryModal
+                    showHistoryModal={state.showHistoryModal}
+                    onClose={() => setState((prev) => ({ ...prev, showHistoryModal: false }))}
                 />
 
                 {/* Add Visualization Modal */}
