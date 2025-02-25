@@ -319,6 +319,9 @@ const TechnicianPage = () => {
         }
     }
 
+    const handleHistory=()=>{
+        router.push('/history')
+    }
     return (
         <>
             {state.showMessage && (
@@ -369,6 +372,13 @@ const TechnicianPage = () => {
                         onClick={handleVisualization}
                     >
                         View All CPUs Visualization
+                    </Button>
+                    <Button
+                        color="blue"
+                        style={{ marginTop: '2em', marginBottom: '2em' }}
+                        onClick={handleHistory}
+                    >
+                        View History
                     </Button>
                 </div>
 

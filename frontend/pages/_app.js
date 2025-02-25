@@ -6,6 +6,7 @@ import '../styles/Visualization.css';
 import '../styles/Carousel.css';
 import '../styles/About.css';
 import '../styles/login.css';
+import '../styles/History.css'
 
 function MyApp({ Component, pageProps }) {
     return (

@@ -32,6 +32,8 @@ const AllCPUs = ({ cpuLabNumber }) => {
                 from: accounts[0],
             });
 
+            console.log(cpus);
+
             // Only filter if cpuLabNumber is provided
             const filteredCpus = cpuLabNumber
                 ? cpus.filter(cpu => cpu.labNumber === cpuLabNumber)
