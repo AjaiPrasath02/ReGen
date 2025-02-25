@@ -1,0 +1,9 @@
+.input-section{
+    display: flex;
+    justify-content: space-between;
+}
+
+.fetch-input{
+    display: flex;
+    gap:20px;
+}
