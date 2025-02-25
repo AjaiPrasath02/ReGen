@@ -70,7 +70,7 @@ const ConnectWalletPage = () => {
 
     return (
         <div className="connect-wallet-container">
-            <Grid textAlign='center' className="connect-wallet-grid" verticalAlign='middle' horizontalAlign='center' style={{ minWidth: '600px' }}>
+            <Grid textAlign='center' className="connect-wallet-grid" verticalAlign='middle' style={{ minWidth: '600px' }}>
                 <Grid.Column style={{ margin: '50px' }}>
                     <h2 className="connect-wallet-header">
                         <Icon name='plug' style={{ color: '#0ea432' }} />

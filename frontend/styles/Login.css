@@ -1,0 +1,68 @@
+/* Container */
+.login-container {
+    padding: 40px 40px;
+    display: flex;
+    flex-direction: column;
+    background: white;
+    box-sizing: border-box;
+    height: 475px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    width: 45%;
+}
+
+/* Grid */
+.login-grid {
+    flex: 1;
+}
+
+/* Grid Column */
+.login-grid-column {
+    width: 70%;
+    max-width: 500px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+    box-sizing: border-box;
+}
+
+/* Header */
+.login-header {
+    text-align: center;
+    margin-bottom: 3rem;
+    color: #0ea432;
+    text-shadow: 1px 1px 1px rgba(0, 0, 0, 0.1);
+}
+
+/* Form */
+.login-form {
+    width: 100%;
+}
+
+/* Input */
+.login-input {
+    width: 100%;
+    margin-bottom: 0;
+    box-sizing: border-box;
+}
+
+/* Dropdown */
+.login-dropdown {
+    font-size: 0.8em;
+    color: black;
+}
+
+/* Button */
+.login-button {
+    width: 100%;
+}
+
+/* Message */
+.login-message {
+    width: 100%;
+    max-width: 500px;
+    margin: 1rem auto 0;
+    border-radius: 8px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}

@@ -4,5 +4,8 @@
     "scripts": {
         "open": "start start.bat",
         "install": "start install.bat"
+    },
+    "dependencies": {
+        "next": "^15.1.7"
     }
 }
