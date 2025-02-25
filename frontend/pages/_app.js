@@ -4,6 +4,8 @@ import Layout from '../components/Layout';
 import '../styles.css';
 import '../styles/Visualization.css';
 import '../styles/Carousel.css';
+import '../styles/About.css';
+import '../styles/login.css';
 
 function MyApp({ Component, pageProps }) {
     return (

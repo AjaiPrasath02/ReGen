@@ -7,57 +7,13 @@ const roleOptions = [
     { key: 'm', text: 'Municipality', value: 'municipality' },
     { key: 'mf', text: 'Manufacturer', value: 'manufacturer' },
     { key: 't', text: 'Technician', value: 'technician' },
-    { key: 'l', text: 'Lab Assistant', value: 'labassistant' }
+    { key: 'l', text: 'Lab Assistant', value: 'labassistant' },
 ];
-
-const styles = {
-    container: {
-        padding: '20px 20px',
-        display: 'flex',
-        flexDirection: 'column',
-        minHeight: '100vh',
-        background: 'white',
-        boxSizing: 'border-box',
-        minHeight: '522px',
-        width: '45%'
-    },
-    form: {
-        width: '70%',
-        maxWidth: '500px',
-        margin: '0 auto',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '1.2rem',
-        boxSizing: 'border-box'
-    },
-    header: {
-        textAlign: 'center',
-        marginBottom: '1rem',
-        color: '#0ea432',
-        textShadow: '1px 1px 1px rgba(0,0,0,0.1)'
-    },
-    input: {
-        width: '100%',
-        marginBottom: '0',
-        boxSizing: 'border-box'
-    },
-    message: {
-        width: '100%',
-        maxWidth: '500px',
-        margin: '1rem auto 0',
-        borderRadius: '8px',
-        boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-    }
-};
 
 const LoginPage = () => {
     const router = useRouter();
     const { login } = useAuth();
-    const [formData, setFormData] = useState({
-        email: '',
-        password: '',
-        role: ''
-    });
+    const [formData, setFormData] = useState({ email: '', password: '', role: '' });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
@@ -72,7 +28,7 @@ const LoginPage = () => {
             await login(email, password, role);
             setSuccess(true);
 
-            // Redirect based on role
+            // Redirect based on role after a short delay
             setTimeout(() => {
                 if (role === 'technician') {
                     router.push('/recycler');
@@ -88,65 +44,69 @@ const LoginPage = () => {
         }
     };
 
-    const handleChange = (e, data) => {
-        const { name, value } = data || e.target;
+    const handleChange = (e, { name, value }) => {
         setFormData({ ...formData, [name]: value });
-    }
+    };
 
     const handleRoleChange = (e, { value }) => {
         setFormData({ ...formData, role: value });
-    }
+    };
 
     return (
-        <>
-            <div className='ui container' style={styles.container}>
-                <Grid textAlign='center' verticalAlign='middle' style={{ flex: 1 }}>
-                    <Grid.Column style={styles.gridColumn}>
-                        <h2 style={styles.header}>
-                            Login to ReGen Platform
-                        </h2>
-                        <Form size='large' onSubmit={handleSubmit} error={!!error} success={success} style={styles.form}>
+        <div className="ui container" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100%', alignSelf: 'center' }}>
+            <div className="login-container">
+                <Grid textAlign="center" verticalAlign="middle" className="login-grid">
+                    <Grid.Column className="login-grid-column">
+                        <h2 className="login-header">Login to ReGen Platform</h2>
+                        <Form
+                            size="large"
+                            onSubmit={handleSubmit}
+                            error={!!error}
+                            success={success}
+                            className="login-form"
+                        >
                             <Form.Input
                                 fluid
-                                icon='user'
-                                iconPosition='left'
-                                placeholder='E-mail address'
-                                name='email'
+                                icon="user"
+                                iconPosition="left"
+                                placeholder="E-mail address"
+                                name="email"
                                 value={formData.email}
                                 onChange={handleChange}
                                 required
-                                style={styles.input}
+                                className="login-input"
                             />
                             <Form.Input
                                 fluid
-                                icon='lock'
-                                iconPosition='left'
-                                placeholder='Password'
-                                type='password'
-                                name='password'
+                                icon="lock"
+                                iconPosition="left"
+                                placeholder="Password"
+                                type="password"
+                                name="password"
                                 value={formData.password}
                                 onChange={handleChange}
                                 required
-                                style={styles.input}
+                                className="login-input"
                             />
                             <Form.Field required>
                                 <Dropdown
-                                    placeholder='Select Role'
+                                    placeholder="Select Role"
                                     fluid
                                     selection
                                     options={roleOptions}
                                     name="role"
                                     value={formData.role}
                                     onChange={handleRoleChange}
-                                    style={{ fontSize: '0.8em', color: 'black' }}
+                                    className="login-dropdown"
                                     required
                                 />
                             </Form.Field>
 
                             <Button
-                                color='green'
+                                color="green"
                                 loading={loading}
                                 disabled={loading}
+                                className="login-button"
                             >
                                 Log In
                             </Button>
@@ -154,34 +114,34 @@ const LoginPage = () => {
                             {error && (
                                 <Message
                                     error
-                                    header='Error'
+                                    header="Error"
                                     content={error}
-                                    style={styles.message}
+                                    className="login-message"
                                 />
                             )}
 
                             {success && (
                                 <Message
                                     success
-                                    header='Success'
+                                    header="Success"
                                     content="Login successful! Redirecting..."
-                                    style={styles.message}
+                                    className="login-message"
                                 />
                             )}
                         </Form>
 
                         {!success && (
-                            <>
-                                <Message warning style={styles.message}>
-                                    Note: Please ensure you have MetaMask extension installed and enabled.
-                                </Message>
-                            </>
+                            <Message
+                                warning
+                                className="login-message"
+                                content="Note: Please ensure you have MetaMask extension installed and enabled."
+                            />
                         )}
                     </Grid.Column>
                 </Grid>
             </div>
-        </>
+        </div>
     );
-}
+};
 
 export default LoginPage;

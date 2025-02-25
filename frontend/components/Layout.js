@@ -46,7 +46,7 @@ const Layout = ({ children }) => {
                 flexDirection: 'column',
                 backgroundColor: '#f5f5f5'
             }}>
-                {isHomePage && <Carousel />}
+                {isHomePage && (<><br /><br /> <Carousel /></>)}
                 <Container style={{
                     padding: '20px 0',
                     flex: 1,

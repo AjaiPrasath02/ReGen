@@ -1,8 +1,6 @@
-import React, { useState, useEffect } from "react";
-import { useRouter } from 'next/router';
-import { Container, Header, Button, Grid } from "semantic-ui-react";
+import React, { useState } from "react";
+import { Container, Button, Grid } from "semantic-ui-react";
 import {
-    BarChart,
     Bar,
     PieChart,
     Pie,
@@ -11,23 +9,13 @@ import {
     YAxis,
     CartesianGrid,
     Tooltip,
-    Legend,
     ResponsiveContainer,
     ComposedChart
 } from 'recharts';
-import Link from 'next/link';
 
-const Visualization = () => {
-    const router = useRouter();
-    const [cpuArray, setCpuArray] = useState([]);
+const Visualization = ({ cpuArray, onBack }) => {
     const [activeTab, setActiveTab] = useState("status");
     const [selectedCpu, setSelectedCpu] = useState(null);
-
-    useEffect(() => {
-        if (router.query.cpuArray) {
-            setCpuArray(JSON.parse(router.query.cpuArray));
-        }
-    }, [router.query]);
 
     // Tab 1: Aggregate CPU count by status
     const statusCounts = cpuArray.reduce((counts, cpu) => {
@@ -63,14 +51,14 @@ const Visualization = () => {
     const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042'];
 
     return (
-        <Container className="cpu-page">
+        <Container className="cpu-page" style={{ backgroundColor: '#f0f0f0' }}>
             <div style={{
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
                 margin: '1em 0'
             }}>
-                <Button color="blue" onClick={() => router.back()}>
+                <Button color="blue" onClick={onBack}>
                     Back to Dashboard
                 </Button>
                 {selectedCpu && (
@@ -154,9 +142,7 @@ const Visualization = () => {
                     <div className="card-header" style={{ marginBottom: '0.5em' }}>
                         <h2>All CPUs</h2>
                     </div>
-                    <div className="cpu-list" style={{
-
-                    }}>
+                    <div className="cpu-list">
                         {cpuArray.map((cpu, index) => (
                             <div
                                 className="cpu-card clickable"
@@ -276,4 +262,4 @@ const Visualization = () => {
     );
 };
 
-export default Visualization; 
+export default Visualization;

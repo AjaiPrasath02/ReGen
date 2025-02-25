@@ -3,53 +3,49 @@ import { useRouter } from 'next/router';
 import { Menu, Icon, Form, Button, Message } from 'semantic-ui-react';
 import Image from 'next/image';
 import trackingContract from '../ethereum/tracking';
-import img1 from "../public/10.webp"
+import img1 from '../public/10.webp';
+import { Container } from 'semantic-ui-react';
 
 const About = () => {
     const router = useRouter();
-    const [state, setState] = useState({
-        activeItem: 'about',
-        recycledBottles: 0,
-        notRecycledBottles: 0,
-        isAuthenticated: false,
-        userRole: null,
-        name: '',
-        email: '',
-        message: '',
-        loading: false,
-        error: '',
-        success: '',
-        formErrors: {}
-    });
+
+    // Split state into individual useState hooks for better clarity
+    const [activeItem, setActiveItem] = useState('about');
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
+    const [message, setMessage] = useState('');
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState('');
+    const [success, setSuccess] = useState('');
+    const [formErrors, setFormErrors] = useState({});
 
     useEffect(() => {
-        // Check if user is already authenticated
+        // Check authentication status
         const token = localStorage.getItem('token');
         const role = localStorage.getItem('role');
         if (token && role) {
-            setState(prev => ({ ...prev, isAuthenticated: true, userRole: role }));
+            setIsAuthenticated(true);
+            setUserRole(role);
         }
 
-        // Get tracking data
+        // Fetch tracking data
         const fetchTrackingData = async () => {
-            var disposed = 0;
-            var sorted = 0;
+            let disposed = 0;
+            let sorted = 0;
 
-            trackingContract.getPastEvents("allEvents", { fromBlock: 0, toBlock: 'latest' }, (error, events) => {
-                events.forEach(item => {
-                    if (item.event === 'updateStatusRecycler') {
-                        disposed++;
-                    } else if (item.event === 'updateStatusMachine') {
-                        sorted++;
-                    }
-                });
-
-                setState(prev => ({
-                    ...prev,
-                    recycledBottles: sorted,
-                    notRecycledBottles: disposed
-                }));
-            });
+            trackingContract.getPastEvents(
+                'allEvents',
+                { fromBlock: 0, toBlock: 'latest' },
+                (err, events) => {
+                    events.forEach((item) => {
+                        if (item.event === 'updateStatusRecycler') disposed++;
+                        else if (item.event === 'updateStatusMachine') sorted++;
+                    });
+                    setRecycledBottles(sorted);
+                    setNotRecycledBottles(disposed);
+                }
+            );
         };
 
         fetchTrackingData();
@@ -60,114 +56,59 @@ const About = () => {
         router.push('/login');
     };
 
-    const handleItemClick = (e, { name }) => {
-        setState(prev => ({ ...prev, activeItem: name }));
-    };
+    const handleItemClick = (e, { name }) => setActiveItem(name);
 
-    const handleLogin = () => {
-        router.push('/login');
-    };
+    const handleLogin = () => router.push('/login');
 
     const validateForm = () => {
         const errors = {};
-        const { name, email, message } = state;
-
-        // Name validation
-        if (!name.trim()) {
-            errors.name = 'Name is required';
-        }
-
-        // Email validation
-        if (!email.trim()) {
-            errors.email = 'Email is required';
-        } else if (!/\S+@\S+\.\S+/.test(email)) {
-            errors.email = 'Please enter a valid email address';
-        }
-
-        // Message validation
-        if (!message.trim()) {
-            errors.message = 'Message is required';
-        }
-
+        if (!name.trim()) errors.name = 'Name is required';
+        if (!email.trim()) errors.email = 'Email is required';
+        else if (!/\S+@\S+\.\S+/.test(email)) errors.email = 'Please enter a valid email address';
+        if (!message.trim()) errors.message = 'Message is required';
         return errors;
     };
 
     const handleSubmit = async (event) => {
         event.preventDefault();
 
-        // Validate form
-        const formErrors = validateForm();
-        if (Object.keys(formErrors).length > 0) {
-            setState(prev => ({ ...prev, formErrors }));
+        const errors = validateForm();
+        if (Object.keys(errors).length > 0) {
+            setFormErrors(errors);
             return;
         }
 
-        const { name, email, message } = state;
-
         try {
-            setState(prev => ({
-                ...prev,
-                loading: true,
-                error: '',
-                success: '',
-                formErrors: {}
-            }));
+            setLoading(true);
+            setError('');
+            setSuccess('');
+            setFormErrors({});
 
             const response = await fetch('http://localhost:4000/api/feedback/submit', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({
-                    name,
-                    email,
-                    message
-                })
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ name, email, message }),
             });
 
             const data = await response.json();
-            if (!response.ok) {
-                throw new Error(data.error || 'Something went wrong');
-            }
+            if (!response.ok) throw new Error(data.error || 'Something went wrong');
 
-            // Clear form and show success message
-            setState(prev => ({
-                ...prev,
-                name: '',
-                email: '',
-                message: '',
-                success: 'Thank you for your feedback!',
-                loading: false,
-                formErrors: {}
-            }));
-
-        } catch (error) {
-            setState(prev => ({
-                ...prev,
-                error: error.message,
-                loading: false
-            }));
+            setName('');
+            setEmail('');
+            setMessage('');
+            setSuccess('Thank you for your feedback!');
+        } catch (err) {
+            setError(err.message);
+        } finally {
+            setLoading(false);
         }
     };
-
-    const handleInputChange = (e, { name, value }) => {
-        setState(prev => ({
-            ...prev,
-            [name]: value,
-            formErrors: {
-                ...prev.formErrors,
-                [name]: '' // Clear error when user types
-            }
-        }));
-    };
-
-    const { activeItem, isAuthenticated, userRole } = state;
 
     return (
         <div>
             <Menu text>
                 <Menu.Item
-                    name='about'
+                    name="about"
                     active={activeItem === 'about'}
                     onClick={handleItemClick}
                     style={{
@@ -178,10 +119,8 @@ const About = () => {
                 >
                     About
                 </Menu.Item>
-
-
                 <Menu.Item
-                    name='contact'
+                    name="contact"
                     active={activeItem === 'contact'}
                     onClick={handleItemClick}
                     style={{
@@ -192,24 +131,16 @@ const About = () => {
                 >
                     Contact Us
                 </Menu.Item>
-
-                {/* Add Login/Dashboard Button */}
-                <Menu.Menu position='right'>
+                <Menu.Menu position="right">
                     {!isAuthenticated ? (
                         <Menu.Item>
-                            <Button
-                                color='green'
-                                onClick={handleLogin}
-                            >
+                            <Button color="green" onClick={handleLogin}>
                                 Login
                             </Button>
                         </Menu.Item>
                     ) : (
                         <Menu.Item>
-                            <Button
-                                color='blue'
-                                onClick={handleLogout}
-                            >
+                            <Button color="blue" onClick={handleLogout}>
                                 Log Out
                             </Button>
                         </Menu.Item>
@@ -217,145 +148,105 @@ const About = () => {
                 </Menu.Menu>
             </Menu>
 
-            {(activeItem === 'about') && (
-                <div className="about-section" style={{ padding: '40px', backgroundColor: '#f4f4f4' }}>
-                    <div className="app-container" style={{ maxWidth: '900px', margin: '0 auto', textAlign: 'center' }}>
-                        <h1 style={{ fontSize: '2.5rem', color: '#333', marginBottom: '20px' }}>ReGen: Sustainable Reverse Logistics</h1>
-
-                        <div className="logo-container" style={{ display: 'flex', justifyContent: 'center', marginBottom: '30px' }}>
-                            <Image className="logo" src='/11.jpg' alt="Blockchain" width="700" height="300" />
+            {activeItem === 'about' && (
+                <div className="about-section">
+                    <div className="app-container">
+                        <h1>ReGen: Sustainable Reverse Logistics</h1>
+                        <div className="logo-container">
+                            <Image src="/11.jpg" alt="Blockchain" layout="responsive" width={700} height={300} />
                         </div>
-
-                        <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555' }}>
+                        <p className="app-description">
                             At ReGen, we are committed to addressing two of the most pressing issues of our time—plastic waste management and the fair recognition of individuals contributing to a cleaner environment. With industrialization and rapid population growth leading to unprecedented levels of plastic waste, there is an urgent need for innovative solutions that ensure efficiency, transparency, and trust.
                         </p>
-
-                        <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555' }}>
+                        <p className="app-description">
                             We leverage cutting-edge blockchain technology to revolutionize how recyclable plastic waste is managed and tracked. Using the Ethereum blockchain and decentralized storage solutions, our platform offers unparalleled transparency, security, and reliability. By integrating smart contracts, we ensure that every individual contributing to waste recycling is fairly rewarded, establishing trust and accountability across all stakeholders.
                         </p>
-
-                        <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555' }}>
+                        <p className="app-description">
                             Our decentralized application (DApp) simplifies the waste tracking process while providing a clear reward system to honor the efforts of everyone involved. This innovation not only promotes environmental sustainability but also ensures that people are compensated fairly for their contributions.
                         </p>
-
-                        <p className="app-description" style={{ fontSize: '1.3rem', lineHeight: '1.8', color: '#555', marginBottom: '20px' }}>
+                        <p className="app-description">
                             At ReGen, we are building a more transparent and efficient waste management ecosystem, one that aligns environmental responsibility with commercial viability.
                         </p>
-                        <h2 style={{ fontSize: '2.5rem', color: '#333', marginBottom: '20px' }}>Know about recycling</h2>
-                        <img src={img1.src} alt="" width="700" height="1000" />
+                        <h2>Know about recycling</h2>
+                        <Image src={img1} alt="Recycling" layout="responsive" width={700} height={1000} />
                     </div>
                 </div>
             )}
 
-            {(activeItem === 'contact') && (
-                <div className="contactSection" style={{ padding: '20px', backgroundColor: '#f9f9f9', borderRadius: '8px' }}>
-                    <br />
-                    <h1 style={{ textAlign: 'center', marginBottom: '20px' }}>Contact Us</h1>
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
-                        <div style={{ display: 'table', margin: '20px 0', borderCollapse: 'collapse' }}>
-                            <div style={{ display: 'table-row' }}>
-                                <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                    <Icon circular inverted name='pin' color='green' />
-                                </div>
-                                <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                    <p><strong>CIT Coimbatore</strong></p>
-                                    <p>Coimbatore Institute of Technology, Coimbatore, Tamil Nadu, India</p>
-                                </div>
+            {activeItem === 'contact' && (
+                <div className="contact-section">
+                    <h1>Contact Us</h1>
+                    <div className="contact-info">
+                        <div className="contact-info-row">
+                            <div className="contact-info-cell">
+                                <Icon circular inverted name="pin" color="green" />
                             </div>
-
-                            <div style={{ display: 'table-row' }}>
-                                <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                    <Icon circular inverted name='mail' color='green' />
-                                </div>
-                                <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                    <p><strong>Email:</strong> <a href="mailto:info@cit.ac.in">info@cit.ac.in</a></p>
-                                </div>
+                            <div className="contact-info-cell">
+                                <p><strong>CIT Coimbatore</strong></p>
+                                <p>Coimbatore Institute of Technology, Coimbatore, Tamil Nadu, India</p>
                             </div>
-
-                            <div style={{ display: 'table-row' }}>
-                                <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                    <Icon circular inverted name='phone' color='green' />
-                                </div>
-                                <div style={{ display: 'table-cell', padding: '10px', verticalAlign: 'middle' }}>
-                                    <p><strong>Phone:</strong> +91 123 456 7890</p>
-                                </div>
+                        </div>
+                        <div className="contact-info-row">
+                            <div className="contact-info-cell">
+                                <Icon circular inverted name="mail" color="green" />
+                            </div>
+                            <div className="contact-info-cell">
+                                <p><strong>Email:</strong> <a href="mailto:info@cit.ac.in">info@cit.ac.in</a></p>
+                            </div>
+                        </div>
+                        <div className="contact-info-row">
+                            <div className="contact-info-cell">
+                                <Icon circular inverted name="phone" color="green" />
+                            </div>
+                            <div className="contact-info-cell">
+                                <p><strong>Phone:</strong> +91 123 456 7890</p>
                             </div>
                         </div>
                     </div>
-                    <h1 style={{ textAlign: 'center' }}>Get in Touch</h1>
-                    <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100%' }}>
+                    <h1>Get in Touch</h1>
+                    {/* <div className="form-container"> */}
+                    <Container style={{ width: '50%' }}>
                         <Form
-                            style={{ maxWidth: '400px', width: '100%' }}
+                            className="form"
                             onSubmit={handleSubmit}
-                            error={!!state.error || Object.keys(state.formErrors).length > 0}
-                            success={!!state.success}
-                            loading={state.loading}
+                            error={!!error || Object.keys(formErrors).length > 0}
+                            success={!!success}
                         >
-                            <Form.Field>
-                                <label>Name</label>
-                                <input
-                                    placeholder='Your Name'
-                                    value={state.name}
-                                    onChange={handleInputChange}
-                                    name="name"
-                                    error={state.formErrors.name ? {
-                                        content: state.formErrors.name,
-                                        pointing: 'below'
-                                    } : false}
-                                    required
-                                />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Email</label>
-                                <input
-                                    placeholder='Your Email'
-                                    type="email"
-                                    value={state.email}
-                                    onChange={handleInputChange}
-                                    name="email"
-                                    error={state.formErrors.email ? {
-                                        content: state.formErrors.email,
-                                        pointing: 'below'
-                                    } : false}
-                                    required
-                                />
-                            </Form.Field>
-                            <Form.Field>
-                                <label>Message</label>
-                                <textarea
-                                    placeholder='Your Message'
-                                    value={state.message}
-                                    onChange={handleInputChange}
-                                    name="message"
-                                    error={state.formErrors.message ? {
-                                        content: state.formErrors.message,
-                                        pointing: 'below'
-                                    } : false}
-                                    required
-                                />
-                            </Form.Field>
-
-                            <Message
-                                error
-                                header='Error'
-                                content={state.error}
+                            <Form.Input
+                                label="Name"
+                                placeholder="Your Name"
+                                value={name}
+                                onChange={(e, { value }) => setName(value)}
+                                error={formErrors.name ? { content: formErrors.name, pointing: 'below' } : null}
+                                required
                             />
-
-                            <Message
-                                success
-                                header='Success'
-                                content={state.success}
+                            <Form.Input
+                                label="Email"
+                                placeholder="Your Email"
+                                type="email"
+                                value={email}
+                                onChange={(e, { value }) => setEmail(value)}
+                                error={formErrors.email ? { content: formErrors.email, pointing: 'below' } : null}
+                                required
                             />
-
-                            <Button type='submit' color='green' fluid>
+                            <Form.TextArea
+                                label="Message"
+                                placeholder="Your Message"
+                                value={message}
+                                onChange={(e, { value }) => setMessage(value)}
+                                error={formErrors.message ? { content: formErrors.message, pointing: 'below' } : null}
+                                required
+                            />
+                            <Message error header="Error" content={error} />
+                            <Message success header="Success" content={success} />
+                            <Button type="submit" color="green" fluid loading={loading} disabled={loading}>
                                 Submit
                             </Button>
-                            <br />
                         </Form>
-                    </div>
+                    </Container>
+                    {/* </div> */}
                 </div>
             )}
-
         </div>
     );
 };
