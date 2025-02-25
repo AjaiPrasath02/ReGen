@@ -11,7 +11,7 @@ app.use(express.json());
 app.use(cors());
 app.use('/api/user/', userRoutes)
 app.use('/api/feedback/', feedbackRoutes)
-app.use('/api/complaints', complaintRoutes)
+app.use('/api/complaints/', complaintRoutes)
 
 app.get('/', (req, res) => {
     console.log("RAN")
