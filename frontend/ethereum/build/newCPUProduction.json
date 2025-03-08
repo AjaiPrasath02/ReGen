@@ -46,6 +46,39 @@
                     "type": "string"
                 },
                 {
+                    "components": [
+                        {
+                            "internalType": "uint256",
+                            "name": "componentID",
+                            "type": "uint256"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "componentType",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "details",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "string",
+                            "name": "status",
+                            "type": "string"
+                        },
+                        {
+                            "internalType": "address",
+                            "name": "cpuAddress",
+                            "type": "address"
+                        }
+                    ],
+                    "indexed": false,
+                    "internalType": "struct EWasteProduction.Component[]",
+                    "name": "components",
+                    "type": "tuple[]"
+                },
+                {
                     "indexed": false,
                     "internalType": "uint256",
                     "name": "time",
@@ -667,5 +700,5 @@
             "stateMutability": "view",
             "type": "function"
         }
-    ]    
+    ] 
 }

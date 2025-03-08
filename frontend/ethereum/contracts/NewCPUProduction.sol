@@ -200,6 +200,8 @@ contract EWasteProduction {
         emit CPUStatusUpdated(cpuAddress, newStatus);
     }
 
+
+
     // Remove a component from a CPU
     function removeComponent(address cpuAddress, uint componentIndex) public {
         require(
@@ -242,6 +244,20 @@ contract EWasteProduction {
             newStatus,
             newDetails
         );
+
+        CPU storage cpu = registeredCPUs[cpuAddress];
+        bool allWorking = true;
+        for (uint i = 0; i < cpu.components.length; i++) {
+            if (keccak256(abi.encodePacked(cpu.components[i].status)) != keccak256(abi.encodePacked("Working"))) {
+                allWorking = false;
+                break;
+            }
+        }
+        if (allWorking) {
+            cpu.status = "Working";
+        } else {
+            cpu.status = "Not Working";
+        }
     }
 
     // Generate a unique CPU address (internal function)

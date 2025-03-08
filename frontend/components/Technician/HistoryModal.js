@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal, Table, Button, Input } from "semantic-ui-react";
 import contractInstance from "../../ethereum/cpuProduction";
 import web3 from "../../ethereum/web3";
@@ -13,75 +13,73 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
     const [error, setError] = useState("");
     const [showQrReader, setShowQrReader] = useState(false);
 
+    useEffect(() => {
+        console.log("Error:", error);
+    }, [error])
+
     const getCPUHistory = async (cpuAddress) => {
-        try {
-            console.log(`Fetching history for CPU: ${cpuAddress}...`);
+        console.log(`Fetching history for CPU: ${cpuAddress}...`);
 
-            const events = await Promise.all([
-                contractInstance.getPastEvents("CPURegistered", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
-                contractInstance.getPastEvents("CPUStatusUpdated", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
-                contractInstance.getPastEvents("ComponentAdded", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
-                contractInstance.getPastEvents("ComponentRemoved", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
-                contractInstance.getPastEvents("ComponentUpdated", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
-                contractInstance.getPastEvents("LabNumberUpdated", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" })
-            ]);
+        const events = await Promise.all([
+            contractInstance.getPastEvents("CPURegistered", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
+            contractInstance.getPastEvents("ComponentAdded", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
+            contractInstance.getPastEvents("ComponentRemoved", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
+            contractInstance.getPastEvents("ComponentUpdated", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" }),
+            contractInstance.getPastEvents("LabNumberUpdated", { filter: { cpuAddress }, fromBlock: 0, toBlock: "latest" })
+        ]);
 
-            const sortedEvents = events.flat().sort((a, b) => {
-                const blockNumberA = Number(a.blockNumber);
-                const blockNumberB = Number(b.blockNumber);
-                const transactionIndexA = Number(a.transactionIndex);
-                const transactionIndexB = Number(b.transactionIndex);
+        const sortedEvents = events.flat().sort((a, b) => {
+            if (Number(a.blockNumber) === Number(b.blockNumber)) {
+                return Number(a.logIndex) - Number(b.logIndex);
+            }
+            return Number(a.blockNumber) - Number(b.blockNumber);
+        });
 
-                if (blockNumberA === blockNumberB) {
-                    return transactionIndexA - transactionIndexB;
+        let cpuState = { components: [] };
+        let history = [];
+        const registeredIndex = sortedEvents.findIndex(event => event.event === "CPURegistered");
+
+        for (let [index, event] of sortedEvents.entries()) {
+            const eventType = event.event;
+            const eventData = event.returnValues;
+            const block = await web3.eth.getBlock(Number(event.blockNumber));
+            const timestamp = new Date(Number(block.timestamp) * 1000).toISOString();
+
+            if (eventType === "CPURegistered") {
+                cpuState = {
+                    cpuAddress: eventData.cpuAddress,
+                    manufacturerID: eventData.manufacturerID.toString(),
+                    modelName: eventData.modelName,
+                    serialNumber: eventData.serialNumber,
+                    productionDate: new Date(Number(eventData.productionDate) * 1000).toISOString(),
+                    labNumber: eventData.labNumber.toString(),
+                    status: "Working",
+                    components: cpuState.components.length > 0 ? cpuState.components : eventData.components,
+                    time: new Date(Number(eventData.time) * 1000).toISOString()
+                };
+            } else if (eventType === "ComponentAdded") {
+                cpuState.components.push({
+                    componentID: eventData.componentID.toString(),
+                    componentType: eventData.componentType,
+                    status: eventData.status,
+                    details: eventData.details
+                });
+            } else if (eventType === "ComponentRemoved") {
+                const componentIndex = Number(eventData.componentID);
+                if (cpuState.components[componentIndex]) {
+                    cpuState.components[componentIndex].status = "Removed";
                 }
-                return blockNumberA - blockNumberB;
-            });
-
-            let cpuState = {};
-            let history = [];
-
-            for (let event of sortedEvents) {
-                const eventType = event.event;
-                const eventData = event.returnValues;
-                const block = await web3.eth.getBlock(Number(event.blockNumber));
-                const timestamp = new Date(Number(block.timestamp) * 1000).toISOString();
-
-                if (eventType === "CPURegistered") {
-                    cpuState = {
-                        cpuAddress: eventData.cpuAddress,
-                        manufacturerID: eventData.manufacturerID.toString(),
-                        modelName: eventData.modelName,
-                        serialNumber: eventData.serialNumber,
-                        productionDate: new Date(Number(eventData.productionDate) * 1000).toISOString(),
-                        labNumber: eventData.labNumber.toString(),
-                        status: "Working",
-                        components: [],
-                        time: new Date(Number(eventData.time) * 1000).toISOString()
-                    };
-                } else if (eventType === "ComponentAdded") {
-                    cpuState.components.push({
-                        componentID: eventData.componentID.toString(),
-                        componentType: eventData.componentType,
-                        status: eventData.status,
-                        details: eventData.details
-                    });
-                } else if (eventType === "ComponentRemoved") {
-                    const componentIndex = Number(eventData.componentID);
-                    if (cpuState.components[componentIndex]) {
-                        cpuState.components[componentIndex].status = "Removed";
-                    }
-                } else if (eventType === "ComponentUpdated") {
-                    const componentIndex = Number(eventData.componentID);
-                    if (cpuState.components[componentIndex]) {
-                        cpuState.components[componentIndex].status = eventData.newStatus;
-                        cpuState.components[componentIndex].details = eventData.newDetails;
-                    }
-                } else if (eventType === "CPUStatusUpdated") {
-                    cpuState.status = eventData.newStatus;
-                } else if (eventType === "LabNumberUpdated") {
-                    cpuState.labNumber = eventData.newLabNumber.toString();
+            } else if (eventType === "ComponentUpdated") {
+                const componentIndex = Number(eventData.componentID);
+                if (cpuState.components[componentIndex]) {
+                    cpuState.components[componentIndex].status = eventData.newStatus;
+                    cpuState.components[componentIndex].details = eventData.newDetails;
                 }
+            } else if (eventType === "LabNumberUpdated") {
+                cpuState.labNumber = eventData.newLabNumber.toString();
+            }
+
+            if (index >= registeredIndex) {
                 history.push({
                     event: eventType,
                     time: timestamp,
@@ -91,12 +89,9 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
                     }
                 });
             }
-
-            return history;
-        } catch (error) {
-            console.error("Error fetching CPU history:", error);
-            return [];
         }
+
+        return history;
     };
 
     const fetchHistory = async (address) => {
@@ -110,7 +105,9 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
             const result = await getCPUHistory(address);
             setHistory(result);
         } catch (err) {
-            setError("Failed to fetch history. Check the console for details.");
+            console.error("Error fetching CPU history:", err);
+            setHistory([]);
+            setError("Failed to fetch history, check for valid address");
         } finally {
             setLoading(false);
         }
@@ -133,10 +130,19 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
 
     const toggleQrReader = () => {
         setShowQrReader(!showQrReader);
-        if (!showQrReader) {
-            setHistory([]);
-            setError("");
-        }
+        setError("");
+    };
+
+    const formatDate = (isoString) => {
+        const date = new Date(isoString);
+        return date.toLocaleDateString('en-GB', {
+            day: '2-digit',
+            month: '2-digit',
+            year: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
+        }).replace(',', ' -');
     };
 
     return (
@@ -180,7 +186,7 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
                 {loading && <p>Fetching history...</p>}
                 {error && <p style={{ color: 'red' }}>{error}</p>}
 
-                {history.length > 0 && (
+                {!showQrReader && history.length > 0 && (
                     <div style={{ maxHeight: "400px", minHeight: "350px", overflowY: "auto" }}>
                         <Table celled>
                             <Table.Header>
@@ -194,7 +200,7 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
                                 {history.map((item, index) => (
                                     <Table.Row key={index}>
                                         <Table.Cell>{item.event}</Table.Cell>
-                                        <Table.Cell>{item.time}</Table.Cell>
+                                        <Table.Cell>{formatDate(item.time)}</Table.Cell>
                                         <Table.Cell>
                                             {item.event === "CPURegistered" && (
                                                 <div>
@@ -217,7 +223,10 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
                                                 </div>
                                             )}
                                             {item.event === "ComponentRemoved" && (
-                                                <p><strong>Component Removed:</strong> {item.data.components[item.data.components.length - 1]?.componentType}</p>
+                                                <div>
+                                                    <p><strong>Component Removed:</strong> {item.data.components[item.data.components.length - 1]?.componentType}</p>
+                                                    <p><strong>New Status:</strong> {item.data.components[item.data.components.length - 1]?.status}</p>
+                                                </div>
                                             )}
                                             {item.event === "ComponentUpdated" && (
                                                 <div>
@@ -242,4 +251,4 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
     );
 };
 
-export default HistoryModal; 
+export default HistoryModal;
