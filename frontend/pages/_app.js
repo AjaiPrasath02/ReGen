@@ -1,4 +1,7 @@
+// Import Semantic UI CSS
 import 'semantic-ui-css/semantic.min.css';
+
+// Then import other styles
 import { AuthProvider } from '../context/AuthContext';
 import Layout from '../components/Layout';
 import '../styles.css';

@@ -13,6 +13,7 @@
     "@fontsource/poppins": "^5.1.0",
     "@fontsource/roboto": "^5.1.0",
     "@marketsystems/nextjs13-appdir-breadcrumbs": "^1.0.4",
+    "@shadcn/ui": "^0.0.4",
     "axios": "^1.6.8",
     "chart.js": "^2.9.4",
     "dotenv": "^8.6.0",
@@ -37,6 +38,7 @@
     "recyclechain": "file:",
     "semantic-ui-css": "^2.5.0",
     "semantic-ui-react": "^2.0.1",
+    "socket.io-client": "^4.8.1",
     "solc": "^0.8.0",
     "truffle-hdwallet-provider": "^1.0.6",
     "web3": "^4.8.0"

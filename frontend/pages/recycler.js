@@ -374,6 +374,7 @@ const TechnicianPage = () => {
                 onClick={() => {
                     // Add your chat functionality here
                     console.log('Chat button clicked');
+                    router.push('/chat');
                 }}
             >
                 <i className="chat icon" style={{ margin: 0 }}></i>
