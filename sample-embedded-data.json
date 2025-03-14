@@ -1,0 +1,46 @@
+{
+  "cpuAddress": "0x20826f07c67911d27E84465270125A66F35DF3bE",
+  "manufacturerID": "2n",
+  "modelName": "Test2",
+  "serialNumber": "Test2",
+  "productionDate": "1762819200n",
+  "labNumber": "Test2",
+  "components": [
+    {
+      "componentID": "0n",
+      "componentType": "Processor",
+      "details": "Test2",
+      "status": "Working",
+      "cpuAddress": "0x20826f07c67911d27E84465270125A66F35DF3bE"
+    },
+    {
+      "componentID": "1n",
+      "componentType": "RAM",
+      "details": "Test2",
+      "status": "Working",
+      "cpuAddress": "0x20826f07c67911d27E84465270125A66F35DF3bE"
+    },
+    {
+      "componentID": "2n",
+      "componentType": "Hard Disk",
+      "details": "Test2",
+      "status": "Working",
+      "cpuAddress": "0x20826f07c67911d27E84465270125A66F35DF3bE"
+    },
+    {
+      "componentID": "3n",
+      "componentType": "Motherboard",
+      "details": "Test2",
+      "status": "Working",
+      "cpuAddress": "0x20826f07c67911d27E84465270125A66F35DF3bE"
+    },
+    {
+      "componentID": "4n",
+      "componentType": "PSU",
+      "details": "Test2",
+      "status": "Working",
+      "cpuAddress": "0x20826f07c67911d27E84465270125A66F35DF3bE"
+    }
+  ],
+  "time": "1741803684n"
+}

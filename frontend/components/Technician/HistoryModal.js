@@ -90,7 +90,7 @@ const HistoryModal = ({ showHistoryModal, onClose }) => {
                 });
             }
         }
-
+        console.log(history);
         return history;
     };
 

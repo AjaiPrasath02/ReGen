@@ -11,6 +11,12 @@ backend/node_modules/
 !start.bat
 !install.bat
 
+# Ignore all .sh files
+*.sh
+
+# Then exclude specific .sh files we want to track
+!install.sh 
+
 # Environment variables
 .env
 .env.local

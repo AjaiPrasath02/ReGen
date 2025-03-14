@@ -350,6 +350,35 @@ const TechnicianPage = () => {
                 </Modal>
             )}
 
+            {/* Chat Button */}
+            <button
+                style={{
+                    padding: '0',
+                    position: 'fixed',
+                    bottom: '2rem',
+                    right: '2rem',
+                    zIndex: '1000',
+                    width: '60px',
+                    height: '60px',
+                    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+                    backgroundColor: '#2185d0',
+                    color: 'white',
+                    borderRadius: '50%',
+                    border: 'none',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1.5rem'
+                }}
+                onClick={() => {
+                    // Add your chat functionality here
+                    console.log('Chat button clicked');
+                }}
+            >
+                <i className="chat icon" style={{ margin: 0 }}></i>
+            </button>
+
             <Container>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Header as="h1" textAlign="center" style={{ marginTop: '1em', flex: 1 }}>

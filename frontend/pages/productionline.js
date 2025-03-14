@@ -7,6 +7,7 @@ import { useAuth } from '../context/AuthContext';
 import CPUDetailsForm from '../components/Productionline/CPUDetailsForm';
 import ComponentDetailsForm from '../components/Productionline/ComponentDetailsForm';
 import QRCodeDisplay from '../components/Productionline/QRCodeDisplay';
+import registerCPU from '../api/register';
 
 const ManufacturingMachinePage = () => {
     const router = useRouter();
@@ -138,6 +139,10 @@ const ManufacturingMachinePage = () => {
 
             const cpuRegisteredEvent = result.events.CPURegistered;
             const cpuQR = cpuRegisteredEvent.returnValues.cpuAddress;
+
+            console.log(cpuRegisteredEvent.returnValues);
+
+            await registerCPU(cpuRegisteredEvent.returnValues);
 
             setState(prev => ({
                 ...prev,

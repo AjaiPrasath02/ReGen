@@ -5,6 +5,7 @@ const cors = require('cors');
 const userRoutes = require('./routes/userRoutes')
 const feedbackRoutes = require('./routes/feedbackRoutes')
 const complaintRoutes = require('./routes/complaintRoutes')
+const cpuRoutes = require('./routes/cpuRoutes')
 require('dotenv').config()
 
 app.use(express.json());
@@ -12,6 +13,7 @@ app.use(cors());
 app.use('/api/user/', userRoutes)
 app.use('/api/feedback/', feedbackRoutes)
 app.use('/api/complaints/', complaintRoutes)
+app.use('/api/cpu/',cpuRoutes)
 
 app.get('/', (req, res) => {
     console.log("RAN")

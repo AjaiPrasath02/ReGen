@@ -19,6 +19,7 @@
     "mongodb": "^6.10.0",
     "mongoose": "^8.8.1",
     "nodemon": "^3.1.7",
+    "openai": "^4.87.3",
     "validator": "^13.12.0"
   }
 }

@@ -1,0 +1,138 @@
+{
+    "cpuData": [
+        {
+            "data": {
+                "components": [
+                    {
+                        "componentID": "0",
+                        "componentType": "Processor",
+                        "details": "Test",
+                        "status": "Working"
+                    },
+                    {
+                        "componentID": "1",
+                        "componentType": "RAM",
+                        "details": "Test",
+                        "status": "Working"
+                    },
+                    {
+                        "componentID": "2",
+                        "componentType": "Hard Disk",
+                        "details": "Test",
+                        "status": "Working"
+                    },
+                    {
+                        "componentID": "3",
+                        "componentType": "Motherboard",
+                        "details": "Test",
+                        "status": "Working"
+                    },
+                    {
+                        "componentID": "4",
+                        "componentType": "PSU",
+                        "details": "Test",
+                        "status": "Working"
+                    }
+                ],
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "labNumber": "L102",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "productionDate": "2025-03-05T00:00:00.000Z",
+                "serialNumber": "123",
+                "status": "Working",
+                "time": "2025-03-06T04:33:00.000Z"
+            },
+            "event": "CPURegistered",
+            "time": "2025-03-06T04:33:00.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "ComponentRemoved",
+            "time": "2025-03-06T04:34:48.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "ComponentUpdated",
+            "time": "2025-03-06T04:35:36.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "ComponentUpdated",
+            "time": "2025-03-06T04:36:00.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "ComponentRemoved",
+            "time": "2025-03-06T04:36:24.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "ComponentRemoved",
+            "time": "2025-03-06T04:36:36.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "ComponentUpdated",
+            "time": "2025-03-06T04:37:00.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "ComponentUpdated",
+            "time": "2025-03-06T04:37:24.000Z"
+        },
+        {
+            "data": {
+                "cpuAddress": "0xD5C994AEe7858cF105C6226B202406340862176b",
+                "manufacturerID": "2",
+                "modelName": "Test",
+                "serialNumber": "123",
+                "productionDate": "2025-03-05T00:00:00.000Z"
+            },
+            "event": "LabNumberUpdated",
+            "time": "2025-03-08T17:18:48.000Z"
+        }
+    ]
+}
