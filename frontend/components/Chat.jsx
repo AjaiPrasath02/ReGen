@@ -200,7 +200,7 @@ const Chat = () => {
   };
 
   return (
-    <Segment raised style={{ maxWidth: '700px', margin: '0 auto', height: '600px', display: 'flex', flexDirection: 'column' }}>
+    <Segment raised style={{ maxWidth: '100vw', margin: '0 0', height: '80vh', display: 'flex', flexDirection: 'column' }}>
       <Header as="h2">AI Chat</Header>
       
       <Segment 
@@ -245,13 +245,6 @@ const Chat = () => {
               </Message>
             </div>
           ))
-        )}
-        {isLoading && (
-          <div style={{ textAlign: 'center', margin: '1rem 0' }}>
-            <Dimmer active inverted>
-              <Loader size="small">Loading</Loader>
-            </Dimmer>
-          </div>
         )}
         <div ref={messagesEndRef} />
       </Segment>

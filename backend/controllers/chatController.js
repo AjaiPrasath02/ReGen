@@ -40,7 +40,7 @@ async function runAgent(messages, socket, iteration = 0) {
 
     // Create a streaming completion with OpenAI
     const stream = await openai.chat.completions.create({
-        model: 'gpt-4o-mini', // Ensure the model supports streaming and tools
+        model: 'gpt-4o', // Ensure the model supports streaming and tools
         messages: messages,
         tools: tools,
         tool_choice: "auto", // Let the model decide when to use tools
